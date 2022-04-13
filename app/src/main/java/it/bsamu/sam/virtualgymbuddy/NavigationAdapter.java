@@ -34,6 +34,7 @@ public class NavigationAdapter extends FragmentStateAdapter {
                 return new ExercisesFragment();
             case 2:
                 return new CurrentProgramFragment();
+
         }
         throw new AssertionError();
     }

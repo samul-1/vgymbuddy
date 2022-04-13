@@ -4,4 +4,9 @@
         <item name="android:textSize">13sp</item>
         <item name="android:textAllCaps">true</item>
     </style>
+    <style name="CardTitle" parent="Base.CardView">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/design_default_color_primary</item>
+        <item name="android:fontWeight">1000</item>
+    </style>
 </resources>

@@ -11,6 +11,11 @@
     <string name="tab_programs">Programmi</string>
     <string name="tab_exercises">Esercizi</string>
 
+    <string name="dialog_exercise_name">Nome esercizio</string>
+    <string name="dialog_exercise_title">Crea esercizio</string>
+    <string name="create">Crea</string>
+    <string name="cancel">Annulla</string>
+
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>

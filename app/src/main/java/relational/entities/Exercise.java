@@ -13,4 +13,7 @@ public class Exercise {
 
     public Exercise() {
     }
+    public Exercise(String name) {
+        this.name=name;
+    }
 }
