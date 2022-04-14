@@ -32,6 +32,7 @@
             android:layout_columnSpan="2"
             android:layout_width="10dp"
             android:layout_height="10dp"
+            android:id="@+id/exercise_img"
             app:srcCompat="@drawable/ic_baseline_fitness_center_24"></ImageView>
     </GridLayout>
 

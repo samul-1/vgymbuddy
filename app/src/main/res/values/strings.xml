@@ -12,6 +12,7 @@
     <string name="tab_exercises">Esercizi</string>
 
     <string name="dialog_exercise_name">Nome esercizio</string>
+    <string name="dialog_exercise_pick_img">Scegli un\'immagine</string>
     <string name="dialog_exercise_title">Crea esercizio</string>
     <string name="create">Crea</string>
     <string name="cancel">Annulla</string>
