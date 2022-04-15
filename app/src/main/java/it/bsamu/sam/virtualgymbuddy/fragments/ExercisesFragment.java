@@ -12,14 +12,14 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ListView;
+
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -40,7 +40,7 @@ import relational.entities.Exercise;
 public class ExercisesFragment extends Fragment implements View.OnClickListener, ExerciseCreationDialog.ExerciseCreationDialogListener {
     private ExercisesFragmentBinding binding;
 
-    private ListView listView;
+    private RecyclerView recyclerView;
     private Cursor exercisesCursor;
     private ExerciseAdapter adapter;
 
@@ -53,29 +53,6 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         db = AppDb.getInstance(getContext());
-
-
-
-        // fetch all exercises
-        new AsyncTask<Void,Void,Void>(){
-
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected Void doInBackground(Void... voids) {
-                exercisesCursor = db.exerciseDao().getAll(); /*new ArrayList<Exercise>();*/
-                adapter = new ExerciseAdapter(
-                        getContext(),
-                        exercisesCursor
-                );
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                adapter.notifyDataSetChanged();
-            }
-        }.execute();
     }
 
     @Override
@@ -85,13 +62,34 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
     ) {
         binding = ExercisesFragmentBinding.inflate(inflater, container, false);
 
-        return binding.getRoot();
+        View view = inflater.inflate(R.layout.exercises_fragment, container,false);
+
+        // create recycler view and set its adapter
+        adapter = new ExerciseAdapter();
+        recyclerView = view.findViewById(R.id.exercise_recyclerview);
+        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        recyclerView.setAdapter(adapter);
+
+        // fetch all exercises
+        new AsyncTask<Void,Void,Void>(){
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                exercisesCursor = db.exerciseDao().getAll();
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                adapter.swapCursor(exercisesCursor);
+                adapter.notifyDataSetChanged();
+            }
+        }.execute();
+        return view;
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        listView = (ListView)getView().findViewById(R.id.exercise_listview);
-        listView.setAdapter(adapter);
 
         fab = (FloatingActionButton) getView().findViewById(R.id.exercises_fragment_fab);
         fab.setOnClickListener(this);
@@ -113,11 +111,13 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
     @Override
     public void onClick(View view) {
         if(view == fab) {
-                exerciseCreationDialog = exerciseCreationDialog==null ? new ExerciseCreationDialog() : exerciseCreationDialog;
-                exerciseCreationDialog.show(getActivity().getSupportFragmentManager(), "exercise-creation-dialog");
+                exerciseCreationDialog = exerciseCreationDialog==null ?
+                        new ExerciseCreationDialog() : exerciseCreationDialog;
+                exerciseCreationDialog.show(
+                        getActivity().getSupportFragmentManager(), "exercise-creation-dialog"
+                );
                 return;
         }
-        System.out.println("OPENED VIEW" + view.toString());
         throw new AssertionError();
     }
 
@@ -151,6 +151,7 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
 
             @Override
             protected void onPostExecute(Exercise added) {
+                // TODO recreate cursor to make exercise appear
                 super.onPostExecute(added);
                 //exercises.add(0, added);
                 adapter.notifyDataSetChanged();
