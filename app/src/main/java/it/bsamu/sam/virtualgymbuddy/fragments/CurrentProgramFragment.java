@@ -1,4 +1,4 @@
-package it.bsamu.sam.virtualgymbuddy;
+package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;

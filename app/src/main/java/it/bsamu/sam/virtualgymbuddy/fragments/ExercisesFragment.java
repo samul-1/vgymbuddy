@@ -1,4 +1,4 @@
-package it.bsamu.sam.virtualgymbuddy;
+package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
@@ -32,6 +32,7 @@ import java.util.ArrayList;
 
 import adapter.ExerciseAdapter;
 import dialog.ExerciseCreationDialog;
+import it.bsamu.sam.virtualgymbuddy.R;
 import it.bsamu.sam.virtualgymbuddy.databinding.ExercisesFragmentBinding;
 import relational.AppDb;
 import relational.entities.Exercise;

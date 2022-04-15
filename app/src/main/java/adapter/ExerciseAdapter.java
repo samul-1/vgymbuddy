@@ -24,35 +24,6 @@ public class ExerciseAdapter extends /*ArrayAdapter<Exercise>*/ CursorAdapter {
     public ExerciseAdapter(Context context, Cursor c) {
         super(context, c, 0);
     }
-    /*public ExerciseAdapter(@NonNull Context context, int resource, @NonNull List<Exercise> objects) {
-        super(context, 0, objects);
-    }*/
-
-   /* @NonNull
-    @Override
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        Exercise item = getItem(position);
-        if(convertView==null) {
-            convertView= LayoutInflater.from(getContext()).inflate(R.layout.exercise_card, parent, false);
-        }
-        TextView tv = convertView.findViewById(R.id.exercise_name);
-        tv.setText(item.name);
-
-        File imgFile = new File(getContext().getFilesDir(), String.valueOf(item.id) + ".jpg");
-        if(imgFile.exists()) {
-            Uri exerciseImgUri = Uri.fromFile(
-                imgFile
-            );
-            // if the exercise has an image associated to it, set it as card preview
-            ImageView iv = convertView.findViewById(R.id.exercise_img);
-            System.out.println("FOUND IMAGE FOR " + item.name + ": " + exerciseImgUri);
-            iv.setImageURI(exerciseImgUri);
-        } else {
-            System.out.println("no image for " + item.name);
-        }
-        return convertView;
-        //return super.getView(position, convertView, parent);
-    }*/
 
     @Override
     public View newView(Context context, Cursor cursor, ViewGroup viewGroup) {
@@ -70,11 +41,11 @@ public class ExerciseAdapter extends /*ArrayAdapter<Exercise>*/ CursorAdapter {
         tv.setText(exerciseName);
 
         File imgFile = new File(context.getFilesDir(), String.valueOf(exerciseId) + ".jpg");
+        // if the exercise has an image associated to it, set it as card preview
         if(imgFile.exists()) {
             Uri exerciseImgUri = Uri.fromFile(
                     imgFile
             );
-            // if the exercise has an image associated to it, set it as card preview
             System.out.println("FOUND IMAGE FOR " + exerciseName + ": " + exerciseImgUri);
             iv.setImageURI(exerciseImgUri);
         } else {

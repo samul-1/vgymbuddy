@@ -1,43 +1,24 @@
 package it.bsamu.sam.virtualgymbuddy;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Bundle;
 
-import com.google.android.material.snackbar.Snackbar;
-import com.google.android.material.tabs.TabItem;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.util.AttributeSet;
-import android.view.View;
-
-import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
-import androidx.room.Room;
-import androidx.viewpager2.adapter.FragmentStateAdapter;
 import androidx.viewpager2.widget.ViewPager2;
 
-import dialog.ExerciseCreationDialog;
+import adapter.NavigationAdapter;
 import it.bsamu.sam.virtualgymbuddy.databinding.ActivityMainBinding;
 import relational.AppDb;
-import relational.entities.Exercise;
 
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;

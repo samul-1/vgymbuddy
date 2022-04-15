@@ -1,4 +1,4 @@
-package it.bsamu.sam.virtualgymbuddy;
+package adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
@@ -6,6 +6,10 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+
+import it.bsamu.sam.virtualgymbuddy.fragments.CurrentProgramFragment;
+import it.bsamu.sam.virtualgymbuddy.fragments.ExercisesFragment;
+import it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment;
 
 public class NavigationAdapter extends FragmentStateAdapter {
 

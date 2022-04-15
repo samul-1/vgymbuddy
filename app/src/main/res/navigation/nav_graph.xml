@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/FirstFragment"
-        android:name="it.bsamu.sam.virtualgymbuddy.CurrentProgramFragment"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.CurrentProgramFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/current_program_fragment">
 
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/SecondFragment"
-        android:name="it.bsamu.sam.virtualgymbuddy.ProgramsFragment"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment"
         android:label="@string/second_fragment_label"
         tools:layout="@layout/programs_fragment">
 
