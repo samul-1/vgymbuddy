@@ -12,6 +12,7 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 
 import androidx.annotation.NonNull;
@@ -55,6 +56,7 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
         db = AppDb.getInstance(getContext());
     }
 
+
     @Override
     public View onCreateView(
             LayoutInflater inflater, ViewGroup container,
@@ -70,7 +72,11 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 
-        // fetch all exercises
+        fetchExercises();
+        return view;
+    }
+
+    private void fetchExercises() {
         new AsyncTask<Void,Void,Void>(){
             @SuppressLint("StaticFieldLeak")
             @Override
@@ -85,7 +91,6 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
                 adapter.notifyDataSetChanged();
             }
         }.execute();
-        return view;
     }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
@@ -151,14 +156,13 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
 
             @Override
             protected void onPostExecute(Exercise added) {
-                // TODO recreate cursor to make exercise appear
                 super.onPostExecute(added);
-                //exercises.add(0, added);
-                adapter.notifyDataSetChanged();
-                // TODO make toast notification
-            }
+                // TODO fix glitch: new card contains image of a card that was in view
+                fetchExercises();
+                Toast.makeText(getContext(), R.string.toast_exercise_created, Toast.LENGTH_SHORT).show();            }
         }.execute();
         System.out.println("received!");
     }
+
 
 }
