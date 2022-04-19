@@ -14,10 +14,19 @@
     <string name="dialog_exercise_name">Nome esercizio</string>
     <string name="dialog_exercise_pick_img">Scegli un\'immagine</string>
     <string name="dialog_exercise_title">Crea esercizio</string>
+
     <string name="create">Crea</string>
     <string name="cancel">Annulla</string>
 
+
+    <string name="dialog_program_title">Crea programma di allenamento</string>
+    <string name="dialog_program_name">Nome programma</string>
+    <string name="dialog_program_desc">Descrizione</string>
+
+
+
     <string name="toast_exercise_created">Esercizio creato con successo</string>
+    <string name="toast_program_created">Programma creato con successo</string>
 
 
 

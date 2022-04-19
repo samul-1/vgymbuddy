@@ -11,4 +11,9 @@ public class TrainingProgram {
 
     public String name;
     public String description;
+
+    public TrainingProgram(String name, String description) {
+        this.name = name;
+        this.description= description;
+    }
 }

@@ -4,7 +4,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
     <com.google.android.material.textfield.TextInputEditText
-        android:id="@+id/exercise_name_input"
+        android:id="@+id/program_name_input"
         android:inputType="text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -12,18 +12,15 @@
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginBottom="4dp"
-        android:hint="@string/dialog_exercise_name" />
-    <Button
-        android:layout_width="wrap_content"
+        android:hint="@string/dialog_program_name" />
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/program_desc_input"
+        android:inputType="text"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:text="@string/dialog_exercise_pick_img"
-        android:id="@+id/dialog_exercise_img_btn">
-    </Button>
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/dialog_exercise_img_preview">
-    </ImageView>
+        android:layout_marginBottom="4dp"
+        android:hint="@string/dialog_program_desc" />
 </LinearLayout>

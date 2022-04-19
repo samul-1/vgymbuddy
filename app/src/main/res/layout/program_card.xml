@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true"
+    android:checkable="true"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    app:contentPaddingLeft="20dp"
+    app:contentPaddingRight="10dp"
+    app:contentPaddingTop="20dp"
+    app:contentPaddingBottom="10dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="2.5dp">
+    <GridLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:layout_row="0"
+            android:layout_rowSpan="1"
+            style="@style/CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/program_name"></TextView>
+        <TextView
+            android:layout_row="0"
+            android:layout_rowSpan="1"
+            style="@style/CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/program_description"></TextView>
+        <ImageView
+            android:layout_row="1"
+            android:layout_rowSpan="1"
+            android:layout_column="0"
+            android:layout_rowWeight="1"
+            android:layout_columnWeight="1"
+            android:layout_columnSpan="2"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
+            android:id="@+id/program_img"
+            app:srcCompat="@drawable/ic_baseline_fitness_center_24"></ImageView>
+    </GridLayout>
+
+</com.google.android.material.card.MaterialCardView>

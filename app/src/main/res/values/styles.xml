@@ -9,4 +9,9 @@
         <item name="android:textColor">@color/design_default_color_primary</item>
         <item name="android:fontWeight">1000</item>
     </style>
+    <style name="CardContent" parent="Base.CardView">
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/design_default_color_primary</item>
+        <item name="android:fontWeight">1000</item>
+    </style>
 </resources>

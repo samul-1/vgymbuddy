@@ -13,7 +13,7 @@ import relational.entities.Exercise;
 @Dao
 public interface ExerciseDao {
     @Query("SELECT * FROM Exercise")
-    /*List<Exercise>*/ Cursor getAll();
+    Cursor getAll();
 
     @Insert
     public long insertExercise(Exercise exercise);

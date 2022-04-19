@@ -16,6 +16,8 @@
         <entry key="app/src/main/res/layout/exercises_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_second.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/program_card.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/training_program_creation_dialog.xml" value="0.151268115942029" />
       </map>
     </option>
   </component>

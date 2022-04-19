@@ -33,8 +33,8 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import relational.AppDb;
 import relational.entities.Exercise;
 
-public class ExerciseCreationDialog extends DialogFragment implements View.OnClickListener {
-    private ExerciseCreationDialogListener listener;
+public class TrainingProgramCreationDialog extends DialogFragment implements View.OnClickListener {
+    private TrainingProgramCreationDialogListener listener;
     private EditText nameInput;
     private ImageView previewView;
     private Button pickImgBtn;
@@ -69,8 +69,8 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
         }
     }
 
-    public interface ExerciseCreationDialogListener {
-        public void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
+    public interface TrainingProgramCreationDialogListener {
+        public void onCreateProgram(DialogFragment dialog, String programName, String programDescription);
     }
 
     @Override
@@ -78,14 +78,14 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
         super.onAttach(context);
         try {
             // used to send events to dialog host
-            listener = (ExerciseCreationDialogListener)
+            listener = (TrainingProgramCreationDialogListener)
                     ((MainActivity)context)
                             .getSupportFragmentManager()
-                            .findFragmentByTag("f1"); // TODO find a less ugly way
+                            .findFragmentByTag("f0"); // TODO find a less ugly way
         } catch (ClassCastException e) {
             // The activity doesn't implement the interface, throw exception
             throw new ClassCastException(context.toString() + "," +getActivity().toString()
-                    + " must implement ExerciseCreationDialogListener");
+                    + " must implement TrainingProgramCreationDialogListener");
         }
     }
 
@@ -101,31 +101,29 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = requireActivity().getLayoutInflater();
-        View view = inflater.inflate(R.layout.exercise_creation_dialog, null);
-
-        previewView = view.findViewById(R.id.dialog_exercise_img_preview);
-        pickImgBtn = view.findViewById(R.id.dialog_exercise_img_btn);
-        pickImgBtn.setOnClickListener(this);
+        View view = inflater.inflate(R.layout.training_program_creation_dialog, null);
 
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        listener.onCreateExercise(
-                                ExerciseCreationDialog.this,
+                        listener.onCreateProgram(
+                                TrainingProgramCreationDialog.this,
                                 ((EditText)getDialog().
-                                        findViewById(R.id.exercise_name_input))
+                                        findViewById(R.id.program_name_input))
                                         .getText().toString(),
-                                pickedImg
+                                ((EditText)getDialog().
+                                        findViewById(R.id.program_desc_input))
+                                        .getText().toString()
                         );
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        ExerciseCreationDialog.this.getDialog().cancel();
+                        TrainingProgramCreationDialog.this.getDialog().cancel();
                     }
-                }).setTitle(R.string.dialog_exercise_title);
+                }).setTitle(R.string.dialog_program_title);
         return builder.create();
     }
 }
