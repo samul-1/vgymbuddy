@@ -38,56 +38,26 @@ import it.bsamu.sam.virtualgymbuddy.databinding.ExercisesFragmentBinding;
 import relational.AppDb;
 import relational.entities.Exercise;
 
-public class ExercisesFragment extends Fragment implements View.OnClickListener, ExerciseCreationDialog.ExerciseCreationDialogListener {
+public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<ExerciseAdapter> implements View.OnClickListener, ExerciseCreationDialog.ExerciseCreationDialogListener {
     private ExercisesFragmentBinding binding;
-
-    private RecyclerView recyclerView;
-    private Cursor exercisesCursor;
-    private ExerciseAdapter adapter;
-
-    private AppDb db;
 
     private FloatingActionButton fab;
     private ExerciseCreationDialog exerciseCreationDialog = null;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        db = AppDb.getInstance(getContext());
-    }
-
 
     @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-        binding = ExercisesFragmentBinding.inflate(inflater, container, false);
-
-        View view = inflater.inflate(R.layout.exercises_fragment, container,false);
-
-        // create recycler view and set its adapter
-        adapter = new ExerciseAdapter();
-        recyclerView = view.findViewById(R.id.exercise_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(adapter);
-
-        fetchExercises();
-        return view;
-    }
-
-    private void fetchExercises() {
+    protected void asyncFetchMainEntity() {
         new AsyncTask<Void,Void,Void>(){
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                exercisesCursor = db.exerciseDao().getAll();
+                cursor = db.exerciseDao().getAll();
                 return null;
             }
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                adapter.swapCursor(exercisesCursor);
+                adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
             }
         }.execute();
@@ -98,25 +68,13 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
 
         fab = (FloatingActionButton) getView().findViewById(R.id.exercises_fragment_fab);
         fab.setOnClickListener(this);
-//        binding.buttonSecond.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                NavHostFragment.findNavController(SecondFragment.this)
-//                        .navigate(R.id.action_SecondFragment_to_FirstFragment);
-//            }
-//        });
     }
 
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
-    }
 
     @Override
     public void onClick(View view) {
         if(view == fab) {
-                exerciseCreationDialog = exerciseCreationDialog==null ?
+                exerciseCreationDialog = exerciseCreationDialog == null ?
                         new ExerciseCreationDialog() : exerciseCreationDialog;
                 exerciseCreationDialog.show(
                         getActivity().getSupportFragmentManager(), "exercise-creation-dialog"
@@ -147,10 +105,7 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
                    } catch (IOException e) {
                        e.printStackTrace();
                    }
-
                 }
-                // TODO investigate: it's null when using an image
-                //dialog.getDialog().cancel();
                 return added;
             }
 
@@ -158,11 +113,26 @@ public class ExercisesFragment extends Fragment implements View.OnClickListener,
             protected void onPostExecute(Exercise added) {
                 super.onPostExecute(added);
                 // TODO fix glitch: new card contains image of a card that was in view
-                fetchExercises();
-                Toast.makeText(getContext(), R.string.toast_exercise_created, Toast.LENGTH_SHORT).show();            }
+                asyncFetchMainEntity();
+                Toast.makeText(getContext(), R.string.toast_exercise_created, Toast.LENGTH_SHORT).show();
+            }
         }.execute();
         System.out.println("received!");
     }
 
 
+    @Override
+    protected ExerciseAdapter getAdapter() {
+        return new ExerciseAdapter();
+    }
+
+    @Override
+    protected RecyclerView getRecyclerView(View parent) {
+        return parent.findViewById(R.id.exercise_recyclerview);
+    }
+
+    @Override
+    protected View getMainView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.exercises_fragment, container,false);
+    }
 }
