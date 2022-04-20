@@ -36,42 +36,14 @@ import relational.AppDb;
 import relational.entities.Exercise;
 import relational.entities.TrainingProgram;
 
-public class ProgramsFragment extends Fragment implements View.OnClickListener, TrainingProgramCreationDialog.TrainingProgramCreationDialogListener {
+public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<TrainingProgramAdapter> implements View.OnClickListener, TrainingProgramCreationDialog.TrainingProgramCreationDialogListener {
 
     private ProgramsFragmentBinding binding;
-    private RecyclerView recyclerView;
-    private Cursor programsCursor;
-    private TrainingProgramAdapter adapter;
-
-    private AppDb db;
 
     private FloatingActionButton fab;
     private TrainingProgramCreationDialog programCreationDialog = null;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        db = AppDb.getInstance(getContext());
-    }
 
-    @Override
-    public View onCreateView(
-            LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState
-    ) {
-
-        binding = ProgramsFragmentBinding.inflate(inflater, container, false);
-        View view = inflater.inflate(R.layout.programs_fragment, container,false);
-
-        // create recycler view and set its adapter
-        adapter = new TrainingProgramAdapter();
-        recyclerView = view.findViewById(R.id.program_recyclerview);
-        recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        recyclerView.setAdapter(adapter);
-        fetchPrograms();
-        return view;
-
-    }
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -86,18 +58,34 @@ public class ProgramsFragment extends Fragment implements View.OnClickListener, 
         binding = null;
     }
 
-    private void fetchPrograms() {
+    @Override
+    protected TrainingProgramAdapter getAdapter() {
+        return new TrainingProgramAdapter();
+    }
+
+    @Override
+    protected RecyclerView getRecyclerView(View parent) {
+        return parent.findViewById(R.id.program_recyclerview);
+    }
+
+    @Override
+    protected View getMainView(LayoutInflater inflater, ViewGroup container) {
+        return inflater.inflate(R.layout.programs_fragment, container,false);
+    }
+
+    @Override
+    protected void asyncFetchMainEntity() {
         new AsyncTask<Void,Void,Void>(){
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                programsCursor = db.trainingProgramDao().getAll();
+                cursor = db.trainingProgramDao().getAll();
                 return null;
             }
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                adapter.swapCursor(programsCursor);
+                adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
             }
         }.execute();
@@ -129,7 +117,7 @@ public class ProgramsFragment extends Fragment implements View.OnClickListener, 
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                //fetchExercises();
+                asyncFetchMainEntity();
                 Toast.makeText(getContext(), R.string.toast_program_created, Toast.LENGTH_SHORT).show();
             }
         }.execute();
