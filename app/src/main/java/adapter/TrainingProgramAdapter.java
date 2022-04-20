@@ -32,10 +32,6 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
         holder.programNameView.setText(programName);
         holder.programDescriptionView.setText(programDescription);
     }
-    @Override
-    public void swapCursor(Cursor newCursor) {
-        super.swapCursor(newCursor);
-    }
 
     class TrainingProgramViewHolder extends RecyclerView.ViewHolder {
         TextView programNameView;

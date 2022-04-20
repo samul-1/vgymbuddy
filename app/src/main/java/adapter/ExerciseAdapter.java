@@ -52,10 +52,7 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
         }
 
     }
-    @Override
-    public void swapCursor(Cursor newCursor) {
-        super.swapCursor(newCursor);
-    }
+
     class ExerciseViewHolder extends RecyclerView.ViewHolder {
         TextView exerciseNameView;
         ImageView exerciseImgView;

@@ -29,6 +29,15 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/program_description"></TextView>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/edit_program_btn"
+            android:layout_gravity="bottom|right"
+            app:icon="@drawable/ic_baseline_edit_24"
+            style="@style/Widget.App.Button.OutlinedButton.IconOnly"
+            ></Button>
+
         <!--<ImageView
             android:layout_row="1"
             android:layout_rowSpan="1"
