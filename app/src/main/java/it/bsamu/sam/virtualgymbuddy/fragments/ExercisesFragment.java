@@ -75,7 +75,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
     public void onClick(View view) {
         if(view == fab) {
                 exerciseCreationDialog = exerciseCreationDialog == null ?
-                        new ExerciseCreationDialog() : exerciseCreationDialog;
+                        new ExerciseCreationDialog(this) : exerciseCreationDialog;
                 exerciseCreationDialog.show(
                         getActivity().getSupportFragmentManager(), "exercise-creation-dialog"
                 );

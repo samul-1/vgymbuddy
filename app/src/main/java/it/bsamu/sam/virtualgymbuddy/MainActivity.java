@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        TabLayout tabLayout = findViewById(R.id.tabBar);
+        /*TabLayout tabLayout = findViewById(R.id.tabBar);
         int[] tabTexts = {
                 R.string.tab_programs,
                 R.string.tab_exercises,
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
                 (tab, position) -> tab.setText(
                         tabTexts[position]
                 )
-        ).attach();
+        ).attach();*/
 
         db = AppDb.getInstance(getApplicationContext());
 

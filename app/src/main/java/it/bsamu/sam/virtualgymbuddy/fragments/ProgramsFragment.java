@@ -53,6 +53,8 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
         fab = (FloatingActionButton) getView().findViewById(R.id.programs_fragment_fab);
         fab.setOnClickListener(this);
+
+        System.out.println("created me" + this);
     }
 
     @Override
@@ -96,15 +98,16 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
     @Override
     public void onClick(View view) {
-        if(view == fab) {
+        /*System.out.println("clicked " + view + " fab is " + fab);
+        if(view == fab) {*/
             programCreationDialog = programCreationDialog==null ?
-                    new TrainingProgramCreationDialog() : programCreationDialog;
+                    new TrainingProgramCreationDialog(this) : programCreationDialog;
             programCreationDialog.show(
                     getActivity().getSupportFragmentManager(), "program-creation-dialog"
             );
             return;
-        }
-        throw new AssertionError();
+        //}
+        //throw new AssertionError();
     }
 
     @Override
@@ -137,7 +140,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
                         .findFragmentById(R.id.nav_host_fragment);
 
         navHostFragment.getNavController().navigate(
-                R.id.action_ProgramList_to_ProgramDetail, args
+                R.id.action_Main_to_ProgramDetail, args
         );
     }
 }

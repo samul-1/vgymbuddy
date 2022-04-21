@@ -7,12 +7,12 @@
 
     <fragment
         android:id="@+id/ProgramList"
-        android:name="it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.MainFragment"
         android:label="@string/first_fragment_label"
-        tools:layout="@layout/programs_fragment">
+        tools:layout="@layout/main_fragment">
 
         <action
-            android:id="@+id/action_ProgramList_to_ProgramDetail"
+            android:id="@+id/action_Main_to_ProgramDetail"
             app:destination="@id/ProgramDetails" />
     </fragment>
     <fragment

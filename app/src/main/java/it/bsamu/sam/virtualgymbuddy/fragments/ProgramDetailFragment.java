@@ -1,5 +1,6 @@
 package it.bsamu.sam.virtualgymbuddy.fragments;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -44,8 +45,8 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
         binding = ProgramDetailBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
 
-        programName = rootView.findViewById(R.id.program_detail_title);
-        programDesc = rootView.findViewById(R.id.program_detail_description);
+        programName = superview.findViewById(R.id.program_detail_title);
+        programDesc = superview.findViewById(R.id.program_detail_description);
 
         paintProgramData();
         System.out.println("inside detail view");
@@ -53,6 +54,7 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
     }
 
     private void paintProgramData() {
+        System.out.println("PAINTING NAME "+ program.name);
         if(program != null) {
             programName.setText(program.name);
             programDesc.setText(program.description);
@@ -84,11 +86,25 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
 
     @Override
     protected View getMainView(LayoutInflater inflater, ViewGroup container) {
+        System.out.println("getting program detail inflate");
         return inflater.inflate(R.layout.program_detail, container,false);
     }
 
     @Override
     protected void asyncFetchMainEntity() {
-
+        new AsyncTask<Void,Void,Void>(){
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                cursor = db.trainingDayDao().getAll();
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                adapter.swapCursor(cursor);
+                adapter.notifyDataSetChanged();
+            }
+        }.execute();
     }
 }

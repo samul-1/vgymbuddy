@@ -23,6 +23,7 @@ import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
+import androidx.fragment.app.Fragment;
 import androidx.room.Room;
 
 import com.google.android.material.textfield.TextInputEditText;
@@ -33,61 +34,19 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import relational.AppDb;
 import relational.entities.Exercise;
 
-public class TrainingProgramCreationDialog extends DialogFragment implements View.OnClickListener {
+public class TrainingProgramCreationDialog extends DialogFragment {
     private TrainingProgramCreationDialogListener listener;
-    private EditText nameInput;
-    private ImageView previewView;
-    private Button pickImgBtn;
-    private Uri pickedImg;
 
-    private final int PICK_IMAGE = 100;
-
-
-    @Override
-    public void onClick(View view) {
-        System.out.println("CLICKED" + view);
-        if (view==pickImgBtn) {
-            openGallery();
-            return;
-        }
-        throw new AssertionError();
+    public TrainingProgramCreationDialog(TrainingProgramCreationDialogListener fListener) {
+        super();
+        listener = fListener;
     }
 
-    private void openGallery() {
-        Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, 100);
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK && requestCode==PICK_IMAGE) {
-            Uri imageUri = data.getData();
-            System.out.println("URI" + imageUri);
-            previewView.setImageURI(imageUri);
-            pickedImg = imageUri;
-        }
-    }
 
     public interface TrainingProgramCreationDialogListener {
         public void onCreateProgram(DialogFragment dialog, String programName, String programDescription);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            // used to send events to dialog host
-            listener = (TrainingProgramCreationDialogListener)
-                    ((MainActivity)context)
-                            .getSupportFragmentManager()
-                            .findFragmentByTag("f0"); // TODO find a less ugly way
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(context.toString() + "," +getActivity().toString()
-                    + " must implement TrainingProgramCreationDialogListener");
-        }
-    }
 
     @Nullable
     @Override

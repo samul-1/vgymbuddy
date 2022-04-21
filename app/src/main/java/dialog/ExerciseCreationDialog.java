@@ -42,6 +42,10 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
 
     private final int PICK_IMAGE = 100;
 
+    public ExerciseCreationDialog(ExerciseCreationDialogListener fListener) {
+        listener = fListener;
+    }
+
 
     @Override
     public void onClick(View view) {
@@ -73,21 +77,6 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
         public void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
     }
 
-    @Override
-    public void onAttach(@NonNull Context context) {
-        super.onAttach(context);
-        try {
-            // used to send events to dialog host
-            listener = (ExerciseCreationDialogListener)
-                    ((MainActivity)context)
-                            .getSupportFragmentManager()
-                            .findFragmentByTag("f1"); // TODO find a less ugly way
-        } catch (ClassCastException e) {
-            // The activity doesn't implement the interface, throw exception
-            throw new ClassCastException(context.toString() + "," +getActivity().toString()
-                    + " must implement ExerciseCreationDialogListener");
-        }
-    }
 
     @Nullable
     @Override

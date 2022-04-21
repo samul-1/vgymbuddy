@@ -1,6 +1,7 @@
 package adapter;
 
 import android.database.Cursor;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -10,10 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
-import relational.entities.TrainingDay;
-// TODO implement everything!! you just copied this from exercise adapter
-// !!!
-public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingProgramAdapter.TrainingProgramViewHolder> {
+public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
     public TrainingDayAdapter(Cursor c) {
         super(c);
     }
@@ -23,23 +21,31 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingProgramAd
     }
 
     @Override
-    public void onBindViewHolder(TrainingProgramAdapter.TrainingProgramViewHolder holder, Cursor cursor) {
-
+    public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, Cursor cursor) {
+        // TODO implement
+        holder.trainingDayExerciseSets.setText("1");
+        holder.trainingDayExerciseReps.setText("12");
+        holder.trainingDayExerciseName.setText("Squat");
     }
 
     @NonNull
     @Override
-    public TrainingProgramAdapter.TrainingProgramViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return null;
+    public TrainingDayAdapter.TrainingDayViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View formNameView = LayoutInflater
+                .from(parent.getContext())
+                .inflate(R.layout.training_day, parent, false);
+        return new TrainingDayAdapter.TrainingDayViewHolder(formNameView);
     }
 
     class TrainingDayViewHolder extends RecyclerView.ViewHolder {
-        TextView exerciseNameView;
-        ImageView exerciseImgView;
+        TextView trainingDayExerciseName;
+        TextView trainingDayExerciseReps;
+        TextView trainingDayExerciseSets;
         TrainingDayViewHolder(View itemView) {
             super(itemView);
-            exerciseNameView = itemView.findViewById(R.id.exercise_name);
-            exerciseImgView = itemView.findViewById(R.id.exercise_img);
+            trainingDayExerciseName = itemView.findViewById(R.id.training_day_exercise_name);
+            trainingDayExerciseSets = itemView.findViewById(R.id.training_day_exercise_sets);
+            trainingDayExerciseReps = itemView.findViewById(R.id.training_day_exercise_reps);
         }
     }
 }

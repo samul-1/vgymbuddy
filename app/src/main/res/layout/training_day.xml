@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true"
+    android:checkable="true"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="200dp"
+    app:contentPaddingLeft="20dp"
+    app:contentPaddingRight="10dp"
+    app:contentPaddingTop="20dp"
+    app:contentPaddingBottom="10dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="2.5dp">
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            style="@style/CardTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_name"></TextView>
+        <TextView
+            style="@style/CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_sets"></TextView>
+        <TextView
+            style="@style/CardContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_reps"></TextView>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>
