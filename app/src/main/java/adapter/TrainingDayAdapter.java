@@ -10,9 +10,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
-public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> implements View.OnClickListener {
+public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
     TrainingDayViewHolderListener listener;
-    long dayId;
 
     public TrainingDayAdapter(TrainingDayViewHolderListener listener) {
         super(null);
@@ -20,11 +19,7 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapte
         System.out.println("instantiating adapter");
     }
 
-    @Override
-    public void onClick(View view) {
-        System.out.println("navigating to " + dayId);
-        listener.navigateToTrainingDayDetails(dayId);
-    }
+
 
     public interface TrainingDayViewHolderListener {
         void navigateToTrainingDayDetails(long dayId);
@@ -33,9 +28,9 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapte
     @Override
     public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, Cursor cursor) {
         short position = cursor.getShort(cursor.getColumnIndexOrThrow("position"));
-        dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+        long dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
         holder.trainingDayPosition.setText(String.valueOf(position));
-        holder.itemView.setOnClickListener(this);
+        holder.itemView.setOnClickListener((__)->listener.navigateToTrainingDayDetails(dayId));
     }
 
     @NonNull
@@ -49,6 +44,7 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapte
 
     class TrainingDayViewHolder extends RecyclerView.ViewHolder {
         TextView trainingDayPosition;
+        long dayId;
         TrainingDayViewHolder(View itemView) {
             super(itemView);
             trainingDayPosition = itemView.findViewById(R.id.training_day_position);

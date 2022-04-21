@@ -38,6 +38,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
+                System.out.println("DAY ID FILTERING BY " + itemId);
                 cursor = db.trainingDayExerciseDao().getExercisesForTrainingDay(itemId);
                 return null;
             }

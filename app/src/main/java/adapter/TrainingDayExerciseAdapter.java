@@ -19,8 +19,9 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
     @Override
     public void onBindViewHolder(TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder holder, Cursor cursor) {
         String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-        short sets = cursor.getShort(cursor.getColumnIndexOrThrow("sets"));
-        short reps = cursor.getShort(cursor.getColumnIndexOrThrow("reps"));
+        short sets = cursor.getShort(cursor.getColumnIndexOrThrow("setsPrescribed"));
+        short reps = cursor.getShort(cursor.getColumnIndexOrThrow("repsPrescribed"));
+        //System.out.println("NAME " + name);
         holder.trainingDayExerciseExerciseName.setText(String.valueOf(name));
         holder.trainingDayExerciseExerciseSets.setText(String.valueOf(String.valueOf(sets)));
         holder.trainingDayExerciseExerciseReps.setText(String.valueOf(String.valueOf(reps)));

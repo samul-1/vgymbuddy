@@ -14,8 +14,8 @@ public interface TrainingDayExerciseDao {
     long insertTrainingDayExercise(TrainingDayExercise trainingDayExercise);
 
     @Query(
-            "SELECT repsPrescribed, setsPrescribed, name " +
-                    "FROM TrainingDayExercise INNER JOIN Exercise ON exerciseId = _id " +
+            "SELECT repsPrescribed, setsPrescribed, name, trainingDayId " +
+                    "FROM TrainingDayExercise INNER JOIN Exercise ON exerciseId = Exercise._id " +
                     "WHERE trainingDayId = :dayId"
     )
     Cursor getExercisesForTrainingDay(long dayId);

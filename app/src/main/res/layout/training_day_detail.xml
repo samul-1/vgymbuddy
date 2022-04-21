@@ -6,21 +6,21 @@
     android:id="@+id/training_day_detail_container"
     android:background="@color/cardview_light_background"
     android:orientation="vertical">
-    <!--<TextView
+    <TextView
         android:gravity="center_horizontal"
         android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         style="@style/FragmentTitle"
-        android:id="@+id/program_detail_title"></TextView>
+        android:text="@string/training_day"></TextView>
     <TextView
         android:gravity="center_horizontal"
         android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/program_detail_description"></TextView>
+        android:id="@+id/training_day_position_title"></TextView>
 
-    <TextView
+    <!--<TextView
         android:paddingTop="30dp"
         android:paddingBottom="10dp"
         android:layout_width="match_parent"
