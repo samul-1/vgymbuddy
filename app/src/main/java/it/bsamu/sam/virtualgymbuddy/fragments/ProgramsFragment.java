@@ -16,6 +16,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.ActionOnlyNavDirections;
+import androidx.navigation.NavAction;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -36,7 +39,7 @@ import relational.AppDb;
 import relational.entities.Exercise;
 import relational.entities.TrainingProgram;
 
-public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<TrainingProgramAdapter> implements View.OnClickListener, TrainingProgramCreationDialog.TrainingProgramCreationDialogListener {
+public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<TrainingProgramAdapter> implements View.OnClickListener, TrainingProgramCreationDialog.TrainingProgramCreationDialogListener, TrainingProgramAdapter.TrainingProgramViewHolderListener {
 
     private ProgramsFragmentBinding binding;
 
@@ -60,7 +63,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
     @Override
     protected TrainingProgramAdapter getAdapter() {
-        return new TrainingProgramAdapter();
+        return new TrainingProgramAdapter(this);
     }
 
     @Override
@@ -121,5 +124,20 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
                 Toast.makeText(getContext(), R.string.toast_program_created, Toast.LENGTH_SHORT).show();
             }
         }.execute();
+    }
+
+    @Override
+    public void navigateToProgramDetails(long programId) {
+        Bundle args = new Bundle();
+        args.putLong(ProgramDetailFragment.PROGRAM_ITEM_ID, programId);
+
+
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+
+        navHostFragment.getNavController().navigate(
+                R.id.action_ProgramList_to_ProgramDetail, args
+        );
     }
 }

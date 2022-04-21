@@ -16,7 +16,6 @@ public class NavigationAdapter extends FragmentStateAdapter {
 
     public NavigationAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-        System.out.println("creating adapter");
     }
 
     public NavigationAdapter(@NonNull Fragment fragment) {

@@ -1,32 +1,29 @@
 package it.bsamu.sam.virtualgymbuddy.fragments;
 
-import android.content.Context;
-import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
+
 
 import adapter.TrainingDayAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
-import relational.entities.Exercise;
+import it.bsamu.sam.virtualgymbuddy.databinding.ProgramDetailBinding;
 import relational.entities.TrainingProgram;
 
 public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<TrainingDayAdapter> {
     public static final String PROGRAM_ITEM_ID = "program_id";
     private long programId;
     private TrainingProgram program;
+    private ProgramDetailBinding binding;
+    private TextView programName;
+    private TextView programDesc;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -38,6 +35,29 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
            asyncFetchProgram();
         } else {
             throw new AssertionError("no program id");
+        }
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View superview = super.onCreateView(inflater, container, savedInstanceState);
+        binding = ProgramDetailBinding.inflate(inflater, container, false);
+        View rootView = binding.getRoot();
+
+        programName = rootView.findViewById(R.id.program_detail_title);
+        programDesc = rootView.findViewById(R.id.program_detail_description);
+
+        paintProgramData();
+        System.out.println("inside detail view");
+        return superview;
+    }
+
+    private void paintProgramData() {
+        if(program != null) {
+            programName.setText(program.name);
+            programDesc.setText(program.description);
+        } else {
+            throw new AssertionError("Program is null at the time of onCreateView");
         }
     }
 

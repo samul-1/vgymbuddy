@@ -13,7 +13,7 @@ public interface TrainingProgramDao {
     @Query("SELECT * FROM TrainingProgram")
     Cursor getAll();
 
-    @Query("SELECT * FROM TrainingProgram WHERE id = :id")
+    @Query("SELECT * FROM TrainingProgram WHERE _id = :id")
     TrainingProgram getById(long id);
 
     @Insert

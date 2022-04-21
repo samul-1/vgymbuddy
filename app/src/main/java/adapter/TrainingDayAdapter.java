@@ -11,13 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
 import relational.entities.TrainingDay;
-
+// TODO implement everything!! you just copied this from exercise adapter
+// !!!
 public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingProgramAdapter.TrainingProgramViewHolder> {
     public TrainingDayAdapter(Cursor c) {
         super(c);
     }
     public TrainingDayAdapter() {
         super(null);
+        System.out.println("instantiating adapter");
     }
 
     @Override

@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "68f374771e4eb3c580bef841aa1393f4",
+    "identityHash": "dfe92d7a2cf277bee5af3f3a644f43d4",
     "entities": [
       {
         "tableName": "Exercise",
@@ -38,11 +38,11 @@
       },
       {
         "tableName": "TrainingProgram",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -61,7 +61,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "_id"
           ],
           "autoGenerate": true
         },
@@ -194,7 +194,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '68f374771e4eb3c580bef841aa1393f4')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'dfe92d7a2cf277bee5af3f3a644f43d4')"
     ]
   }
 }
