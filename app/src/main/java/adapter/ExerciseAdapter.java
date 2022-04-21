@@ -2,7 +2,6 @@ package adapter;
 
 import android.database.Cursor;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,7 +24,7 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
     public ExerciseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View formNameView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.exercise_card, parent, false);
+                .inflate(R.layout.exercise_item, parent, false);
         return new ExerciseViewHolder(formNameView);
     }
     @Override

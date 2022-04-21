@@ -23,7 +23,9 @@
     <string name="dialog_program_name">Nome programma</string>
     <string name="dialog_program_desc">Descrizione</string>
 
-
+    <string name="program_details_days_title">Giorni di allenamento</string>
+    <string name="training_day">Allenamento</string>
+    <string name="add">Aggiungi</string>
 
     <string name="toast_exercise_created">Esercizio creato con successo</string>
     <string name="toast_program_created">Programma creato con successo</string>

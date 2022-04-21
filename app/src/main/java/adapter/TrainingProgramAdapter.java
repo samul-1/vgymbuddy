@@ -1,18 +1,15 @@
 package adapter;
 
 import android.database.Cursor;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import androidx.navigation.Navigation;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
-import it.bsamu.sam.virtualgymbuddy.fragments.ProgramDetailFragment;
 
 public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgramAdapter.TrainingProgramViewHolder>{
     private TrainingProgramViewHolderListener listener;
@@ -25,7 +22,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
     public TrainingProgramAdapter.TrainingProgramViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View formNameView = LayoutInflater
                 .from(parent.getContext())
-                .inflate(R.layout.program_card, parent, false);
+                .inflate(R.layout.program_item, parent, false);
         return new TrainingProgramAdapter.TrainingProgramViewHolder(formNameView, listener);
     }
     @Override

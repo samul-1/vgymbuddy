@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,16 +16,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.TrainingDayAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
-import it.bsamu.sam.virtualgymbuddy.databinding.ProgramDetailBinding;
+import it.bsamu.sam.virtualgymbuddy.databinding.ProgramDetailFragmentBinding;
+import relational.entities.TrainingDay;
 import relational.entities.TrainingProgram;
 
 public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<TrainingDayAdapter> {
     public static final String PROGRAM_ITEM_ID = "program_id";
     private long programId;
     private TrainingProgram program;
-    private ProgramDetailBinding binding;
+    private ProgramDetailFragmentBinding binding;
     private TextView programName;
     private TextView programDesc;
+    private Button addDayBtn;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -42,11 +45,14 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View superview = super.onCreateView(inflater, container, savedInstanceState);
-        binding = ProgramDetailBinding.inflate(inflater, container, false);
+        binding = ProgramDetailFragmentBinding.inflate(inflater, container, false);
         View rootView = binding.getRoot();
 
         programName = superview.findViewById(R.id.program_detail_title);
         programDesc = superview.findViewById(R.id.program_detail_description);
+        addDayBtn = superview.findViewById(R.id.add_training_day_btn);
+
+        addDayBtn.setOnClickListener((__)->insertTrainingDay());
 
         paintProgramData();
         System.out.println("inside detail view");
@@ -54,7 +60,7 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
     }
 
     private void paintProgramData() {
-        System.out.println("PAINTING NAME "+ program.name);
+        System.out.println("PAINTING NAME "+ program.description);
         if(program != null) {
             programName.setText(program.name);
             programDesc.setText(program.description);
@@ -87,7 +93,26 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
     @Override
     protected View getMainView(LayoutInflater inflater, ViewGroup container) {
         System.out.println("getting program detail inflate");
-        return inflater.inflate(R.layout.program_detail, container,false);
+        return inflater.inflate(R.layout.program_detail_fragment, container,false);
+    }
+
+    private void insertTrainingDay() {
+        new AsyncTask<Void,Void,Void>(){
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(programId)+1);
+                db.trainingDayDao().insertTrainingDay(new TrainingDay(programId, newPosition));
+                cursor = db.trainingDayDao().getForProgram(programId);
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                adapter.swapCursor(cursor);
+                adapter.notifyDataSetChanged();
+            }
+        }.execute();
     }
 
     @Override
@@ -96,7 +121,7 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                cursor = db.trainingDayDao().getAll();
+                cursor = db.trainingDayDao().getForProgram(programId);
                 return null;
             }
             @Override

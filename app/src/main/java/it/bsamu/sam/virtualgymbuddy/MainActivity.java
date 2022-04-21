@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import adapter.NavigationAdapter;
 import it.bsamu.sam.virtualgymbuddy.databinding.ActivityMainBinding;
 import relational.AppDb;
+import relational.entities.TrainingDay;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,27 +35,14 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        /*TabLayout tabLayout = findViewById(R.id.tabBar);
-        int[] tabTexts = {
-                R.string.tab_programs,
-                R.string.tab_exercises,
-                R.string.tab_current_program
-        };
-
-        // set up view pager and attach mediator to tab layout
-        this.viewPager = findViewById(R.id.pager);
-        this.navigationAdapter = new NavigationAdapter(this);
-        viewPager.setAdapter(this.navigationAdapter);
-        new TabLayoutMediator(tabLayout, viewPager,
-                (tab, position) -> tab.setText(
-                        tabTexts[position]
-                )
-        ).attach();*/
-
         db = AppDb.getInstance(getApplicationContext());
 
-        /* new Thread(()->{
-            Exercise ex1 = new Exercise();
+        new Thread(()->{
+            /*TrainingDay d = new TrainingDay();
+            d.trainingProgramId = 1;
+            d.position = 2;
+            db.trainingDayDao().insertTrainingDay(d);*/
+            /*Exercise ex1 = new Exercise();
             Exercise ex2 = new Exercise();
             Exercise ex3 = new Exercise();
             Exercise ex4 = new Exercise();
@@ -89,9 +77,9 @@ public class MainActivity extends AppCompatActivity {
             db.exerciseDao().insertExercise(ex9);
             db.exerciseDao().insertExercise(ex10);
             db.exerciseDao().insertExercise(ex11);
-            db.exerciseDao().insertExercise(ex12);
+            db.exerciseDao().insertExercise(ex12);*/
         }).start();
-        System.out.println("db built");*/
+        System.out.println("db built");
     }
 
 

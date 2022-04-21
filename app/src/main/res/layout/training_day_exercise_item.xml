@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clickable="true"
+    android:focusable="true"
+    android:checkable="true"
+    android:layout_gravity="center"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:contentPaddingLeft="5dp"
+    app:contentPaddingRight="5dp"
+    app:contentPaddingTop="3dp"
+    app:contentPaddingBottom="3dp"
+    app:cardUseCompatPadding="true"
+    app:cardElevation="0.2dp"
+    >
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:textColor="@color/design_default_color_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_name"></TextView>
+        <TextView
+            android:textColor="@color/design_default_color_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_sets"></TextView>
+        <TextView
+            android:textColor="@color/design_default_color_primary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/training_day_exercise_reps"></TextView>
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -9,6 +9,16 @@
         <item name="android:textColor">@color/design_default_color_primary</item>
         <item name="android:fontWeight">1000</item>
     </style>
+    <style name="FragmentTitle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/design_default_color_primary</item>
+        <item name="android:fontWeight">1000</item>
+    </style>
+    <style name="FragmentSubtitle" parent="@style/TextAppearance.AppCompat.Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textColor">@color/design_default_color_secondary_variant</item>
+        <item name="android:fontWeight">400</item>
+    </style>
     <style name="CardContent" parent="Base.CardView">
         <item name="android:textSize">15sp</item>
         <item name="android:textColor">@color/material_on_background_emphasis_medium</item>

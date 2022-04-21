@@ -6,23 +6,30 @@
     android:checkable="true"
     android:layout_gravity="center"
     android:layout_width="match_parent"
-    android:layout_height="200dp"
-    app:contentPaddingLeft="20dp"
-    app:contentPaddingRight="10dp"
-    app:contentPaddingTop="20dp"
-    app:contentPaddingBottom="10dp"
+    android:layout_height="wrap_content"
+    app:contentPaddingLeft="5dp"
+    app:contentPaddingRight="5dp"
+    app:contentPaddingTop="3dp"
+    app:contentPaddingBottom="3dp"
     app:cardUseCompatPadding="true"
-    app:cardElevation="2.5dp">
+    app:cardElevation="0.2dp"
+    >
     <LinearLayout
-        android:orientation="vertical"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
         <TextView
-            style="@style/CardTitle"
+            style="@style/CardContent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="2dp"
+            android:text="@string/training_day"></TextView>
+        <TextView
+            android:textColor="@color/design_default_color_primary"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/training_day_exercise_name"></TextView>
-        <TextView
+            android:id="@+id/training_day_position"></TextView>
+        <!--<TextView
             style="@style/CardContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -31,7 +38,7 @@
             style="@style/CardContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/training_day_exercise_reps"></TextView>
+            android:id="@+id/training_day_exercise_reps"></TextView>-->
     </LinearLayout>
 
 </com.google.android.material.card.MaterialCardView>

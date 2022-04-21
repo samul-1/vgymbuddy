@@ -2,18 +2,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingHorizontal="10dp"
     android:id="@+id/program_detail_container"
     android:background="@color/cardview_light_background"
-    android:orientation="horizontal">
+    android:orientation="vertical">
     <TextView
+        android:gravity="center_horizontal"
+        android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        style="@style/CardTitle"
+        style="@style/FragmentTitle"
         android:id="@+id/program_detail_title"></TextView>
     <TextView
+        android:gravity="center_horizontal"
+        android:paddingVertical="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/program_detail_description"></TextView>
+
+    <TextView
+        android:paddingTop="30dp"
+        android:paddingBottom="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="@style/FragmentSubtitle"
+        android:text="@string/program_details_days_title"
+        android:id="@+id/program_detail_days_title"></TextView>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,7 +35,13 @@
         android:divider="@android:color/transparent"
         android:dividerHeight="1.5sp"
         android:paddingVertical="7.5sp"
-        android:paddingHorizontal="5.0sp"
         >
     </androidx.recyclerview.widget.RecyclerView>
+
+    <Button
+        android:id="@+id/add_training_day_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:text="@string/add"></Button>
 </LinearLayout>
