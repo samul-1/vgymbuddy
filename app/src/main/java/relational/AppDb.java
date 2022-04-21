@@ -8,6 +8,7 @@ import androidx.room.RoomDatabase;
 
 import relational.dao.ExerciseDao;
 import relational.dao.TrainingDayDao;
+import relational.dao.TrainingDayExerciseDao;
 import relational.dao.TrainingProgramDao;
 import relational.entities.Exercise;
 import relational.entities.TrainingDay;
@@ -26,6 +27,7 @@ public abstract class AppDb extends RoomDatabase {
     public abstract ExerciseDao exerciseDao();
     public abstract TrainingProgramDao trainingProgramDao();
     public abstract TrainingDayDao trainingDayDao();
+    public abstract TrainingDayExerciseDao trainingDayExerciseDao();
 
     private static AppDb instance = null;
 

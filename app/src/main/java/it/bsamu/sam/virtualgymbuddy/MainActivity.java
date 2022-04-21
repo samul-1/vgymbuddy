@@ -17,6 +17,7 @@ import adapter.NavigationAdapter;
 import it.bsamu.sam.virtualgymbuddy.databinding.ActivityMainBinding;
 import relational.AppDb;
 import relational.entities.TrainingDay;
+import relational.entities.TrainingDayExercise;
 
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,11 +39,14 @@ public class MainActivity extends AppCompatActivity {
         db = AppDb.getInstance(getApplicationContext());
 
         new Thread(()->{
+            /*db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)1, (long)1, (short)2, (short)12));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)2, (long)1, (short)4, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)3, (long)1, (short)3, (short)3));*/
             /*TrainingDay d = new TrainingDay();
             d.trainingProgramId = 1;
             d.position = 2;
-            db.trainingDayDao().insertTrainingDay(d);*/
-            /*Exercise ex1 = new Exercise();
+            db.trainingDayDao().insertTrainingDay(d);
+            Exercise ex1 = new Exercise();
             Exercise ex2 = new Exercise();
             Exercise ex3 = new Exercise();
             Exercise ex4 = new Exercise();

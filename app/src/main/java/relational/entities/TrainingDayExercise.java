@@ -1,6 +1,5 @@
 package relational.entities;
 
-import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
 
@@ -28,10 +27,10 @@ public class TrainingDayExercise {
     public short setsPrescribed;
     public short repsPrescribed;
 
-    public TrainingDayExercise(long eId, long tId, short sets, short reps) {
-        this.exerciseId = eId;
-        this.trainingDayId = tId;
-        this.repsPrescribed = reps;
-        this.setsPrescribed = sets;
+    public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed) {
+        this.exerciseId = exerciseId;
+        this.trainingDayId = trainingDayId;
+        this.repsPrescribed = repsPrescribed;
+        this.setsPrescribed = setsPrescribed;
     }
 }

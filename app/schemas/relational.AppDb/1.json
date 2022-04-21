@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "46d479698fbba92837f28a973049cdb9",
+    "identityHash": "f5fb739612647ed7b84aa51facdfc974",
     "entities": [
       {
         "tableName": "Exercise",
@@ -70,11 +70,11 @@
       },
       {
         "tableName": "TrainingDay",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `trainingProgramId` INTEGER NOT NULL, `position` INTEGER NOT NULL, FOREIGN KEY(`trainingProgramId`) REFERENCES `TrainingProgram`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `trainingProgramId` INTEGER NOT NULL, `position` INTEGER NOT NULL, FOREIGN KEY(`trainingProgramId`) REFERENCES `TrainingProgram`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
-            "columnName": "id",
+            "columnName": "_id",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -93,7 +93,7 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "id"
+            "_id"
           ],
           "autoGenerate": true
         },
@@ -114,7 +114,7 @@
       },
       {
         "tableName": "TrainingDayExercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingDayId` INTEGER NOT NULL, `setsPrescribed` INTEGER NOT NULL, `repsPrescribed` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`exerciseId`, `trainingDayId`))",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingDayId` INTEGER NOT NULL, `setsPrescribed` INTEGER NOT NULL, `repsPrescribed` INTEGER NOT NULL, PRIMARY KEY(`exerciseId`, `trainingDayId`), FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "exerciseId",
@@ -139,12 +139,6 @@
             "columnName": "repsPrescribed",
             "affinity": "INTEGER",
             "notNull": true
-          },
-          {
-            "fieldPath": "notes",
-            "columnName": "notes",
-            "affinity": "TEXT",
-            "notNull": false
           }
         ],
         "primaryKey": {
@@ -155,7 +149,30 @@
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "TrainingDay",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trainingDayId"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          },
+          {
+            "table": "Exercise",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "exerciseId"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
       },
       {
         "tableName": "TrainingDayExerciseSet",
@@ -206,7 +223,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '46d479698fbba92837f28a973049cdb9')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'f5fb739612647ed7b84aa51facdfc974')"
     ]
   }
 }

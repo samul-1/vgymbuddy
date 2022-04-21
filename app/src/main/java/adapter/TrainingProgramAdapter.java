@@ -38,7 +38,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
     }
 
     public interface TrainingProgramViewHolderListener {
-        public void navigateToProgramDetails(long programId);
+        void navigateToProgramDetails(long programId);
     }
 
     class TrainingProgramViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {

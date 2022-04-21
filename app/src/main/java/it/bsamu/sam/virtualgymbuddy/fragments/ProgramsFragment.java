@@ -132,7 +132,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
     @Override
     public void navigateToProgramDetails(long programId) {
         Bundle args = new Bundle();
-        args.putLong(ProgramDetailFragment.PROGRAM_ITEM_ID, programId);
+        args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, programId);
 
 
         NavHostFragment navHostFragment =

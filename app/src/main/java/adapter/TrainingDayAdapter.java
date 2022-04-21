@@ -10,19 +10,32 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
-public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
-    public TrainingDayAdapter(Cursor c) {
-        super(c);
-    }
-    public TrainingDayAdapter() {
+public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> implements View.OnClickListener {
+    TrainingDayViewHolderListener listener;
+    long dayId;
+
+    public TrainingDayAdapter(TrainingDayViewHolderListener listener) {
         super(null);
+        this.listener = listener;
         System.out.println("instantiating adapter");
+    }
+
+    @Override
+    public void onClick(View view) {
+        System.out.println("navigating to " + dayId);
+        listener.navigateToTrainingDayDetails(dayId);
+    }
+
+    public interface TrainingDayViewHolderListener {
+        void navigateToTrainingDayDetails(long dayId);
     }
 
     @Override
     public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, Cursor cursor) {
         short position = cursor.getShort(cursor.getColumnIndexOrThrow("position"));
+        dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
         holder.trainingDayPosition.setText(String.valueOf(position));
+        holder.itemView.setOnClickListener(this);
     }
 
     @NonNull

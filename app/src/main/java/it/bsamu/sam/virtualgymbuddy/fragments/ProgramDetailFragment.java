@@ -9,7 +9,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 
@@ -20,27 +22,13 @@ import it.bsamu.sam.virtualgymbuddy.databinding.ProgramDetailFragmentBinding;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingProgram;
 
-public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<TrainingDayAdapter> {
-    public static final String PROGRAM_ITEM_ID = "program_id";
-    private long programId;
+public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDayAdapter> implements TrainingDayAdapter.TrainingDayViewHolderListener {
     private TrainingProgram program;
     private ProgramDetailFragmentBinding binding;
     private TextView programName;
     private TextView programDesc;
     private Button addDayBtn;
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        if(getArguments().containsKey(PROGRAM_ITEM_ID)) {
-            // get data for selected program
-           programId = getArguments().getLong(PROGRAM_ITEM_ID);
-           asyncFetchProgram();
-        } else {
-            throw new AssertionError("no program id");
-        }
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -54,13 +42,14 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
 
         addDayBtn.setOnClickListener((__)->insertTrainingDay());
 
-        paintProgramData();
         System.out.println("inside detail view");
         return superview;
     }
 
-    private void paintProgramData() {
-        System.out.println("PAINTING NAME "+ program.description);
+
+    @Override
+    protected void paintItemData() {
+        System.out.println("painting");
         if(program != null) {
             programName.setText(program.name);
             programDesc.setText(program.description);
@@ -69,12 +58,12 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
         }
     }
 
-    private void asyncFetchProgram() {
+    @Override
+    protected void asyncFetchItem() {
         new AsyncTask<Void,Void, Void>(){
             @Override
             protected Void doInBackground(Void... voids) {
-                System.out.println("fetching program " + programId);
-                program = db.trainingProgramDao().getById(programId);
+                program = db.trainingProgramDao().getById(itemId);
                 return null;
             }
         }.execute();
@@ -82,7 +71,7 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
 
     @Override
     protected TrainingDayAdapter getAdapter() {
-        return new TrainingDayAdapter();
+        return new TrainingDayAdapter(this);
     }
 
     @Override
@@ -101,9 +90,9 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(programId)+1);
-                db.trainingDayDao().insertTrainingDay(new TrainingDay(programId, newPosition));
-                cursor = db.trainingDayDao().getForProgram(programId);
+                short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(itemId)+1);
+                db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, newPosition));
+                cursor = db.trainingDayDao().getForProgram(itemId);
                 return null;
             }
             @Override
@@ -121,7 +110,7 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                cursor = db.trainingDayDao().getForProgram(programId);
+                cursor = db.trainingDayDao().getForProgram(itemId);
                 return null;
             }
             @Override
@@ -131,5 +120,20 @@ public class ProgramDetailFragment extends AbstractCursorRecyclerViewFragment<Tr
                 adapter.notifyDataSetChanged();
             }
         }.execute();
+    }
+
+    @Override
+    public void navigateToTrainingDayDetails(long dayId) {
+        Bundle args = new Bundle();
+        args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, dayId);
+
+
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+
+        navHostFragment.getNavController().navigate(
+                R.id.action_ProgramDetail_to_TrainingDay, args
+        );
     }
 }

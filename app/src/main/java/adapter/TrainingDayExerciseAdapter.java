@@ -11,12 +11,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
 public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder> {
-    public TrainingDayExerciseAdapter(Cursor c) {
-        super(c);
-    }
     public TrainingDayExerciseAdapter() {
         super(null);
-        System.out.println("instantiating adapter");
+        System.out.println("instantiating adapterr");
     }
 
     @Override
@@ -32,6 +29,7 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
     @NonNull
     @Override
     public TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        System.out.println("on creating view holder");
         View formNameView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.training_day_exercise_item, parent, false);
