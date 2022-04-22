@@ -50,16 +50,4 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapte
             trainingDayPosition = itemView.findViewById(R.id.training_day_position);
         }
     }
-
-    /*class TrainingDayViewHolder extends RecyclerView.ViewHolder {
-        TextView trainingDayExerciseName;
-        TextView trainingDayExerciseReps;
-        TextView trainingDayExerciseSets;
-        TrainingDayViewHolder(View itemView) {
-            super(itemView);
-            trainingDayExerciseName = itemView.findViewById(R.id.training_day_exercise_name);
-            trainingDayExerciseSets = itemView.findViewById(R.id.training_day_exercise_sets);
-            trainingDayExerciseReps = itemView.findViewById(R.id.training_day_exercise_reps);
-        }
-    }*/
 }

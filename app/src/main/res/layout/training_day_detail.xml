@@ -6,17 +6,29 @@
     android:id="@+id/training_day_detail_container"
     android:background="@color/cardview_light_background"
     android:orientation="vertical">
-    <TextView
-        android:gravity="center_horizontal"
-        android:paddingVertical="10dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:textAlignment="center">
+        <TextView
+        android:paddingVertical="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         style="@style/FragmentTitle"
+            android:paddingRight="7dp"
         android:text="@string/training_day"></TextView>
+        <TextView
+            android:paddingVertical="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="@style/FragmentTitle"
+            android:id="@+id/training_day_detail_position_title"></TextView></LinearLayout>
     <TextView
         android:gravity="center_horizontal"
         android:paddingVertical="10dp"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/training_day_position_title"></TextView>
 
@@ -37,11 +49,44 @@
         android:paddingVertical="7.5sp"
         >
     </androidx.recyclerview.widget.RecyclerView>
-
-    <Button
-        android:id="@+id/add_training_day_btn"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:text="@string/add"></Button>
+        android:paddingVertical="15dp"
+        android:orientation="horizontal">
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:paddingHorizontal="10dp"
+            android:paddingVertical="5dp"
+            android:inputType="number"
+            android:maxLength="3"
+            android:hint="@string/training_day_exercise_sets"
+            android:id="@+id/training_day_exercise_input_sets"
+            ></EditText>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text=" x "></TextView>
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingHorizontal="10dp"
+            android:layout_marginRight="5dp"
+            android:paddingVertical="5dp"
+            android:maxLength="3"
+            android:inputType="number"
+            android:hint="@string/training_day_exercise_reps"
+            android:id="@+id/training_day_exercise_input_reps"
+            ></EditText>
+        <Button
+            android:id="@+id/add_training_day_exercise_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/add"></Button>
+    </LinearLayout>
+
+
 </LinearLayout>
