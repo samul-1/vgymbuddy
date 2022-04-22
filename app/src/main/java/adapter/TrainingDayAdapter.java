@@ -1,5 +1,6 @@
 package adapter;
 
+import android.content.Context;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,12 +11,14 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.bsamu.sam.virtualgymbuddy.R;
-public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
-    TrainingDayViewHolderListener listener;
+public class TrainingDayAdapter extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
+    protected TrainingDayViewHolderListener listener;
+    private Context context;
 
-    public TrainingDayAdapter(TrainingDayViewHolderListener listener) {
+    public TrainingDayAdapter(TrainingDayViewHolderListener listener, Context context) {
         super(null);
         this.listener = listener;
+        this.context = context;
         System.out.println("instantiating adapter");
     }
 
@@ -27,9 +30,11 @@ public class TrainingDayAdapter  extends AbstractCursorAdapter<TrainingDayAdapte
 
     @Override
     public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, Cursor cursor) {
-        short position = cursor.getShort(cursor.getColumnIndexOrThrow("position"));
+        short dayOfWeekIdx = cursor.getShort(cursor.getColumnIndexOrThrow("dayOfWeek"));
         long dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
-        holder.trainingDayPosition.setText(String.valueOf(position));
+
+        String[] daysOfWeek = context.getResources().getStringArray(R.array.days_of_week);
+        holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx]);
         holder.itemView.setOnClickListener((__)->listener.navigateToTrainingDayDetails(dayId));
     }
 

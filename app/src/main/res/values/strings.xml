@@ -16,7 +16,7 @@
 
     <string name="pref_file_key">it.bsamu.VirtualGymBuddy.PREF_FILE</string>
     <string name="active_program_pref_key">ACTIVE_PROGRAM_ID</string>
-    <string name="active_program">Programma attivo</string>
+    <string name="active_program">Attivo</string>
 
     <string name="dialog_exercise_name">Nome esercizio</string>
     <string name="dialog_exercise_pick_img">Scegli un\'immagine</string>

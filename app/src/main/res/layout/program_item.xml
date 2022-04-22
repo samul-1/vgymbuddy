@@ -9,54 +9,51 @@
     android:layout_height="200dp"
     app:contentPaddingLeft="20dp"
     app:contentPaddingRight="10dp"
-    app:contentPaddingTop="20dp"
-    app:contentPaddingBottom="10dp"
+    app:contentPaddingTop="10dp"
+    app:contentPaddingBottom="15dp"
     app:cardUseCompatPadding="true"
     app:cardElevation="2.5dp">
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <TextView
-            style="@style/CardTitle"
+        android:layout_height="match_parent"
+    >
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/program_name"></TextView>
+            android:orientation="horizontal"
+        >
+            <TextView
+                style="@style/CardTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/program_name"
+            />
+            <com.google.android.material.chip.Chip
+                android:id="@+id/active_program_chip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="@string/active_program"
+                android:visibility="invisible"
+            />
+        </LinearLayout>
         <TextView
+            android:layout_weight="1"
             android:layout_marginTop="10dp"
             android:layout_gravity="bottom"
             style="@style/CardContent"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/program_description"></TextView>
+            android:id="@+id/program_description"
+        />
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/edit_program_btn"
-            android:layout_gravity="bottom|right"
+            android:layout_gravity="bottom|left"
             app:icon="@drawable/ic_baseline_edit_24"
             style="@style/Widget.App.Button.OutlinedButton.IconOnly"
-            ></Button>
-
-        <com.google.android.material.chip.Chip
-            android:id="@+id/active_program_chip"
-            android:visibility="invisible"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:text="@string/active_program"/>
-
-        <!--<ImageView
-            android:layout_row="1"
-            android:layout_rowSpan="1"
-            android:layout_column="0"
-            android:layout_rowWeight="1"
-            android:layout_columnWeight="1"
-            android:layout_columnSpan="2"
-            android:layout_width="10dp"
-            android:layout_height="10dp"
-            android:id="@+id/program_img"
-            app:srcCompat="@drawable/ic_baseline_fitness_center_24"></ImageView>-->
+        />
     </LinearLayout>
-
 </com.google.android.material.card.MaterialCardView>

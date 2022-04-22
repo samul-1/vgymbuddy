@@ -108,7 +108,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
 
     @Override
     protected void paintItemData() {
-        title.setText(String.valueOf(trainingDay.position));
+        title.setText(String.valueOf(trainingDay.dayOfWeek));
     }
 
     @Override

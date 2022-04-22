@@ -6,7 +6,9 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +29,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     private ProgramDetailFragmentBinding binding;
     private TextView programName;
     private TextView programDesc;
+    Spinner dayOfWeekDropdown;
     private Button addDayBtn;
 
 
@@ -39,6 +42,16 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
         programName = superview.findViewById(R.id.program_detail_title);
         programDesc = superview.findViewById(R.id.program_detail_description);
         addDayBtn = superview.findViewById(R.id.add_training_day_btn);
+        dayOfWeekDropdown = superview.findViewById(R.id.day_of_week_selection);
+
+        String[] daysOfWeek = getResources().getStringArray(R.array.days_of_week);
+        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(
+                getContext(),
+                androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
+                daysOfWeek
+        );
+
+        dayOfWeekDropdown.setAdapter(dropdownAdapter);
 
         addDayBtn.setOnClickListener((__)->insertTrainingDay());
 
@@ -71,7 +84,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
     @Override
     protected TrainingDayAdapter getAdapter() {
-        return new TrainingDayAdapter(this);
+        return new TrainingDayAdapter(this, getContext());
     }
 
     @Override
@@ -90,8 +103,8 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(itemId)+1);
-                db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, newPosition));
+                //short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(itemId)+1);
+                db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId,(short)dayOfWeekDropdown.getSelectedItemPosition()));
                 cursor = db.trainingDayDao().getForProgram(itemId);
                 return null;
             }

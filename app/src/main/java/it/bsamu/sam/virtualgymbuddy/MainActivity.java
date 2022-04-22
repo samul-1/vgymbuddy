@@ -16,6 +16,7 @@ import androidx.viewpager2.widget.ViewPager2;
 import adapter.NavigationAdapter;
 import it.bsamu.sam.virtualgymbuddy.databinding.ActivityMainBinding;
 import relational.AppDb;
+import relational.entities.Exercise;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
 
@@ -44,9 +45,8 @@ public class MainActivity extends AppCompatActivity {
             db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)3, (long)1, (short)3, (short)3));*/
             /*TrainingDay d = new TrainingDay();
             d.trainingProgramId = 1;
-            d.position = 2;
-            db.trainingDayDao().insertTrainingDay(d);
-            Exercise ex1 = new Exercise();
+            d.position = 2;*/
+            /*Exercise ex1 = new Exercise();
             Exercise ex2 = new Exercise();
             Exercise ex3 = new Exercise();
             Exercise ex4 = new Exercise();

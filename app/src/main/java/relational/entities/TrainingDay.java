@@ -20,11 +20,11 @@ public class TrainingDay {
     public long id;
 
     public long trainingProgramId;
-    public short position;
+    public short dayOfWeek;
 
-    public TrainingDay(long trainingProgramId, short position) {
+    public TrainingDay(long trainingProgramId, short dayOfWeek) {
         this.trainingProgramId = trainingProgramId;
-        this.position = position;
+        this.dayOfWeek = dayOfWeek;
     }
 
     public static class TrainingDayExerciseData {
