@@ -2,6 +2,7 @@ package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
@@ -46,7 +47,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
     private FloatingActionButton fab;
     private TrainingProgramCreationDialog programCreationDialog = null;
 
-
+    SharedPreferences preferences;
 
     public void onViewCreated(@NonNull View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -54,7 +55,9 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
         fab = (FloatingActionButton) getView().findViewById(R.id.programs_fragment_fab);
         fab.setOnClickListener(this);
 
-        System.out.println("created me" + this);
+        preferences = getActivity()
+                .getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE);
+        //System.out.println("ACTIVE PROGRAM" + preferences.getLong(getString(R.string.active_program_pref_key),0L));
     }
 
     @Override
@@ -98,16 +101,11 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
     @Override
     public void onClick(View view) {
-        /*System.out.println("clicked " + view + " fab is " + fab);
-        if(view == fab) {*/
-            programCreationDialog = programCreationDialog==null ?
-                    new TrainingProgramCreationDialog(this) : programCreationDialog;
-            programCreationDialog.show(
-                    getActivity().getSupportFragmentManager(), "program-creation-dialog"
-            );
-            return;
-        //}
-        //throw new AssertionError();
+        programCreationDialog = programCreationDialog==null ?
+                new TrainingProgramCreationDialog(this) : programCreationDialog;
+        programCreationDialog.show(
+                getActivity().getSupportFragmentManager(), "program-creation-dialog"
+        );
     }
 
     @Override
@@ -142,5 +140,30 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
         navHostFragment.getNavController().navigate(
                 R.id.action_Main_to_ProgramDetail, args
         );
+    }
+
+    @Override
+    public void setActiveTrainingProgram(long programId) {
+        long oldActiveId = preferences.getLong(getString(R.string.active_program_pref_key), 0L);
+        TrainingProgramAdapter.TrainingProgramViewHolderController oldActiveHolder = (
+                (TrainingProgramAdapter.TrainingProgramViewHolderController)
+                recyclerView.findViewHolderForItemId(oldActiveId)
+        );
+        // hide active chip for old active program
+        if(oldActiveHolder != null) {
+            oldActiveHolder.setActiveChipVisibility(View.INVISIBLE);
+        }
+
+        // set new active program in preferences
+        preferences
+                .edit()
+                .putLong(getString(R.string.active_program_pref_key), programId)
+                .apply();
+
+        // show chip for new active program
+        ((TrainingProgramAdapter.TrainingProgramViewHolderController)
+                recyclerView.findViewHolderForItemId(programId)).setActiveChipVisibility(View.VISIBLE);
+
+        Toast.makeText(getContext(), R.string.new_active_program_set, Toast.LENGTH_SHORT).show();
     }
 }

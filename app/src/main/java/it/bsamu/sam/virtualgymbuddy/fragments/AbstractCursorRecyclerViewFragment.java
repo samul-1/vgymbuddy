@@ -30,7 +30,7 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends AbstractCurso
      */
     private ExercisesFragmentBinding binding;
 
-    private RecyclerView recyclerView;
+    protected RecyclerView recyclerView;
     protected Cursor cursor;
     protected A adapter;
 
@@ -71,7 +71,6 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends AbstractCurso
         asyncFetchMainEntity();
         return view;
     }
-
 
     @Override
     public void onDestroyView() {
