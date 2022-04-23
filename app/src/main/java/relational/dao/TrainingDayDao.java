@@ -6,7 +6,10 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import java.util.List;
+
 import relational.entities.TrainingDay;
+import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingProgram;
 
 @Dao
@@ -20,9 +23,11 @@ public interface TrainingDayDao {
     @Query("SELECT * FROM TrainingDay WHERE trainingProgramId = :programId ORDER BY dayOfWeek")
     Cursor getForProgram(long programId);
 
-    /* @Query("SELECT MAX(position) FROM TrainingDay WHERE trainingProgramId = :programId")
-    short getHighestPositionForProgram(long programId);*/
+    @Query("SELECT * FROM TrainingDay WHERE trainingProgramId = :programId AND dayOfWeek = :dayOfWeek")
+    TrainingDay getForProgramAndDayOfWeek(long programId, short dayOfWeek);
 
+    @Query("SELECT * FROM TRAININGDAYEXERCISE WHERE trainingDayId = :trainingDayId")
+    List<TrainingDayExercise> getExercisesFor(long trainingDayId);
 
     @Insert
     long insertTrainingDay(TrainingDay day);

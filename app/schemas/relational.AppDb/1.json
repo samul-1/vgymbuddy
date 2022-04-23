@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "693ae0d16c5638840d38d22a7e42ec84",
+    "identityHash": "8e0b07fb27867c9bdd200df921146754",
     "entities": [
       {
         "tableName": "Exercise",
@@ -175,8 +175,8 @@
         ]
       },
       {
-        "tableName": "TrainingDayExerciseSet",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingDayId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`exerciseId`, `trainingDayId`))",
+        "tableName": "TrainingSessionSet",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`exerciseId`, `trainingSessionId`), FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "exerciseId",
@@ -185,8 +185,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "trainingDayId",
-            "columnName": "trainingDayId",
+            "fieldPath": "trainingSessionId",
+            "columnName": "trainingSessionId",
             "affinity": "INTEGER",
             "notNull": true
           },
@@ -212,18 +212,85 @@
         "primaryKey": {
           "columnNames": [
             "exerciseId",
-            "trainingDayId"
+            "trainingSessionId"
           ],
           "autoGenerate": false
         },
         "indices": [],
-        "foreignKeys": []
+        "foreignKeys": [
+          {
+            "table": "TrainingSession",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trainingSessionId"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          },
+          {
+            "table": "Exercise",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "exerciseId"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "TrainingSession",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `trainingDayId` INTEGER NOT NULL, `timestamp` INTEGER, FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "trainingDayId",
+            "columnName": "trainingDayId",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "TrainingDay",
+            "onDelete": "CASCADE",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "trainingDayId"
+            ],
+            "referencedColumns": [
+              "_id"
+            ]
+          }
+        ]
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '693ae0d16c5638840d38d22a7e42ec84')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8e0b07fb27867c9bdd200df921146754')"
     ]
   }
 }

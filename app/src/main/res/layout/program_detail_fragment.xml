@@ -38,19 +38,30 @@
         >
     </androidx.recyclerview.widget.RecyclerView>
 
-    <Spinner
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dropdown"
-        android:id="@+id/day_of_week_selection"
-        >
+        android:orientation="horizontal">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="5dp"
+            android:text="@string/training_day" />
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:spinnerMode="dropdown"
+            android:id="@+id/day_of_week_selection"
+            >
 
-    </Spinner>
+        </Spinner>
+    </LinearLayout>
 
     <Button
         android:id="@+id/add_training_day_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:text="@string/add"></Button>
+
 </LinearLayout>

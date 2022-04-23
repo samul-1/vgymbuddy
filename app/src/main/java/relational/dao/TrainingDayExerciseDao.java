@@ -19,4 +19,6 @@ public interface TrainingDayExerciseDao {
                     "WHERE trainingDayId = :dayId"
     )
     Cursor getExercisesForTrainingDay(long dayId);
+
+
 }

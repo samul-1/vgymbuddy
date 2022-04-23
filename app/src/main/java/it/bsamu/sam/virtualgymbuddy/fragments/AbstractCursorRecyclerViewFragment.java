@@ -17,7 +17,7 @@ import relational.AppDb;
 
 
 
-public abstract class AbstractCursorRecyclerViewFragment<A extends AbstractCursorAdapter> extends Fragment {
+public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.Adapter> extends Fragment {
     /**
      * An abstract Fragment used for displaying instances of an entity fetched
      * from a db using a Cursor inside of a RecyclerView. The fragment is meant

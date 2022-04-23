@@ -10,12 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.TrainingDayExerciseAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
-import it.bsamu.sam.virtualgymbuddy.databinding.ProgramDetailFragmentBinding;
 import relational.entities.TrainingDay;
 import it.bsamu.sam.virtualgymbuddy.databinding.TrainingDayDetailBinding;
 import relational.entities.TrainingDayExercise;
@@ -65,7 +63,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View superview = super.onCreateView(inflater, container, savedInstanceState);
         binding = TrainingDayDetailBinding.inflate(inflater, container, false);
-        View rootView = binding.getRoot();
 
         title = superview.findViewById(R.id.training_day_detail_position_title);
         addExerciseBtn = superview.findViewById(R.id.add_training_day_exercise_btn);
@@ -73,8 +70,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
         repsInput = superview.findViewById(R.id.training_day_exercise_input_reps);
 
         addExerciseBtn.setOnClickListener((__)->insertExercise());
-
-        System.out.println("inside detail view");
         return superview;
     }
 
@@ -108,7 +103,12 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
 
     @Override
     protected void paintItemData() {
-        title.setText(String.valueOf(trainingDay.dayOfWeek));
+        title.setText(String.valueOf(
+                getContext()
+                        .getResources()
+                        .getStringArray(R.array.days_of_week)[trainingDay.dayOfWeek]
+                )
+        );
     }
 
     @Override

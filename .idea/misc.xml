@@ -7,6 +7,8 @@
         <entry key="app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.148" />
         <entry key="app/src/main/res/drawable/exercise_default_icon.xml" value="0.148" />
         <entry key="app/src/main/res/drawable/ic_baseline_fitness_center_24.xml" value="0.1" />
+        <entry key="app/src/main/res/drawable/ic_baseline_sentiment_very_dissatisfied_24.xml" value="0.1445" />
+        <entry key="app/src/main/res/drawable/ic_baseline_single_bed_24.xml" value="0.1445" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.148" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.1" />
@@ -22,6 +24,7 @@
         <entry key="app/src/main/res/layout/program_detail_fragment.xml" value="0.1693840579710145" />
         <entry key="app/src/main/res/layout/program_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/programs_fragment.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/todays_training_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/training_day.xml" value="0.2" />
         <entry key="app/src/main/res/layout/training_day_detail.xml" value="0.44854368932038835" />
         <entry key="app/src/main/res/layout/training_day_exercise_item.xml" value="0.15729166666666666" />

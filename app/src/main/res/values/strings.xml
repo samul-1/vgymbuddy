@@ -30,12 +30,15 @@
     <string name="dialog_program_name">Nome programma</string>
     <string name="dialog_program_desc">Descrizione</string>
 
+    <string name="rest_day">Nessun allenamento previsto per oggi. Buon riposo!</string>
+    <string name="no_active_program">Non hai un programma di allenamento attivo. Per attivare un programma, fai tap lungo su di esso.</string>
+
     <string name="training_day_exercise_sets">Serie</string>
     <string name="training_day_exercise_reps">Rep</string>
 
 
     <string name="program_details_days_title">Giorni di allenamento</string>
-    <string name="training_day">Allenamento</string>
+    <string name="training_day">Allenamento del</string>
     <string name="add">Aggiungi</string>
 
     <string name="toast_exercise_created">Esercizio creato con successo</string>

@@ -17,6 +17,8 @@ import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import adapter.TrainingDayAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
@@ -29,8 +31,11 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     private ProgramDetailFragmentBinding binding;
     private TextView programName;
     private TextView programDesc;
-    Spinner dayOfWeekDropdown;
     private Button addDayBtn;
+
+    private ArrayAdapter<String> dropdownAdapter;
+    Spinner dayOfWeekDropdown;
+    ArrayList<String> daysOfWeek;
 
 
     @Override
@@ -44,19 +49,29 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
         addDayBtn = superview.findViewById(R.id.add_training_day_btn);
         dayOfWeekDropdown = superview.findViewById(R.id.day_of_week_selection);
 
-        String[] daysOfWeek = getResources().getStringArray(R.array.days_of_week);
-        ArrayAdapter<String> dropdownAdapter = new ArrayAdapter<>(
+        setUsableDaysOfWeek();
+        dropdownAdapter = new ArrayAdapter<>(
                 getContext(),
                 androidx.appcompat.R.layout.support_simple_spinner_dropdown_item,
                 daysOfWeek
         );
-
         dayOfWeekDropdown.setAdapter(dropdownAdapter);
 
         addDayBtn.setOnClickListener((__)->insertTrainingDay());
 
-        System.out.println("inside detail view");
         return superview;
+    }
+
+    @NonNull
+    private void setUsableDaysOfWeek() {
+        if(daysOfWeek == null) {
+            daysOfWeek = new ArrayList<>(
+                    Arrays.asList(
+                            getResources().getStringArray(R.array.days_of_week)
+                    )
+            );
+        }
+        // TODO remove days that have already been used
     }
 
 
@@ -103,8 +118,10 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                //short newPosition = (short)(db.trainingDayDao().getHighestPositionForProgram(itemId)+1);
-                db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId,(short)dayOfWeekDropdown.getSelectedItemPosition()));
+                short selectedDayIdx = (short)dayOfWeekDropdown.getSelectedItemPosition();
+                // to allow max one training day per day of week, remove selected day from dropdown
+
+                db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, selectedDayIdx));
                 cursor = db.trainingDayDao().getForProgram(itemId);
                 return null;
             }
