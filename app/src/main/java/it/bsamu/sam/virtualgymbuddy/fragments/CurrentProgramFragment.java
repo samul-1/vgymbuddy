@@ -14,6 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -46,15 +47,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         super.onCreate(savedInstanceState);
 
         // get information needed to fetch today's training
-        todayWeekDayIdx = (short) Calendar.getInstance().get(Calendar.DAY_OF_WEEK);
+        todayWeekDayIdx = (short)LocalDate.now().getDayOfWeek().getValue();
         activeProgramId = getContext().getSharedPreferences(
                 getString(R.string.pref_file_key), Context.MODE_PRIVATE
         ).getLong(getString(R.string.active_program_pref_key), 0L);
 
-        // TODO handle no selected active program (empty state)
-        //asyncFetchTrainingDay();
-
-        // TODO fetch current program's today session: if it doesn't exist, show REST DAY
 
         /* TODO for each exercise in today session: show input for weight and reps and a button to add
             the set information, until all sets are completed, then move on to the next exercise. For
@@ -113,6 +110,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     private void fetchExercisesAndSets() {
         exercisesWithSets = db.trainingSessionSetDao().getExercisesWithSetsForSession(session.id);
+        System.out.println("with sets "+ exercisesWithSets.keySet());
+        System.out.println("with sets "+ exercisesWithSets.values());
     }
 
     private synchronized void fetchOrCreateTodaysTrainingSession() {
@@ -125,12 +124,16 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             ));
             session = db.trainingSessionDao().getById(sessionId);
         }
+        System.out.println("SESSION " + session);
     }
 
     private void fetchTrainingDay() {
         trainingDay = db.trainingDayDao().getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
+        System.out.println("fetching day for " + activeProgramId + ", " + todayWeekDayIdx + " fetched " + trainingDay);
+
         if(trainingDay != null) {
             trainingDayExercises = db.trainingDayDao().getExercisesFor(trainingDay.id);
+            System.out.println("exercises " + trainingDayExercises);
         }
     }
 
@@ -175,6 +178,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                 break;
             }
         }
+        System.out.println("Current exercise " + currentExercise + " sets " + currentExerciseSets);
+        // TODO pass info to adapter to create viewholder
         adapter.notifyDataSetChanged();
     }
 

@@ -118,7 +118,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                short selectedDayIdx = (short)dayOfWeekDropdown.getSelectedItemPosition();
+                short selectedDayIdx = (short)(dayOfWeekDropdown.getSelectedItemPosition()+1);
                 // to allow max one training day per day of week, remove selected day from dropdown
 
                 db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, selectedDayIdx));

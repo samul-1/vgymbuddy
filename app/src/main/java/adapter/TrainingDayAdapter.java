@@ -34,7 +34,7 @@ public class TrainingDayAdapter extends AbstractCursorAdapter<TrainingDayAdapter
         long dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
 
         String[] daysOfWeek = context.getResources().getStringArray(R.array.days_of_week);
-        holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx]);
+        holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx-1]);
         holder.itemView.setOnClickListener((__)->listener.navigateToTrainingDayDetails(dayId));
     }
 

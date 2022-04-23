@@ -17,7 +17,6 @@ public interface TrainingSessionSetDao {
     @Query(
         "SELECT * FROM Exercise LEFT OUTER JOIN TrainingSessionSet " +
         "ON Exercise._id = TrainingSessionSet.exerciseId WHERE " +
-        "TrainingSessionSet.trainingSessionId = :sessionId AND " +
         "Exercise._id IN (" +
         "   SELECT _id FROM Exercise INNER JOIN " +
         "   TrainingDayExercise ON _id = exerciseId WHERE " +
@@ -25,7 +24,10 @@ public interface TrainingSessionSetDao {
         "       SELECT trainingDayId FROM TrainingSession " +
         "       WHERE _id = :sessionId" +
         "   )" +
-        ")"
+        ") AND " +
+        "TrainingSessionSet.trainingSessionId IS NULL OR " +
+                "TrainingSessionSet.trainingSessionId = :sessionId"
+
     )
     Map<Exercise, List<TrainingSessionSet>> getExercisesWithSetsForSession(long sessionId);
 }
