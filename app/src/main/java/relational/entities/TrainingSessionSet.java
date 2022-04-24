@@ -26,4 +26,11 @@ import androidx.room.ForeignKey;
     public double weightUsed;
     public short repsDone;
     public String notes;
+
+    public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed) {
+        this.exerciseId=exerciseId;
+        this.trainingSessionId=trainingSessionId;
+        this.repsDone=repsDone;
+        this.weightUsed=weightUsed;
+    }
 }

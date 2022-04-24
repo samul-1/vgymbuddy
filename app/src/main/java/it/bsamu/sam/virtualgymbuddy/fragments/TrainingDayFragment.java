@@ -106,7 +106,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
         title.setText(String.valueOf(
                 getContext()
                         .getResources()
-                        .getStringArray(R.array.days_of_week)[trainingDay.dayOfWeek]
+                        .getStringArray(R.array.days_of_week)[trainingDay.dayOfWeek-1]
                 )
         );
     }

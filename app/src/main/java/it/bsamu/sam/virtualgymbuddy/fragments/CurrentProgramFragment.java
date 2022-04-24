@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -37,6 +38,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     TrainingSession session;
     Exercise currentExercise;
     List<TrainingSessionSet> currentExerciseSets = null;
+    EditText repsInput;
+    EditText weightInput;
 
     public CurrentProgramFragment() {
 
@@ -69,6 +72,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        repsInput = view.findViewById(R.id.training_session_reps_input);
+        weightInput = view.findViewById(R.id.training_session_weight_input);
     }
 
     @Override
@@ -190,7 +195,31 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             paintEmptyState(EmptyStates.REST_DAY);
         } else {
             setDataSetToCurrentExerciseSets();
+            ((TextView)getActivity().findViewById(R.id.session_current_exercise)).setText(currentExercise.name);
         }
     }
 
+
+    private void addSet(View v) {
+        short reps = Short.valueOf(repsInput.getText().toString());
+        double weight = Double.valueOf(weightInput.getText().toString());
+
+        new AsyncTask<Void,Void,Void>(){
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                TrainingSessionSet set = new TrainingSessionSet(
+                        session.id, currentExercise.id, reps, weight
+                );
+                db.trainingSessionSetDao().insertSet(set);
+                fetchExercisesAndSets();
+                return null;
+            }
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                paintTrainingSessionInfo();
+            }
+        }.execute();
+    }
 }

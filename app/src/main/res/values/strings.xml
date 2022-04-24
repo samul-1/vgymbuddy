@@ -36,6 +36,8 @@
     <string name="training_day_exercise_sets">Serie</string>
     <string name="training_day_exercise_reps">Rep</string>
 
+    <string name="add_set_btn_label">Aggiungi serie</string>
+
 
     <string name="program_details_days_title">Giorni di allenamento</string>
     <string name="training_day">Allenamento del</string>

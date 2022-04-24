@@ -3,6 +3,7 @@ package relational.dao;
 import android.database.Cursor;
 
 import androidx.room.Dao;
+import androidx.room.Insert;
 import androidx.room.Query;
 
 import java.util.List;
@@ -14,6 +15,9 @@ import relational.entities.TrainingSession;
 
 @Dao
 public interface TrainingSessionSetDao {
+    @Insert
+    void insertSet(TrainingSessionSet set);
+
     @Query(
         "SELECT * FROM Exercise LEFT OUTER JOIN TrainingSessionSet " +
         "ON Exercise._id = TrainingSessionSet.exerciseId WHERE " +
