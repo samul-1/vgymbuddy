@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,7 +31,7 @@ import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
 import relational.entities.TrainingSessionSet;
 
-public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> {
+public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener {
     short todayWeekDayIdx;
     long activeProgramId;
     Map<Exercise, List<TrainingSessionSet>> exercisesWithSets;
@@ -37,9 +39,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     List<TrainingDayExercise> trainingDayExercises;
     TrainingSession session;
     Exercise currentExercise;
-    List<TrainingSessionSet> currentExerciseSets = null;
+    List<TrainingSessionSet> currentExerciseSets = new LinkedList<>();
     EditText repsInput;
     EditText weightInput;
+    Button addSetBtn;
 
     public CurrentProgramFragment() {
 
@@ -74,6 +77,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         super.onViewCreated(view, savedInstanceState);
         repsInput = view.findViewById(R.id.training_session_reps_input);
         weightInput = view.findViewById(R.id.training_session_weight_input);
+        addSetBtn = view.findViewById(R.id.add_set_btn);
+
+        addSetBtn.setOnClickListener(this);
+
     }
 
     @Override
@@ -115,8 +122,14 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     private void fetchExercisesAndSets() {
         exercisesWithSets = db.trainingSessionSetDao().getExercisesWithSetsForSession(session.id);
-        System.out.println("with sets "+ exercisesWithSets.keySet());
-        System.out.println("with sets "+ exercisesWithSets.values());
+        /*for(Exercise e : exercisesWithSets.keySet()) {
+            System.out.println("LEFT JOIN EXERCISE ID " + e.id);
+        }
+        for(List<TrainingSessionSet> e : exercisesWithSets.values()) {
+            System.out.println("LEFT JOIN SET EID " + e.get(0).repsDone + "(size " + e.size());
+        }*/
+
+        System.out.println(exercisesWithSets.values());
     }
 
     private synchronized void fetchOrCreateTodaysTrainingSession() {
@@ -124,6 +137,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         // training day; if it doesn't exist, it creates one in the database
         session = db.trainingSessionDao().getTodaysTrainingSessionForTrainingDay(trainingDay.id);
         if(session == null) {
+            System.out.println("SESSION IS NULL, CREATING");
             long sessionId = db.trainingSessionDao().insertTrainingSession(new TrainingSession(
                     trainingDay.id, new Date()
             ));
@@ -169,9 +183,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
          * current exercise in the session
          */
 
-        // find the first exercise for which not all sets have been logged
+        // find the first exercise for which not all sets have been completed
         for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.entrySet()) {
-            TrainingDayExercise exercise = trainingDayExercises
+            System.out.println("EXERCISE entry " + entry.getKey().name);
+           TrainingDayExercise exercise = trainingDayExercises
                     .stream()
                     .filter(e->e.exerciseId==entry.getKey().id)
                     .findFirst()
@@ -179,7 +194,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             long sets = exercise.setsPrescribed;
             if(entry.getValue().size() < sets) {
                 currentExercise = entry.getKey();
-                currentExerciseSets = entry.getValue();
+                currentExerciseSets.clear();
+                currentExerciseSets.addAll(entry.getValue());
                 break;
             }
         }
@@ -194,22 +210,42 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         } else if (session == null) {
             paintEmptyState(EmptyStates.REST_DAY);
         } else {
+            System.out.println("TODAYS EXERCISES");
+            for(TrainingDayExercise e: trainingDayExercises) {
+                System.out.println("id:" + e.exerciseId);
+            }
+
+            System.out.println("TODAYS EXERCISE-SETS");
+            for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.entrySet()) {
+                System.out.println(
+                        "id:" + entry.getKey().id+ "name: " +
+                                entry.getKey().name + "sets: " + entry.getValue());
+            }
             setDataSetToCurrentExerciseSets();
-            ((TextView)getActivity().findViewById(R.id.session_current_exercise)).setText(currentExercise.name);
+            if(currentExercise != null) {
+                ((TextView) getActivity()
+                        .findViewById(R.id.session_current_exercise))
+                        .setText(currentExercise.name);
+            } else {
+                System.out.println("current exercise null");
+            }
         }
     }
 
 
-    private void addSet(View v) {
+    @Override
+    public void onClick(View v) {
         short reps = Short.valueOf(repsInput.getText().toString());
         double weight = Double.valueOf(weightInput.getText().toString());
+
+        System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
 
         new AsyncTask<Void,Void,Void>(){
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
                 TrainingSessionSet set = new TrainingSessionSet(
-                        session.id, currentExercise.id, reps, weight
+                        currentExercise.id, session.id, reps, weight
                 );
                 db.trainingSessionSetDao().insertSet(set);
                 fetchExercisesAndSets();

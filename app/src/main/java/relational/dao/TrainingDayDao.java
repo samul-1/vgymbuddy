@@ -26,7 +26,7 @@ public interface TrainingDayDao {
     @Query("SELECT * FROM TrainingDay WHERE trainingProgramId = :programId AND dayOfWeek = :dayOfWeek")
     TrainingDay getForProgramAndDayOfWeek(long programId, short dayOfWeek);
 
-    @Query("SELECT * FROM TRAININGDAYEXERCISE WHERE trainingDayId = :trainingDayId")
+    @Query("SELECT * FROM TrainingDayExercise WHERE trainingDayId = :trainingDayId")
     List<TrainingDayExercise> getExercisesFor(long trainingDayId);
 
     @Insert

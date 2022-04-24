@@ -1,10 +1,11 @@
 package relational.entities;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
+import androidx.room.PrimaryKey;
 
 @Entity(
-        primaryKeys = {"exerciseId", "trainingSessionId"},
         foreignKeys = {
                 @ForeignKey(
                         entity = TrainingSession.class,
@@ -20,6 +21,9 @@ import androidx.room.ForeignKey;
                 )
         }
 )public class TrainingSessionSet {
+    @PrimaryKey(autoGenerate = true)
+    public long sid;
+
     public long exerciseId;
     public long trainingSessionId;
 

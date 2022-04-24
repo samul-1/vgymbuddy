@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "8e0b07fb27867c9bdd200df921146754",
+    "identityHash": "18343edd6a918f002f98cb9c1912e032",
     "entities": [
       {
         "tableName": "Exercise",
@@ -176,8 +176,14 @@
       },
       {
         "tableName": "TrainingSessionSet",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, PRIMARY KEY(`exerciseId`, `trainingSessionId`), FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
+          {
+            "fieldPath": "sid",
+            "columnName": "sid",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
           {
             "fieldPath": "exerciseId",
             "columnName": "exerciseId",
@@ -211,10 +217,9 @@
         ],
         "primaryKey": {
           "columnNames": [
-            "exerciseId",
-            "trainingSessionId"
+            "sid"
           ],
-          "autoGenerate": false
+          "autoGenerate": true
         },
         "indices": [],
         "foreignKeys": [
@@ -290,7 +295,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '8e0b07fb27867c9bdd200df921146754')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '18343edd6a918f002f98cb9c1912e032')"
     ]
   }
 }

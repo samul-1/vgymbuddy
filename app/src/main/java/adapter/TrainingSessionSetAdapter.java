@@ -49,7 +49,9 @@ public class TrainingSessionSetAdapter extends RecyclerView.Adapter<TrainingSess
 
     class TrainingSessionSetViewHolder extends RecyclerView.ViewHolder {
         public TrainingSessionSetViewHolder(@NonNull View itemView) {
+
             super(itemView);
+            System.out.println("CREATING VIEW HOLDER FOR SET");
         }
     }
 }

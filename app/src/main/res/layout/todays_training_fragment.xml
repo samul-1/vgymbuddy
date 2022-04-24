@@ -28,7 +28,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="200dp"
         android:id="@+id/todays_training_recyclerview"
         android:divider="@android:color/transparent"
         android:dividerHeight="1.5sp"
@@ -81,7 +81,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/add_set_btn"
         android:text="@string/add_set_btn_label"
-        android:onClick="addSet"
         />
 
     <LinearLayout
