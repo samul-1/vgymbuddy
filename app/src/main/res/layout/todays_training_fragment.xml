@@ -37,51 +37,61 @@
         >
     </androidx.recyclerview.widget.RecyclerView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+
+    <com.google.android.flexbox.FlexboxLayout
         android:id="@+id/training_session_controls_container"
-        android:orientation="horizontal"
-    >
-        <EditText
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:alignContent="center"
+        app:alignItems="center"
+        app:flexWrap="wrap"
+        app:justifyContent="space_evenly">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+                <EditText
+                android:id="@+id/training_session_reps_input"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="5dp"
+                android:hint="@string/training_day_exercise_reps"
+                android:inputType="number"
+                android:maxLength="3"
+                android:paddingHorizontal="10dp"
+                android:paddingVertical="5dp"></EditText>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:labelFor="@id/training_session_reps_input"
+                    android:text=" rep "></TextView>
+                <EditText
+                    android:id="@+id/training_session_weight_input"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:hint="@string/training_set_weight"
+                    android:inputType="numberDecimal"
+                    android:maxLength="5"
+                    android:paddingHorizontal="10dp"
+                    android:paddingVertical="5dp"></EditText>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="5dp"
+                    android:labelFor="@id/training_session_weight_input"
+                    android:text=" kg "></TextView>
+            </LinearLayout>
+        <Button
+            android:id="@+id/add_set_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:paddingHorizontal="10dp"
-            android:paddingVertical="5dp"
-            android:inputType="number"
-            android:maxLength="3"
-            android:hint="@string/training_day_exercise_sets"
-            android:id="@+id/training_session_reps_input"
-            ></EditText>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text=" rep "></TextView>
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingHorizontal="10dp"
-            android:layout_marginRight="5dp"
-            android:paddingVertical="5dp"
-            android:maxLength="5"
-            android:inputType="numberDecimal"
-            android:hint="@string/training_day_exercise_reps"
-            android:id="@+id/training_session_weight_input"
-            ></EditText>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:text=" kg "></TextView>
-    </LinearLayout>
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/add_set_btn"
-        android:text="@string/add_set_btn_label"
-        />
+            android:text="@string/add_set_btn_label"
+            android:drawableLeft="@drawable/ic_baseline_add_24"
+            android:drawableTint="@color/white"
+            />
+    </com.google.android.flexbox.FlexboxLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

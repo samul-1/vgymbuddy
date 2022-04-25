@@ -35,8 +35,11 @@
 
     <string name="training_day_exercise_sets">Serie</string>
     <string name="training_day_exercise_reps">Rep</string>
+    <string name="training_set_weight">Peso</string>
 
-    <string name="add_set_btn_label">Aggiungi serie</string>
+    <string name="add_set_btn_label">Serie</string>
+
+    <string name="done_training">Allenamento completato per oggi. Ottimo!</string>
 
 
     <string name="program_details_days_title">Giorni di allenamento</string>

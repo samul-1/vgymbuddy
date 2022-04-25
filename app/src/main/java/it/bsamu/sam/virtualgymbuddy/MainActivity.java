@@ -19,9 +19,12 @@ import relational.AppDb;
 import relational.entities.Exercise;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
+import relational.entities.TrainingProgram;
 
 import android.view.Menu;
 import android.view.MenuItem;
+
+import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
@@ -40,48 +43,30 @@ public class MainActivity extends AppCompatActivity {
         db = AppDb.getInstance(getApplicationContext());
 
         new Thread(()->{
-            /*db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)1, (long)1, (short)2, (short)12));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)2, (long)1, (short)4, (short)5));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise((long)3, (long)1, (short)3, (short)3));*/
-            /*TrainingDay d = new TrainingDay();
-            d.trainingProgramId = 1;
-            d.position = 2;*/
-            /*Exercise ex1 = new Exercise();
-            Exercise ex2 = new Exercise();
-            Exercise ex3 = new Exercise();
-            Exercise ex4 = new Exercise();
-            Exercise ex5 = new Exercise();
-            Exercise ex6 = new Exercise();
-            Exercise ex7 = new Exercise();
-            Exercise ex8 = new Exercise();
-            Exercise ex9 = new Exercise();
-            Exercise ex10 = new Exercise();
-            Exercise ex11 = new Exercise();
-            Exercise ex12 = new Exercise();
-            ex1.name = "Squat";
-            ex2.name = "Military press";
-            ex3.name = "Deadlift";
-            ex4.name = "Panca piana";
-            ex5.name = "Panca inclinata";
-            ex6.name = "Rematore con bilanciere";
-            ex7.name = "Lat machine";
-            ex8.name = "Alzate laterali";
-            ex9.name = "Pullup";
-            ex10.name = "Pushup";
-            ex11.name = "Dip";
-            ex12.name = "Stacco a gamba tesa";
-            db.exerciseDao().insertExercise(ex1);
-            db.exerciseDao().insertExercise(ex2);
-            db.exerciseDao().insertExercise(ex3);
-            db.exerciseDao().insertExercise(ex4);
-            db.exerciseDao().insertExercise(ex5);
-            db.exerciseDao().insertExercise(ex6);
-            db.exerciseDao().insertExercise(ex7);
-            db.exerciseDao().insertExercise(ex8);
-            db.exerciseDao().insertExercise(ex9);
-            db.exerciseDao().insertExercise(ex10);
-            db.exerciseDao().insertExercise(ex11);
-            db.exerciseDao().insertExercise(ex12);*/
+           /* db.exerciseDao().insertExercise(new Exercise("Squat"));
+            long benchId= db.exerciseDao().insertExercise(new Exercise("Panca piana"));
+            db.exerciseDao().insertExercise(new Exercise("Deadlift"));
+            long milId = db.exerciseDao().insertExercise(new Exercise("Military press"));
+            db.exerciseDao().insertExercise(new Exercise("Stacco a gamba tesa"));
+            long raiseId = db.exerciseDao().insertExercise(new Exercise("Alzate laterali"));
+            db.exerciseDao().insertExercise(new Exercise("Curl con bilanciere"));
+            long ropeId = db.exerciseDao().insertExercise(new Exercise("Rope pushdown"));
+            db.exerciseDao().insertExercise(new Exercise("Pull-up"));
+            db.exerciseDao().insertExercise(new Exercise("Push-up"));
+            db.exerciseDao().insertExercise(new Exercise("Dips"));
+
+           long pplId= db.trainingProgramDao().insertTrainingProgram(new TrainingProgram("PPL", ""));
+           long dayId = db.trainingDayDao().insertTrainingDay(
+                   new TrainingDay(pplId,
+                           (short) LocalDate.now().getDayOfWeek().getValue()));
+
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(benchId, dayId, (short)2, (short)12));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12));
+
+
+            */
         }).start();
         System.out.println("db built");
     }

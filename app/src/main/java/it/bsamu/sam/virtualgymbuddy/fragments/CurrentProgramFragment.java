@@ -158,23 +158,43 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     enum EmptyStates {
         NO_ACTIVE_PROGRAM,
-        REST_DAY
+        REST_DAY,
+        FINISHED
     }
 
     private void paintEmptyState(EmptyStates state) {
         View emptyStateView = getActivity().findViewById(R.id.training_session_empty_state_container);
+        View controlsView = getActivity().findViewById(R.id.training_session_controls_container);
         // TODO this gets called even if not in this fragment (move to onResume etc.)
         emptyStateView.setVisibility(View.VISIBLE);
+        // hide controls
+        controlsView.setVisibility(View.GONE);
+        getRecyclerView(getView()).setVisibility(View.GONE);
+
+
+        int iconResId, textResId;
 
         ImageView iv = (ImageView) getActivity().findViewById(R.id.training_session_empty_state_icon);
-        iv.setImageResource(state==EmptyStates.NO_ACTIVE_PROGRAM
-                ? R.drawable.ic_baseline_sentiment_very_dissatisfied_24
-                : R.drawable.ic_baseline_single_bed_24);
-
         TextView tv = (TextView) getActivity().findViewById(R.id.training_session_empty_state_desc);
-        tv.setText(state==EmptyStates.NO_ACTIVE_PROGRAM
-                ? R.string.no_active_program
-                : R.string.rest_day);
+
+        switch(state) {
+            case NO_ACTIVE_PROGRAM:
+                iconResId = R.drawable.ic_baseline_sentiment_very_dissatisfied_24;
+                textResId = R.string.no_active_program;
+                break;
+            case REST_DAY:
+                iconResId = R.drawable.ic_baseline_single_bed_24;
+                textResId = R.string.rest_day;
+                break;
+            case FINISHED:
+                iconResId = R.drawable.ic_baseline_done_24;
+                textResId = R.string.done_training;
+                break;
+            default:
+                throw new AssertionError();
+        }
+        iv.setImageResource(iconResId);
+        tv.setText(textResId);
     }
 
     private void setDataSetToCurrentExerciseSets() {
@@ -227,7 +247,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                         .findViewById(R.id.session_current_exercise))
                         .setText(currentExercise.name);
             } else {
-                System.out.println("current exercise null");
+                paintEmptyState(EmptyStates.FINISHED);
             }
         }
     }
