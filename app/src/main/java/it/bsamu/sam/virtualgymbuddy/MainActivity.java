@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         db = AppDb.getInstance(getApplicationContext());
 
         new Thread(()->{
-           /* db.exerciseDao().insertExercise(new Exercise("Squat"));
+           /*db.exerciseDao().insertExercise(new Exercise("Squat"));
             long benchId= db.exerciseDao().insertExercise(new Exercise("Panca piana"));
             db.exerciseDao().insertExercise(new Exercise("Deadlift"));
             long milId = db.exerciseDao().insertExercise(new Exercise("Military press"));
@@ -64,9 +64,9 @@ public class MainActivity extends AppCompatActivity {
             db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12));
             db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12));
             db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12));
+*/
 
 
-            */
         }).start();
         System.out.println("db built");
     }

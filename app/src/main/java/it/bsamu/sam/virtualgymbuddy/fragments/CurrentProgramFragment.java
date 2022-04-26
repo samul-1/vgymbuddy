@@ -1,9 +1,13 @@
 package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +15,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -43,6 +48,12 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     EditText repsInput;
     EditText weightInput;
     Button addSetBtn;
+    Button recordSetBtn;
+    VideoView videoView;
+    Uri takenVideoUri;
+
+    static final int REQUEST_VIDEO_CAPTURE = 22222;
+
 
     public CurrentProgramFragment() {
 
@@ -78,7 +89,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         repsInput = view.findViewById(R.id.training_session_reps_input);
         weightInput = view.findViewById(R.id.training_session_weight_input);
         addSetBtn = view.findViewById(R.id.add_set_btn);
+        recordSetBtn = view.findViewById(R.id.set_record_video_btn);
+        videoView = view.findViewById(R.id.set_video);
 
+        recordSetBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
 
     }
@@ -122,14 +136,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     private void fetchExercisesAndSets() {
         exercisesWithSets = db.trainingSessionSetDao().getExercisesWithSetsForSession(session.id);
-        /*for(Exercise e : exercisesWithSets.keySet()) {
-            System.out.println("LEFT JOIN EXERCISE ID " + e.id);
-        }
-        for(List<TrainingSessionSet> e : exercisesWithSets.values()) {
-            System.out.println("LEFT JOIN SET EID " + e.get(0).repsDone + "(size " + e.size());
-        }*/
-
-        System.out.println(exercisesWithSets.values());
     }
 
     private synchronized void fetchOrCreateTodaysTrainingSession() {
@@ -148,11 +154,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     private void fetchTrainingDay() {
         trainingDay = db.trainingDayDao().getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
-        System.out.println("fetching day for " + activeProgramId + ", " + todayWeekDayIdx + " fetched " + trainingDay);
-
         if(trainingDay != null) {
             trainingDayExercises = db.trainingDayDao().getExercisesFor(trainingDay.id);
-            System.out.println("exercises " + trainingDayExercises);
         }
     }
 
@@ -160,6 +163,33 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         NO_ACTIVE_PROGRAM,
         REST_DAY,
         FINISHED
+    }
+
+    private void dispatchTakeVideoIntent() {
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
+        } else {
+            // TODO show message camera not available
+        }
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent intent) {
+        if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
+            // save video uri for later usage (when saving data for the set to db)
+            takenVideoUri = intent.getData();
+
+            System.out.println("URI " + takenVideoUri);
+
+            // show video preview
+            videoView.setVideoURI(takenVideoUri);
+            videoView.setVisibility(View.VISIBLE);
+            // play mute video
+            videoView.seekTo(0);
+            videoView.setOnPreparedListener((mp)->mp.setVolume(0,0));
+            videoView.start();
+        }
     }
 
     private void paintEmptyState(EmptyStates state) {
@@ -255,27 +285,32 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     @Override
     public void onClick(View v) {
-        short reps = Short.valueOf(repsInput.getText().toString());
-        double weight = Double.valueOf(weightInput.getText().toString());
+        if(v == addSetBtn) {
+            short reps = Short.valueOf(repsInput.getText().toString());
+            double weight = Double.valueOf(weightInput.getText().toString());
 
-        System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
+            System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
 
-        new AsyncTask<Void,Void,Void>(){
-            @SuppressLint("StaticFieldLeak")
-            @Override
-            protected Void doInBackground(Void... voids) {
-                TrainingSessionSet set = new TrainingSessionSet(
-                        currentExercise.id, session.id, reps, weight
-                );
-                db.trainingSessionSetDao().insertSet(set);
-                fetchExercisesAndSets();
-                return null;
-            }
-            @Override
-            protected void onPostExecute(Void unused) {
-                super.onPostExecute(unused);
-                paintTrainingSessionInfo();
-            }
-        }.execute();
+            new AsyncTask<Void, Void, Void>() {
+                @SuppressLint("StaticFieldLeak")
+                @Override
+                protected Void doInBackground(Void... voids) {
+                    TrainingSessionSet set = new TrainingSessionSet(
+                            currentExercise.id, session.id, reps, weight
+                    );
+                    db.trainingSessionSetDao().insertSet(set);
+                    fetchExercisesAndSets();
+                    return null;
+                }
+
+                @Override
+                protected void onPostExecute(Void unused) {
+                    super.onPostExecute(unused);
+                    paintTrainingSessionInfo();
+                }
+            }.execute();
+        } else {
+            dispatchTakeVideoIntent();
+        }
     }
 }
