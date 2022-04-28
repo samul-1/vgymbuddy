@@ -34,10 +34,11 @@ import androidx.room.PrimaryKey;
     public String notes;
     public Uri videoUri;
 
-    public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed) {
+    public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed, Uri videoUri) {
         this.exerciseId=exerciseId;
         this.trainingSessionId=trainingSessionId;
         this.repsDone=repsDone;
         this.weightUsed=weightUsed;
+        this.videoUri = videoUri;
     }
 }

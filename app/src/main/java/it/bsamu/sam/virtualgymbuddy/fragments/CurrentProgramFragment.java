@@ -29,6 +29,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -310,16 +311,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                TrainingSessionSet set = new TrainingSessionSet(
-                        currentExercise.id, session.id, reps, weight
-                );
-                long setId = db.trainingSessionSetDao().insertSet(set);
-
+                Uri videoUri = null;
                 // save set's video, if one was taken
                 if(takenVideoUri != null) {
                     String mimeType = getContext().getContentResolver().getType(takenVideoUri);
-                    System.out.println("mime" + mimeType);
-                    String filename = String.valueOf(setId)+".mp4 ";//+mimeType;
+                    String ext = ".mp4"; // TODO generalize
+                    String filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                            .format(System.currentTimeMillis()) + ext;
+
+                    // TODO extract
                     try(
                         InputStream is = getContext().getContentResolver().openInputStream(takenVideoUri);
                         FileOutputStream fos = getContext().openFileOutput(filename, Context.MODE_PRIVATE)
@@ -331,14 +331,17 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                         }
                         bos.close();
                         fos.close();
-                        System.out.println("saved " + filename);
+                        videoUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
                 }
-
+                TrainingSessionSet set = new TrainingSessionSet(
+                        currentExercise.id, session.id, reps, weight, videoUri
+                );
+                db.trainingSessionSetDao().insertSet(set);
                 fetchExercisesAndSets();
                 return null;
             }
