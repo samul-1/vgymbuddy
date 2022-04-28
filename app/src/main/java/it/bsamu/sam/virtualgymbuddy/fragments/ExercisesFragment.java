@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 import adapter.ExerciseAdapter;
@@ -91,14 +92,20 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
             protected Exercise doInBackground(Void... voids) {
                 System.out.println("received" + exerciseName);
                 // create new exercise
-                Exercise added = new Exercise(exerciseName);
-                long id = db.exerciseDao().insertExercise(added);
+                String filename = null;
+                Uri imageUri = null;
 
                 // save picked img
                 if(pickedImg != null) {
-                    try(FileOutputStream fos = getContext().openFileOutput(String.valueOf(id)+".jpg", Context.MODE_PRIVATE)) {
+                    // TODO cache date format object
+                    filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                            .format(System.currentTimeMillis()) + ".jpg"; // TODO generalize mime type
+                    try(FileOutputStream fos = getContext()
+                            .openFileOutput(filename, Context.MODE_PRIVATE)
+                    ) {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), pickedImg);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                        imageUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
                         //fos.write(bitmap.to);
                    } catch (FileNotFoundException e) {
                        e.printStackTrace();
@@ -106,6 +113,8 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
                        e.printStackTrace();
                    }
                 }
+                Exercise added = new Exercise(exerciseName, imageUri);
+                db.exerciseDao().insertExercise(added);
                 return added;
             }
 

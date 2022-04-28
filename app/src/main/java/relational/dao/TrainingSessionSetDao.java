@@ -18,7 +18,10 @@ import relational.entities.TrainingSession;
 @Dao
 public interface TrainingSessionSetDao {
     @Insert
-    void insertSet(TrainingSessionSet set);
+    long insertSet(TrainingSessionSet set);
+
+    @Query("SELECT * FROM TrainingSessionSet WHERE exerciseId = :exerciseId")
+    Cursor getForExercise(long exerciseId);
 
     @Query(
         "SELECT * FROM Exercise LEFT OUTER JOIN TrainingSessionSet " +

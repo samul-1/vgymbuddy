@@ -1,5 +1,7 @@
 package relational.entities;
 
+import android.net.Uri;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.ForeignKey;
@@ -30,6 +32,7 @@ import androidx.room.PrimaryKey;
     public double weightUsed;
     public short repsDone;
     public String notes;
+    public Uri videoUri;
 
     public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed) {
         this.exerciseId=exerciseId;

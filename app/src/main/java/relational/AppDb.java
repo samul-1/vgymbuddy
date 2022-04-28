@@ -39,14 +39,19 @@ public abstract class AppDb extends RoomDatabase {
 
     private static AppDb instance = null;
 
-    public static synchronized AppDb getInstance(Context context) {
-        if(instance == null) {
-            instance = Room.databaseBuilder(
-                context,
-                AppDb.class,
-                "db"
-            ).build();
+    public static AppDb getInstance(Context context) {
+        if(instance != null) {
+            return instance;
         }
-        return instance;
+        synchronized (AppDb.class) {
+            if(instance == null) {
+                instance = Room.databaseBuilder(
+                        context,
+                        AppDb.class,
+                        "db"
+                ).build();
+            }
+            return instance;
+        }
     }
 }

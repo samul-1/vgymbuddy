@@ -43,7 +43,8 @@ public class MainActivity extends AppCompatActivity {
         db = AppDb.getInstance(getApplicationContext());
 
         new Thread(()->{
-           /*db.exerciseDao().insertExercise(new Exercise("Squat"));
+           /*
+           db.exerciseDao().insertExercise(new Exercise("Squat"));
             long benchId= db.exerciseDao().insertExercise(new Exercise("Panca piana"));
             db.exerciseDao().insertExercise(new Exercise("Deadlift"));
             long milId = db.exerciseDao().insertExercise(new Exercise("Military press"));

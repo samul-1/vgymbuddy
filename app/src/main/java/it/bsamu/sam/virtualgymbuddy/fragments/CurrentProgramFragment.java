@@ -4,9 +4,11 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +23,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -291,26 +299,55 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
             System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
 
-            new AsyncTask<Void, Void, Void>() {
-                @SuppressLint("StaticFieldLeak")
-                @Override
-                protected Void doInBackground(Void... voids) {
-                    TrainingSessionSet set = new TrainingSessionSet(
-                            currentExercise.id, session.id, reps, weight
-                    );
-                    db.trainingSessionSetDao().insertSet(set);
-                    fetchExercisesAndSets();
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Void unused) {
-                    super.onPostExecute(unused);
-                    paintTrainingSessionInfo();
-                }
-            }.execute();
+            insertTrainingSet(reps, weight);
         } else {
             dispatchTakeVideoIntent();
         }
+    }
+
+    private void insertTrainingSet(short reps, double weight) {
+        new AsyncTask<Void, Void, Void>() {
+            @SuppressLint("StaticFieldLeak")
+            @Override
+            protected Void doInBackground(Void... voids) {
+                TrainingSessionSet set = new TrainingSessionSet(
+                        currentExercise.id, session.id, reps, weight
+                );
+                long setId = db.trainingSessionSetDao().insertSet(set);
+
+                // save set's video, if one was taken
+                if(takenVideoUri != null) {
+                    String mimeType = getContext().getContentResolver().getType(takenVideoUri);
+                    System.out.println("mime" + mimeType);
+                    String filename = String.valueOf(setId)+".mp4 ";//+mimeType;
+                    try(
+                        InputStream is = getContext().getContentResolver().openInputStream(takenVideoUri);
+                        FileOutputStream fos = getContext().openFileOutput(filename, Context.MODE_PRIVATE)
+                    ) {
+                        BufferedOutputStream bos = new BufferedOutputStream(fos);
+                        byte[] buf = new byte[1024];
+                        while(is.read(buf)!=-1) {
+                            bos.write(buf);
+                        }
+                        bos.close();
+                        fos.close();
+                        System.out.println("saved " + filename);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                fetchExercisesAndSets();
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void unused) {
+                super.onPostExecute(unused);
+                paintTrainingSessionInfo();
+            }
+        }.execute();
     }
 }

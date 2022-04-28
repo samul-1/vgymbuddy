@@ -1,5 +1,7 @@
 package relational.entities;
 
+import android.net.Uri;
+
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -14,11 +16,13 @@ public class Exercise {
 
     public String name;
     public String description;
+    public Uri imageUri;
 
     public Exercise() {
     }
-    public Exercise(String name) {
+    public Exercise(String name, Uri imageUri) {
         this.name=name;
+        this.imageUri=imageUri;
     }
 
     @Override

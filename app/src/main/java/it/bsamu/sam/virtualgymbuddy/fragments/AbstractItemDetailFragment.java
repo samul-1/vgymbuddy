@@ -11,7 +11,7 @@ import adapter.TrainingDayAdapter;
 
 public abstract class AbstractItemDetailFragment<A extends AbstractCursorAdapter> extends AbstractCursorRecyclerViewFragment<A>{
     public static final String ITEM_ID_ARG = "item_id";
-    long itemId;
+    protected long itemId;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {

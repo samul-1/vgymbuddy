@@ -2,11 +2,11 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "18343edd6a918f002f98cb9c1912e032",
+    "identityHash": "d1f257e6a626a8acd1bc5a7d8638ff38",
     "entities": [
       {
         "tableName": "Exercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT)",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `name` TEXT, `description` TEXT, `imageUri` TEXT)",
         "fields": [
           {
             "fieldPath": "id",
@@ -23,6 +23,12 @@
           {
             "fieldPath": "description",
             "columnName": "description",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "imageUri",
+            "columnName": "imageUri",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -176,7 +182,7 @@
       },
       {
         "tableName": "TrainingSessionSet",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, `videoUri` TEXT, FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "sid",
@@ -211,6 +217,12 @@
           {
             "fieldPath": "notes",
             "columnName": "notes",
+            "affinity": "TEXT",
+            "notNull": false
+          },
+          {
+            "fieldPath": "videoUri",
+            "columnName": "videoUri",
             "affinity": "TEXT",
             "notNull": false
           }
@@ -295,7 +307,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '18343edd6a918f002f98cb9c1912e032')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd1f257e6a626a8acd1bc5a7d8638ff38')"
     ]
   }
 }

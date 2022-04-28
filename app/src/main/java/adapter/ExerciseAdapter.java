@@ -32,24 +32,18 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
         // fetch exercise's data
         String exerciseName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
         long exerciseId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+        String imageUriString = cursor.getString(cursor.getColumnIndexOrThrow("imageUri"));
 
         holder.exerciseNameView.setText(exerciseName);
 
-        File imgFile = new File(
-                holder.exerciseNameView.getContext().getFilesDir(),
-                String.valueOf(exerciseId) + ".jpg"
-        );
         // if the exercise has an image associated to it, set it as card preview
-        if(imgFile.exists()) {
-            Uri exerciseImgUri = Uri.fromFile(
-                    imgFile
-            );
+        if(imageUriString.length()>0) {
+            Uri exerciseImgUri = Uri.parse(imageUriString);
             System.out.println("FOUND IMAGE FOR " + exerciseName + ": " + exerciseImgUri);
             holder.exerciseImgView.setImageURI(exerciseImgUri);
         } else {
             System.out.println("no image for " + exerciseName);
         }
-
     }
 
     class ExerciseViewHolder extends RecyclerView.ViewHolder {
