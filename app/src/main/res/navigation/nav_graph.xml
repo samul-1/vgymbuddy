@@ -14,6 +14,9 @@
         <action
             android:id="@+id/action_Main_to_ProgramDetail"
             app:destination="@id/ProgramDetails" />
+        <action
+            android:id="@+id/action_ExerciseList_to_ExerciseDetail"
+            app:destination="@id/ExerciseDetails" />
     </fragment>
     <fragment
         android:id="@+id/ProgramDetails"
@@ -35,6 +38,27 @@
         tools:layout="@layout/training_day_detail">
         <argument
             android:name="day_id"
+            android:defaultValue="0L"
+            app:argType="long" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ExerciseList"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.ExercisesFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/exercises_fragment">
+
+        <!--<action
+            android:id="@+id/action_ExerciseList_to_ExerciseDetail"
+            app:destination="@id/ExerciseDetails" />-->
+    </fragment>
+    <fragment
+        android:id="@+id/ExerciseDetails"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.ExerciseDetailFragment"
+        android:label="@string/first_fragment_label"
+        tools:layout="@layout/exercise_detail_fragment">
+        <argument
+            android:name="exercise_id"
             android:defaultValue="0L"
             app:argType="long" />
     </fragment>

@@ -175,7 +175,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private void dispatchTakeVideoIntent() {
-        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE);
+        Intent takeVideoIntent = new Intent(MediaStore.ACTION_VIDEO_CAPTURE)
+                .putExtra(
+                        MediaStore.EXTRA_OUTPUT,
+                        getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES)
+                );
         if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         } else {
@@ -311,38 +315,20 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                Uri videoUri = null;
+                Uri videoUri = takenVideoUri;
                 // save set's video, if one was taken
-                if(takenVideoUri != null) {
-                    String mimeType = getContext().getContentResolver().getType(takenVideoUri);
-                    String ext = ".mp4"; // TODO generalize
-                    String filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-                            .format(System.currentTimeMillis()) + ext;
-
-                    // TODO extract
-                    try(
-                        InputStream is = getContext().getContentResolver().openInputStream(takenVideoUri);
-                        FileOutputStream fos = getContext().openFileOutput(filename, Context.MODE_PRIVATE)
-                    ) {
-                        BufferedOutputStream bos = new BufferedOutputStream(fos);
-                        byte[] buf = new byte[1024];
-                        while(is.read(buf)!=-1) {
-                            bos.write(buf);
-                        }
-                        bos.close();
-                        fos.close();
-                        videoUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
-                    } catch (FileNotFoundException e) {
-                        e.printStackTrace();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                /*if(takenVideoUri != null) {
+                    videoUri = saveVideo();
+                }*/
                 TrainingSessionSet set = new TrainingSessionSet(
-                        currentExercise.id, session.id, reps, weight, videoUri
+                        currentExercise.id,
+                        session.id,
+                        reps,
+                        weight,
+                        videoUri
                 );
                 db.trainingSessionSetDao().insertSet(set);
-                fetchExercisesAndSets();
+                startNextSetTimer();
                 return null;
             }
 
@@ -352,5 +338,45 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                 paintTrainingSessionInfo();
             }
         }.execute();
+    }
+
+    private void startNextSetTimer() {
+        // TODO implement
+        fetchExercisesAndSets();
+    }
+
+    private Uri saveVideo() {
+        System.out.println(Environment.getExternalStorageState());
+        String mimeType = getContext().getContentResolver().getType(takenVideoUri);
+        String ext = ".mp4"; // TODO generalize
+
+        // create unique filename
+        String filename = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss.SSS")
+                .format(System.currentTimeMillis()) + ext;
+
+        // get storage dir and create new file
+        File root = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
+        File file = new File(root, filename);
+        System.out.println("saving to " + file.getAbsolutePath());
+
+        try(
+            InputStream is = getContext().getContentResolver().openInputStream(takenVideoUri);
+            FileOutputStream fos =  new FileOutputStream(file)
+        ) {
+            // copy content from takenVideoUri to new file
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            byte[] buf = new byte[1024];
+            while(is.read(buf)!=-1) {
+                bos.write(buf);
+            }
+            bos.close();
+            fos.close();
+            return Uri.fromFile(file);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

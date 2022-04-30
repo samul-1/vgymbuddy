@@ -20,7 +20,9 @@ public interface TrainingSessionSetDao {
     @Insert
     long insertSet(TrainingSessionSet set);
 
-    @Query("SELECT * FROM TrainingSessionSet WHERE exerciseId = :exerciseId")
+    @Query("SELECT repsDone, weightUsed, videoUri, timestamp  FROM TrainingSessionSet " +
+            "INNER JOIN TrainingSession " +
+            "ON trainingSessionId = _id WHERE exerciseId = :exerciseId")
     Cursor getForExercise(long exerciseId);
 
     @Query(

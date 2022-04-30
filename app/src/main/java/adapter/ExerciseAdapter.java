@@ -14,24 +14,23 @@ import java.io.File;
 import it.bsamu.sam.virtualgymbuddy.R;
 
 public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.ExerciseViewHolder> {
-    public ExerciseAdapter(Cursor c) {
-        super(c);
-    }
-    public ExerciseAdapter() {
+    public ExerciseAdapter(ExerciseViewHolderListener listener) {
         super(null);
+        this.listener = listener;
     }
+    private ExerciseViewHolderListener listener;
     @Override
     public ExerciseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View formNameView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.exercise_item, parent, false);
-        return new ExerciseViewHolder(formNameView);
+        return new ExerciseViewHolder(formNameView, listener);
     }
     @Override
     public void onBindViewHolder(ExerciseViewHolder holder, Cursor cursor) {
         // fetch exercise's data
         String exerciseName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
-        long exerciseId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+        holder.exerciseId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
         String imageUriString = cursor.getString(cursor.getColumnIndexOrThrow("imageUri"));
 
         holder.exerciseNameView.setText(exerciseName);
@@ -44,15 +43,31 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
         } else {
             System.out.println("no image for " + exerciseName);
         }
+
     }
 
-    class ExerciseViewHolder extends RecyclerView.ViewHolder {
+    public interface ExerciseViewHolderListener {
+        void navigateToExerciseDetails(long exerciseId);
+    }
+
+    class ExerciseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView exerciseNameView;
         ImageView exerciseImgView;
-        ExerciseViewHolder(View itemView) {
+        long exerciseId;
+        ExerciseViewHolderListener listener;
+
+        ExerciseViewHolder(View itemView, ExerciseViewHolderListener listener) {
             super(itemView);
             exerciseNameView = itemView.findViewById(R.id.exercise_name);
             exerciseImgView = itemView.findViewById(R.id.exercise_img);
+            this.listener = listener;
+
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View view) {
+            listener.navigateToExerciseDetails(exerciseId);
         }
     }
 }

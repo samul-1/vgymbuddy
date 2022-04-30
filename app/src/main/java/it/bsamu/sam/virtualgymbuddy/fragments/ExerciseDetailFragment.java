@@ -1,4 +1,4 @@
-package it.bsamu.sam.virtualgymbuddy;
+package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.ExerciseSetAdapter;
 import adapter.TrainingSessionSetAdapter;
+import it.bsamu.sam.virtualgymbuddy.R;
 import it.bsamu.sam.virtualgymbuddy.fragments.AbstractItemDetailFragment;
 import relational.entities.Exercise;
 
@@ -22,12 +23,12 @@ public class ExerciseDetailFragment extends AbstractItemDetailFragment<ExerciseS
 
     @Override
     protected RecyclerView getRecyclerView(View parent) {
-        return null;
+        return parent.findViewById(R.id.exercise_detail_recyclerview);
     }
 
     @Override
     protected View getMainView(LayoutInflater inflater, ViewGroup container) {
-        return null;
+        return inflater.inflate(R.layout.exercise_detail_fragment, container,false);
     }
 
     @Override

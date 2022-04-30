@@ -20,6 +20,10 @@ public class Exercise {
 
     public Exercise() {
     }
+    public Exercise(String name) {
+        this.name=name;
+        this.imageUri=null;
+    }
     public Exercise(String name, Uri imageUri) {
         this.name=name;
         this.imageUri=imageUri;

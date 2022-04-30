@@ -26,11 +26,21 @@ public class TrainingDayExercise {
 
     public short setsPrescribed;
     public short repsPrescribed;
+    public short restSeconds;
 
     public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed) {
         this.exerciseId = exerciseId;
         this.trainingDayId = trainingDayId;
         this.repsPrescribed = repsPrescribed;
         this.setsPrescribed = setsPrescribed;
+        this.restSeconds = 5;
     }
+
+   /* public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed, short restSeconds) {
+        this.exerciseId = exerciseId;
+        this.trainingDayId = trainingDayId;
+        this.repsPrescribed = repsPrescribed;
+        this.setsPrescribed = setsPrescribed;
+        this.restSeconds = restSeconds;
+    }*/
 }

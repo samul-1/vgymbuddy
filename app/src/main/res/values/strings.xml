@@ -33,6 +33,9 @@
     <string name="rest_day">Nessun allenamento previsto per oggi. Buon riposo!</string>
     <string name="no_active_program">Non hai un programma di allenamento attivo. Per attivare un programma, fai tap lungo su di esso.</string>
 
+    <string name="exercise_set_timestamp_label">Allenamento in data</string>
+
+
     <string name="training_day_exercise_sets">Serie</string>
     <string name="training_day_exercise_reps">Rep</string>
     <string name="training_set_weight">Peso</string>

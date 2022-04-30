@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "d1f257e6a626a8acd1bc5a7d8638ff38",
+    "identityHash": "e1ddea1cd9e5fdcc9a453ad816e1f702",
     "entities": [
       {
         "tableName": "Exercise",
@@ -120,7 +120,7 @@
       },
       {
         "tableName": "TrainingDayExercise",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingDayId` INTEGER NOT NULL, `setsPrescribed` INTEGER NOT NULL, `repsPrescribed` INTEGER NOT NULL, PRIMARY KEY(`exerciseId`, `trainingDayId`), FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`exerciseId` INTEGER NOT NULL, `trainingDayId` INTEGER NOT NULL, `setsPrescribed` INTEGER NOT NULL, `repsPrescribed` INTEGER NOT NULL, `restSeconds` INTEGER NOT NULL, PRIMARY KEY(`exerciseId`, `trainingDayId`), FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "exerciseId",
@@ -143,6 +143,12 @@
           {
             "fieldPath": "repsPrescribed",
             "columnName": "repsPrescribed",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "restSeconds",
+            "columnName": "restSeconds",
             "affinity": "INTEGER",
             "notNull": true
           }
@@ -307,7 +313,7 @@
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'd1f257e6a626a8acd1bc5a7d8638ff38')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1ddea1cd9e5fdcc9a453ad816e1f702')"
     ]
   }
 }

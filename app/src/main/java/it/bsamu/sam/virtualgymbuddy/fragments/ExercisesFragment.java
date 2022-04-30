@@ -1,7 +1,9 @@
 package it.bsamu.sam.virtualgymbuddy.fragments;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -17,8 +19,10 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.room.Room;
@@ -39,7 +43,7 @@ import it.bsamu.sam.virtualgymbuddy.databinding.ExercisesFragmentBinding;
 import relational.AppDb;
 import relational.entities.Exercise;
 
-public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<ExerciseAdapter> implements View.OnClickListener, ExerciseCreationDialog.ExerciseCreationDialogListener {
+public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<ExerciseAdapter> implements View.OnClickListener, ExerciseCreationDialog.ExerciseCreationDialogListener, ExerciseAdapter.ExerciseViewHolderListener {
     private ExercisesFragmentBinding binding;
 
     private FloatingActionButton fab;
@@ -69,6 +73,21 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
 
         fab = (FloatingActionButton) getView().findViewById(R.id.exercises_fragment_fab);
         fab.setOnClickListener(this);
+
+        requestExternalStorageReadPermission();
+    }
+
+    private static final int READ_EXT_STORAGE_PERMISSION_REQUEST = 9999;
+
+    private void requestExternalStorageReadPermission() {
+        if (ContextCompat.checkSelfPermission(
+                getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) !=
+                PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(
+                    new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
+                    READ_EXT_STORAGE_PERMISSION_REQUEST
+            );
+        }
     }
 
 
@@ -132,7 +151,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
 
     @Override
     protected ExerciseAdapter getAdapter() {
-        return new ExerciseAdapter();
+        return new ExerciseAdapter(this);
     }
 
     @Override
@@ -143,5 +162,20 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
     @Override
     protected View getMainView(LayoutInflater inflater, ViewGroup container) {
         return inflater.inflate(R.layout.exercises_fragment, container,false);
+    }
+
+    @Override
+    public void navigateToExerciseDetails(long exerciseId) {
+        Bundle args = new Bundle();
+        args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, exerciseId);
+
+
+        NavHostFragment navHostFragment =
+                (NavHostFragment) getActivity().getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+
+        navHostFragment.getNavController().navigate(
+                R.id.action_ExerciseList_to_ExerciseDetail, args
+        );
     }
 }
