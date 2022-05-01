@@ -17,7 +17,7 @@
         <entry key="app/src/main/res/layout/current_program_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/exercise_card.xml" value="0.1" />
         <entry key="app/src/main/res/layout/exercise_creation_dialog.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/exercise_detail_fragment.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/exercise_detail_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/exercise_set_item.xml" value="0.25" />
         <entry key="app/src/main/res/layout/exercises_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/fragment_first.xml" value="0.1" />
@@ -30,7 +30,7 @@
         <entry key="app/src/main/res/layout/programs_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/todays_training_fragment.xml" value="0.33" />
         <entry key="app/src/main/res/layout/training_day.xml" value="0.2" />
-        <entry key="app/src/main/res/layout/training_day_detail.xml" value="0.4393939393939394" />
+        <entry key="app/src/main/res/layout/training_day_detail.xml" value="0.25" />
         <entry key="app/src/main/res/layout/training_day_exercise_item.xml" value="0.15729166666666666" />
         <entry key="app/src/main/res/layout/training_day_item.xml" value="0.15729166666666666" />
         <entry key="app/src/main/res/layout/training_program_creation_dialog.xml" value="0.151268115942029" />

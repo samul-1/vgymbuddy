@@ -22,8 +22,8 @@ public interface TrainingSessionSetDao {
 
     @Query("SELECT repsDone, weightUsed, videoUri, timestamp  FROM TrainingSessionSet " +
             "INNER JOIN TrainingSession " +
-            "ON trainingSessionId = _id WHERE exerciseId = :exerciseId")
-    Cursor getForExercise(long exerciseId);
+            "ON trainingSessionId = _id WHERE exerciseId = :exerciseId AND videoUri <> \"\"")
+    Cursor getForExerciseWithVideo(long exerciseId);
 
     @Query(
         "SELECT * FROM Exercise LEFT OUTER JOIN TrainingSessionSet " +

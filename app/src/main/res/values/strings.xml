@@ -38,10 +38,12 @@
 
     <string name="training_day_exercise_sets">Serie</string>
     <string name="training_day_exercise_reps">Rep</string>
+    <string name="training_day_exercise_rest">Recupero (secondi)</string>
+    <string name="add_exercise">Aggiungi esercizio</string>
     <string name="training_set_weight">Peso</string>
 
-    <string name="add_set_btn_label">Serie</string>
-    <string name="record_set_video_btn">Fai un video della tua serie</string>
+    <string name="add_set_btn_label">Aggiungi serie</string>
+    <string name="record_set_video_btn">Fai un video alla tua serie</string>
 
     <string name="done_training">Allenamento completato per oggi. Ottimo!</string>
 
@@ -53,6 +55,7 @@
     <string name="toast_exercise_created">Esercizio creato con successo</string>
     <string name="toast_program_created">Programma creato con successo</string>
 
+    <string name="exercise_detail_empty">Le serie di questo esercizio per cui hai registrato un video appariranno qui.</string>
 
 
     <string name="hello_first_fragment">Hello first fragment</string>

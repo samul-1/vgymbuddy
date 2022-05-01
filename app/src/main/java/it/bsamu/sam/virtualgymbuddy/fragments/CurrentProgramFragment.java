@@ -2,6 +2,8 @@ package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -9,19 +11,25 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.provider.MediaStore;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.RecyclerView;
+
+import org.w3c.dom.Text;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -30,6 +38,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
@@ -39,14 +48,17 @@ import java.util.Map;
 
 import adapter.TrainingSessionSetAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
+import it.bsamu.sam.virtualgymbuddy.receiver.AlarmReceiver;
 import relational.entities.Exercise;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
 import relational.entities.TrainingSessionSet;
 
-public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener {
+public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable {
     short todayWeekDayIdx;
+    short currentRestTime;
+    short remainingRestTime;
     long activeProgramId;
     Map<Exercise, List<TrainingSessionSet>> exercisesWithSets;
     TrainingDay trainingDay;
@@ -59,7 +71,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     Button addSetBtn;
     Button recordSetBtn;
     VideoView videoView;
+    TextView restTimerText;
+    TextView currentExerciseTextView;
     Uri takenVideoUri;
+
+    Handler restTimerHandler = new Handler();
 
     static final int REQUEST_VIDEO_CAPTURE = 22222;
 
@@ -95,11 +111,14 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        System.out.println("calling on viewcreated");
         repsInput = view.findViewById(R.id.training_session_reps_input);
         weightInput = view.findViewById(R.id.training_session_weight_input);
         addSetBtn = view.findViewById(R.id.add_set_btn);
         recordSetBtn = view.findViewById(R.id.set_record_video_btn);
         videoView = view.findViewById(R.id.set_video);
+        restTimerText = view.findViewById(R.id.rest_timer_text);
+        currentExerciseTextView = view.findViewById(R.id.session_current_exercise);
 
         recordSetBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
@@ -122,7 +141,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                paintTrainingSessionInfo();
+                paintTrainingSessionInfo(true);
             }
         }.execute();
     }
@@ -168,6 +187,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         }
     }
 
+
+
     enum EmptyStates {
         NO_ACTIVE_PROGRAM,
         REST_DAY,
@@ -192,8 +213,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         if (requestCode == REQUEST_VIDEO_CAPTURE && resultCode == Activity.RESULT_OK) {
             // save video uri for later usage (when saving data for the set to db)
             takenVideoUri = intent.getData();
-
-            System.out.println("URI " + takenVideoUri);
 
             // show video preview
             videoView.setVideoURI(takenVideoUri);
@@ -240,16 +259,14 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         tv.setText(textResId);
     }
 
-    private void setDataSetToCurrentExerciseSets() {
+    private void updateCurrentExercise() {
         /**
-         * sets recyclerview adapter's data set to the sets for the
-         * current exercise in the session
+         * sets the current exercise instance variable to the first exercise for which
+         * not all sets have been completed
          */
-
-        // find the first exercise for which not all sets have been completed
+        System.out.println("updating exercise");
         for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.entrySet()) {
-            System.out.println("EXERCISE entry " + entry.getKey().name);
-           TrainingDayExercise exercise = trainingDayExercises
+            TrainingDayExercise exercise = trainingDayExercises
                     .stream()
                     .filter(e->e.exerciseId==entry.getKey().id)
                     .findFirst()
@@ -257,37 +274,38 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             long sets = exercise.setsPrescribed;
             if(entry.getValue().size() < sets) {
                 currentExercise = entry.getKey();
-                currentExerciseSets.clear();
-                currentExerciseSets.addAll(entry.getValue());
-                break;
+                currentRestTime = exercise.restSeconds;
+                return;
             }
         }
-        System.out.println("Current exercise " + currentExercise + " sets " + currentExerciseSets);
-        // TODO pass info to adapter to create viewholder
-        adapter.notifyDataSetChanged();
+        // no suitable exercise found
+        currentExercise = null;
     }
 
-    private void paintTrainingSessionInfo() {
+    private void setDataSetToCurrentExerciseSets() {
+        /**
+         * sets recyclerview adapter's data set to the sets for the
+         * current exercise in the session
+         */
+        if(currentExercise!=null) {
+            currentExerciseSets.clear();
+            currentExerciseSets.addAll(exercisesWithSets.get(currentExercise));
+            adapter.notifyDataSetChanged();
+        }
+    }
+
+    private void paintTrainingSessionInfo(boolean updateCurrentExercise) {
         if(activeProgramId == 0L) {
             paintEmptyState(EmptyStates.NO_ACTIVE_PROGRAM);
         } else if (session == null) {
             paintEmptyState(EmptyStates.REST_DAY);
         } else {
-            System.out.println("TODAYS EXERCISES");
-            for(TrainingDayExercise e: trainingDayExercises) {
-                System.out.println("id:" + e.exerciseId);
-            }
-
-            System.out.println("TODAYS EXERCISE-SETS");
-            for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.entrySet()) {
-                System.out.println(
-                        "id:" + entry.getKey().id+ "name: " +
-                                entry.getKey().name + "sets: " + entry.getValue());
+            if(updateCurrentExercise) {
+                updateCurrentExercise();
             }
             setDataSetToCurrentExerciseSets();
             if(currentExercise != null) {
-                ((TextView) getActivity()
-                        .findViewById(R.id.session_current_exercise))
+                currentExerciseTextView
                         .setText(currentExercise.name);
             } else {
                 paintEmptyState(EmptyStates.FINISHED);
@@ -315,68 +333,73 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                Uri videoUri = takenVideoUri;
-                // save set's video, if one was taken
-                /*if(takenVideoUri != null) {
-                    videoUri = saveVideo();
-                }*/
                 TrainingSessionSet set = new TrainingSessionSet(
                         currentExercise.id,
                         session.id,
                         reps,
                         weight,
-                        videoUri
+                        takenVideoUri
                 );
                 db.trainingSessionSetDao().insertSet(set);
-                startNextSetTimer();
+                fetchExercisesAndSets();
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                paintTrainingSessionInfo();
+                //updateCurrentExercise();
+                paintTrainingSessionInfo(false);
+                startNextSetTimer();
             }
         }.execute();
     }
 
-    private void startNextSetTimer() {
-        // TODO implement
-        fetchExercisesAndSets();
+
+    private void updateRestTimer() {
+        getActivity().runOnUiThread(() ->
+        {
+            restTimerText.setText(String.valueOf(remainingRestTime--));
+
+            if (remainingRestTime < 0) {
+                restTimerText.setVisibility(View.GONE);
+                setControlsLayoutEnabled(true);
+                updateCurrentExercise();
+                setDataSetToCurrentExerciseSets();
+                paintTrainingSessionInfo(true);
+            } else {
+                restTimerHandler.postDelayed(this, 1000);
+            }
+        });
     }
 
-    private Uri saveVideo() {
-        System.out.println(Environment.getExternalStorageState());
-        String mimeType = getContext().getContentResolver().getType(takenVideoUri);
-        String ext = ".mp4"; // TODO generalize
+    @Override
+    public void run() {
+        updateRestTimer();
+    }
 
-        // create unique filename
-        String filename = new SimpleDateFormat("yyyy-MM-dd-HH:mm:ss.SSS")
-                .format(System.currentTimeMillis()) + ext;
-
-        // get storage dir and create new file
-        File root = getContext().getExternalFilesDir(Environment.DIRECTORY_MOVIES);
-        File file = new File(root, filename);
-        System.out.println("saving to " + file.getAbsolutePath());
-
-        try(
-            InputStream is = getContext().getContentResolver().openInputStream(takenVideoUri);
-            FileOutputStream fos =  new FileOutputStream(file)
-        ) {
-            // copy content from takenVideoUri to new file
-            BufferedOutputStream bos = new BufferedOutputStream(fos);
-            byte[] buf = new byte[1024];
-            while(is.read(buf)!=-1) {
-                bos.write(buf);
-            }
-            bos.close();
-            fos.close();
-            return Uri.fromFile(file);
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void setControlsLayoutEnabled(boolean enabled) {
+        LinearLayout layout = getActivity().findViewById(R.id.training_session_controls_container);
+        for (int i = 0; i < layout.getChildCount(); i++) {
+            View child = layout.getChildAt(i);
+            child.setEnabled(enabled);
         }
-        return null;
+    }
+
+
+    private void startNextSetTimer() {
+       restTimerText.setVisibility(View.VISIBLE);
+       setControlsLayoutEnabled(false);
+        remainingRestTime = currentRestTime;
+        restTimerHandler.postDelayed(this, 0);
+
+
+        /*AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
+        PendingIntent pi = PendingIntent.getBroadcast(getContext(),TIMER_UP,alarmIntent,0)
+        am.setAlarmClock(
+                new AlarmManager.AlarmClockInfo(getAlarmTargetTime().toEpochMilli(), pi),
+                pi
+        );*/
     }
 }

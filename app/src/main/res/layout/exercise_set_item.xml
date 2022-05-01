@@ -14,14 +14,22 @@
     app:cardUseCompatPadding="true"
     app:cardElevation="2dp"
     >
-    <LinearLayout
-        android:orientation="vertical"
+    <GridLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:rowCount="5"
+        android:columnCount="2"
+        >
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
+            android:layout_row="0"
+            android:layout_rowSpan="1"
+            android:layout_column="0"
+            android:layout_columnSpan="2"
+            android:layout_marginBottom="5dp"
             >
             <TextView
                 android:layout_width="wrap_content"
@@ -37,18 +45,22 @@
         </androidx.appcompat.widget.LinearLayoutCompat>
 
         <VideoView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:id="@+id/set_item_video"
+            android:layout_height="118dp"
+            android:layout_width="match_parent"
+            android:layout_columnSpan="2"
+            android:layout_rowSpan="3"
             android:layout_gravity="center"
-            android:layout_weight="1"
+            android:layout_rowWeight="1"
         />
         <LinearLayout
+            android:layout_marginTop="5dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:layout_rowWeight="1"
             android:orientation="horizontal"
-            android:gravity="bottom"
-            android:layout_weight="1"
             >
             <TextView
                 android:textColor="@color/design_default_color_primary"
@@ -84,17 +96,6 @@
                 android:layout_height="wrap_content"
                 android:text="kg" />
         </LinearLayout>
-
-        <!--<TextView
-            style="@style/CardContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/training_day_exercise_sets"></TextView>
-        <TextView
-            style="@style/CardContent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/training_day_exercise_reps"></TextView>-->
-    </LinearLayout>
+    </GridLayout>
 
 </com.google.android.material.card.MaterialCardView>

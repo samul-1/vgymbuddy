@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".fragments.CurrentProgramFragment"
     android:orientation="vertical"
+    android:paddingHorizontal="10dp"
     android:paddingTop="30dp"
     >
     <androidx.appcompat.widget.LinearLayoutCompat
@@ -34,79 +35,102 @@
         android:dividerHeight="1.5sp"
         android:paddingVertical="7.5sp"
         android:paddingHorizontal="5.0sp"
-        >
-    </androidx.recyclerview.widget.RecyclerView>
+    />
 
     <VideoView
         android:id="@+id/set_video"
         android:layout_gravity="center"
         android:layout_marginTop="50dp"
         android:visibility="gone"
-        android:layout_width="150dp"
-        android:layout_height="80dp" />
+        android:layout_width="match_parent"
+        android:layout_height="10dp"
+    />
 
-    <Button
-        android:layout_gravity="center"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/set_record_video_btn"
-        android:text="@string/record_set_video_btn" />
-
-    <com.google.android.flexbox.FlexboxLayout
-        android:id="@+id/training_session_controls_container"
+    <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:alignContent="center"
-        app:alignItems="center"
-        app:flexWrap="wrap"
-        app:justifyContent="space_evenly">
-            <LinearLayout
+        android:id="@+id/rest_timer_text"
+    />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="bottom"
+        android:id="@+id/training_session_controls_container"
+>
+        <com.google.android.material.button.MaterialButton
+            android:layout_gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:icon="@drawable/ic_baseline_videocam_24"
+            app:iconGravity="textStart"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:id="@+id/set_record_video_btn"
+            android:text="@string/record_set_video_btn"
+        />
+        <GridLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:columnCount="5"
+            android:orientation="horizontal"
+            android:paddingVertical="15dp"
+            android:rowCount="1">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_columnSpan="2"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill_horizontal"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-                <EditText
-                android:id="@+id/training_session_reps_input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:layout_marginRight="5dp"
                 android:hint="@string/training_day_exercise_reps"
-                android:inputType="number"
-                android:maxLength="3"
-                android:paddingHorizontal="10dp"
-                android:paddingVertical="5dp"></EditText>
-                <TextView
-                    android:layout_width="wrap_content"
+                >
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/training_session_reps_input"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:labelFor="@id/training_session_reps_input"
-                    android:text=" rep "></TextView>
-                <EditText
+                    android:inputType="number"
+                    android:maxLength="3" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="1"
+                android:layout_gravity="center"
+                android:paddingRight="7dp"
+                android:paddingLeft="4dp"
+                android:textSize="24dp"
+                android:text="\@" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="2"
+                android:layout_columnWeight="1"
+                android:layout_gravity="fill_horizontal"
+                android:hint="@string/training_set_weight"
+                app:suffixText="kg"
+                app:expandedHintEnabled="false"
+                >
+
+                <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/training_session_weight_input"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:hint="@string/training_set_weight"
                     android:inputType="numberDecimal"
-                    android:maxLength="5"
-                    android:paddingHorizontal="10dp"
-                    android:paddingVertical="5dp"></EditText>
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:labelFor="@id/training_session_weight_input"
-                    android:text=" kg "></TextView>
-            </LinearLayout>
-        <Button
+                    android:maxLength="6"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+        </GridLayout>
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/add_set_btn"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_set_btn_label"
-            android:drawableLeft="@drawable/ic_baseline_add_24"
-            android:drawableTint="@color/white"
-            />
-    </com.google.android.flexbox.FlexboxLayout>
+            app:icon="@drawable/ic_baseline_add_24"
+           app:iconGravity="textStart"
+        />
 
+    </LinearLayout>
 
 
     <LinearLayout
@@ -138,17 +162,4 @@
 
     </LinearLayout>
 
-
-
-
-   <!--<TextView
-        android:id="@+id/textview_first"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="380dp"
-        android:text="@string/hello_first_fragment"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />-->
 </LinearLayout>
