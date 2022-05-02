@@ -165,7 +165,8 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
     }
 
     @Override
-    public void navigateToExerciseDetails(long exerciseId) {
+    public void onExerciseClick(long exerciseId, String __) {
+        // navigate to the detail fragment for selected exercise
         Bundle args = new Bundle();
         args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, exerciseId);
 

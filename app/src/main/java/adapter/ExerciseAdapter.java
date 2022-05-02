@@ -29,31 +29,29 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
     @Override
     public void onBindViewHolder(ExerciseViewHolder holder, Cursor cursor) {
         // fetch exercise's data
-        String exerciseName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+        holder.exerciseName = cursor.getString(cursor.getColumnIndexOrThrow("name"));
         holder.exerciseId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
         String imageUriString = cursor.getString(cursor.getColumnIndexOrThrow("imageUri"));
 
-        holder.exerciseNameView.setText(exerciseName);
+        holder.exerciseNameView.setText(holder.exerciseName);
 
         // if the exercise has an image associated to it, set it as card preview
         if(imageUriString.length()>0) {
             Uri exerciseImgUri = Uri.parse(imageUriString);
-            System.out.println("FOUND IMAGE FOR " + exerciseName + ": " + exerciseImgUri);
             holder.exerciseImgView.setImageURI(exerciseImgUri);
-        } else {
-            System.out.println("no image for " + exerciseName);
         }
 
     }
 
     public interface ExerciseViewHolderListener {
-        void navigateToExerciseDetails(long exerciseId);
+        void onExerciseClick(long exerciseId, String exerciseName);
     }
 
     class ExerciseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView exerciseNameView;
         ImageView exerciseImgView;
         long exerciseId;
+        String exerciseName;
         ExerciseViewHolderListener listener;
 
         ExerciseViewHolder(View itemView, ExerciseViewHolderListener listener) {
@@ -67,7 +65,8 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
 
         @Override
         public void onClick(View view) {
-            listener.navigateToExerciseDetails(exerciseId);
+            System.out.println("ID " + exerciseId + " NAME " + exerciseName);
+            listener.onExerciseClick(exerciseId, exerciseName);
         }
     }
 }

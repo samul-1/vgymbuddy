@@ -13,18 +13,21 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.TrainingDayExerciseAdapter;
+import dialog.ExerciseSelectionDialog;
 import it.bsamu.sam.virtualgymbuddy.R;
 import relational.entities.TrainingDay;
 import it.bsamu.sam.virtualgymbuddy.databinding.TrainingDayDetailBinding;
 import relational.entities.TrainingDayExercise;
 
-public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayExerciseAdapter> {
+public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayExerciseAdapter> implements ExerciseSelectionDialog.ExerciseSelectionDialogListener {
     private TrainingDay trainingDay;
-    TextView title;
-    Button addExerciseBtn;
+    TextView title, selectedExerciseName;
+    Button addExerciseBtn, saveExerciseBtn;
+    ViewGroup addExerciseControls;
     private TrainingDayDetailBinding binding;
     long chosenExerciseId;
     EditText setsInput, repsInput;
+    ExerciseSelectionDialog dialog;
 
     @Override
     protected TrainingDayExerciseAdapter getAdapter() {
@@ -65,12 +68,23 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
         binding = TrainingDayDetailBinding.inflate(inflater, container, false);
 
         title = superview.findViewById(R.id.training_day_detail_position_title);
+        selectedExerciseName = superview.findViewById(R.id.selected_exercise);
         addExerciseBtn = superview.findViewById(R.id.add_training_day_exercise_btn);
+        saveExerciseBtn = superview.findViewById(R.id.save_training_day_exercise_btn);
         setsInput = superview.findViewById(R.id.training_day_exercise_input_sets);
         repsInput = superview.findViewById(R.id.training_day_exercise_input_reps);
+        addExerciseControls = superview.findViewById(R.id.training_day_exercise_controls);
 
-        addExerciseBtn.setOnClickListener((__)->insertExercise());
+        addExerciseBtn.setOnClickListener((__)->chooseExercise());
+        saveExerciseBtn.setOnClickListener((__)->insertExercise());
         return superview;
+    }
+
+    private void chooseExercise() {
+        dialog = dialog == null ? new ExerciseSelectionDialog(this) : dialog;
+        dialog.show(
+                getActivity().getSupportFragmentManager(), "exercise-selection-dialog"
+        );
     }
 
     private void insertExercise() {
@@ -120,5 +134,13 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
                 return null;
             }
         }.execute();
+    }
+
+    @Override
+    public void onExerciseSelection(long exerciseId, String exerciseName) {
+        dialog.dismiss();
+        selectedExerciseName.setText(exerciseName);
+        addExerciseBtn.setVisibility(View.GONE);
+        addExerciseControls.setVisibility(View.VISIBLE);
     }
 }

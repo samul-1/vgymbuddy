@@ -386,6 +386,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private void setControlsLayoutEnabled(boolean enabled) {
+        // TODO refactor to make recursive
+        // TODO extract in a Utils class
         LinearLayout layout = getActivity().findViewById(R.id.training_session_controls_container);
         for (int i = 0; i < layout.getChildCount(); i++) {
             View child = layout.getChildAt(i);
