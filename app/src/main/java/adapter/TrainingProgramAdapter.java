@@ -89,6 +89,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
 
         @Override
         public void onClick(View view) {
+            System.out.println("clicked");
             listener.navigateToProgramDetails(programId);
         }
 

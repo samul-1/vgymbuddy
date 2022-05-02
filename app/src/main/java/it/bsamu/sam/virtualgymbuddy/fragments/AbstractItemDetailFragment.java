@@ -5,11 +5,12 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.AbstractCursorAdapter;
 import adapter.TrainingDayAdapter;
 
-public abstract class AbstractItemDetailFragment<A extends AbstractCursorAdapter> extends AbstractCursorRecyclerViewFragment<A>{
+public abstract class AbstractItemDetailFragment<A extends RecyclerView.Adapter> extends AbstractCursorRecyclerViewFragment<A>{
     public static final String ITEM_ID_ARG = "item_id";
     protected long itemId;
 

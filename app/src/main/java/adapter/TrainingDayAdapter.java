@@ -10,28 +10,37 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.util.List;
+
 import it.bsamu.sam.virtualgymbuddy.R;
-public class TrainingDayAdapter extends AbstractCursorAdapter<TrainingDayAdapter.TrainingDayViewHolder> {
+import relational.entities.TrainingDay;
+
+public class TrainingDayAdapter extends RecyclerView.Adapter<TrainingDayAdapter.TrainingDayViewHolder> {
     protected TrainingDayViewHolderListener listener;
     private Context context;
+    List<TrainingDay> dataset;
 
-    public TrainingDayAdapter(TrainingDayViewHolderListener listener, Context context) {
-        super(null);
+    public TrainingDayAdapter(TrainingDayViewHolderListener listener, Context context, List<TrainingDay> dataset) {
+        this.dataset = dataset;
         this.listener = listener;
         this.context = context;
         System.out.println("instantiating adapter");
     }
 
-
+    @Override
+    public int getItemCount() {
+        return dataset.size();
+    }
 
     public interface TrainingDayViewHolderListener {
         void navigateToTrainingDayDetails(long dayId);
     }
 
     @Override
-    public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, Cursor cursor) {
-        short dayOfWeekIdx = cursor.getShort(cursor.getColumnIndexOrThrow("dayOfWeek"));
-        long dayId = cursor.getLong(cursor.getColumnIndexOrThrow("_id"));
+    public void onBindViewHolder(TrainingDayAdapter.TrainingDayViewHolder holder, int position) {
+        TrainingDay day = dataset.get(position);
+        short dayOfWeekIdx = day.dayOfWeek;
+        long dayId = day.id;
 
         String[] daysOfWeek = context.getResources().getStringArray(R.array.days_of_week);
         holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx-1]);
@@ -49,7 +58,6 @@ public class TrainingDayAdapter extends AbstractCursorAdapter<TrainingDayAdapter
 
     class TrainingDayViewHolder extends RecyclerView.ViewHolder {
         TextView trainingDayPosition;
-        long dayId;
         TrainingDayViewHolder(View itemView) {
             super(itemView);
             trainingDayPosition = itemView.findViewById(R.id.training_day_position);

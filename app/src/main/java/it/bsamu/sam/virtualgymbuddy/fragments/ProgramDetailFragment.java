@@ -19,6 +19,10 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import adapter.TrainingDayAdapter;
 import it.bsamu.sam.virtualgymbuddy.R;
@@ -33,9 +37,12 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     private TextView programDesc;
     private Button addDayBtn;
 
+    List<String> weekDays;
+
     private ArrayAdapter<String> dropdownAdapter;
     Spinner dayOfWeekDropdown;
     ArrayList<String> daysOfWeek;
+    List<TrainingDay> trainingDays = new LinkedList<>();
 
 
     @Override
@@ -48,6 +55,10 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
         programDesc = superview.findViewById(R.id.program_detail_description);
         addDayBtn = superview.findViewById(R.id.add_training_day_btn);
         dayOfWeekDropdown = superview.findViewById(R.id.day_of_week_selection);
+
+        weekDays = Arrays.asList(
+                getResources().getStringArray(R.array.days_of_week)
+        );
 
         setUsableDaysOfWeek();
         dropdownAdapter = new ArrayAdapter<>(
@@ -64,14 +75,27 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
     @NonNull
     private void setUsableDaysOfWeek() {
+        List<Short> usedDays = trainingDays
+                .stream()
+                .map(t->t.dayOfWeek)
+                .collect(Collectors.toList());
+
+        // filter out days for which a training day exists
+        List<String> usableDays =
+                IntStream.range(1, weekDays.size()+1)
+                .filter(i-> !usedDays.contains((short)i))
+                .mapToObj(i->weekDays.get(i-1))
+                .collect(Collectors.toList());
+
         if(daysOfWeek == null) {
             daysOfWeek = new ArrayList<>(
-                    Arrays.asList(
-                            getResources().getStringArray(R.array.days_of_week)
-                    )
+                usableDays
             );
+        } else {
+            daysOfWeek.clear();
+            daysOfWeek.addAll(usableDays);
+            dropdownAdapter.notifyDataSetChanged();
         }
-        // TODO remove days that have already been used
     }
 
 
@@ -99,7 +123,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
     @Override
     protected TrainingDayAdapter getAdapter() {
-        return new TrainingDayAdapter(this, getContext());
+        return new TrainingDayAdapter(this, getContext(), trainingDays);
     }
 
     @Override
@@ -118,18 +142,19 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                short selectedDayIdx = (short)(dayOfWeekDropdown.getSelectedItemPosition()+1);
+                short selectedDayIdx = (short)(weekDays.indexOf(dayOfWeekDropdown.getSelectedItem())+1);
                 // to allow max one training day per day of week, remove selected day from dropdown
 
                 db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, selectedDayIdx));
-                cursor = db.trainingDayDao().getForProgram(itemId);
+                trainingDays.clear();
+                trainingDays.addAll(db.trainingDayDao().getForProgram(itemId));
                 return null;
             }
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
+                setUsableDaysOfWeek();
             }
         }.execute();
     }
@@ -140,13 +165,12 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                cursor = db.trainingDayDao().getForProgram(itemId);
+                trainingDays.addAll(db.trainingDayDao().getForProgram(itemId));
                 return null;
             }
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
             }
         }.execute();

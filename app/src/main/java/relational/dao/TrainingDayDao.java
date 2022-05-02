@@ -21,7 +21,7 @@ public interface TrainingDayDao {
     TrainingDay getById(long id);
 
     @Query("SELECT * FROM TrainingDay WHERE trainingProgramId = :programId ORDER BY dayOfWeek")
-    Cursor getForProgram(long programId);
+    List<TrainingDay> getForProgram(long programId);
 
     @Query("SELECT * FROM TrainingDay WHERE trainingProgramId = :programId AND dayOfWeek = :dayOfWeek")
     TrainingDay getForProgramAndDayOfWeek(long programId, short dayOfWeek);
