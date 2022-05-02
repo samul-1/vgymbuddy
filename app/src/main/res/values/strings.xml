@@ -43,7 +43,8 @@
     <string name="training_set_weight">Peso</string>
 
     <string name="add_set_btn_label">Aggiungi serie</string>
-    <string name="record_set_video_btn">Fai un video alla tua serie</string>
+    <string name="record_set_video_btn">Fai un video</string>
+    <string name="count_reps_set_btn">Conta rep</string>
 
     <string name="done_training">Allenamento completato per oggi. Ottimo!</string>
 

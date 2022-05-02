@@ -7,24 +7,28 @@
     tools:context=".fragments.CurrentProgramFragment"
     android:orientation="vertical"
     android:paddingHorizontal="10dp"
-    android:paddingTop="30dp"
+    android:paddingTop="5dp"
     >
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
+        <!--<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/session_previous_exercise" />-->
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/session_previous_exercise" />
-        <TextView
+            style="@style/FragmentTitle"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:id="@+id/session_current_exercise"
+            android:text="Bench press"/>
+       <!-- <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/session_current_exercise" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/session_next_exercise" />
+            android:id="@+id/session_next_exercise" />-->
     </androidx.appcompat.widget.LinearLayoutCompat>
 
     <androidx.recyclerview.widget.RecyclerView
@@ -37,38 +41,70 @@
         android:paddingHorizontal="5.0sp"
     />
 
-    <VideoView
-        android:id="@+id/set_video"
-        android:layout_gravity="center"
-        android:layout_marginTop="50dp"
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:scaleType="centerInside"
         android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="10dp"
-    />
-
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/rest_timer_text"
-    />
+        android:adjustViewBounds="true"
+        android:id="@+id/set_video_thumbnail" />
 
     <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/rest_timer_container"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+        android:layout_weight="1"
+        >
+        <ImageView
+            android:layout_marginRight="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_timer_24" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/rest_timer_text"
+            android:text="5"
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_marginBottom="20dp"
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:gravity="bottom"
         android:id="@+id/training_session_controls_container"
 >
-        <com.google.android.material.button.MaterialButton
-            android:layout_gravity="center"
+        <com.google.android.flexbox.FlexboxLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:icon="@drawable/ic_baseline_videocam_24"
-            app:iconGravity="textStart"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-            android:id="@+id/set_record_video_btn"
-            android:text="@string/record_set_video_btn"
-        />
+            app:justifyContent="space_between"
+            android:id="@+id/set_aux_btn_container"
+            >
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:icon="@drawable/ic_baseline_videocam_24"
+                app:iconGravity="textStart"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/set_record_video_btn"
+                android:text="@string/record_set_video_btn"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:id="@+id/set_count_reps_btn"
+                android:text="@string/count_reps_set_btn"
+                />
+        </com.google.android.flexbox.FlexboxLayout>
         <GridLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -90,6 +126,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="number"
+                    android:windowSoftInputMode="adjustPan"
                     android:maxLength="3" />
             </com.google.android.material.textfield.TextInputLayout>
 
@@ -117,6 +154,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:inputType="numberDecimal"
+                    android:windowSoftInputMode="adjustPan"
                     android:maxLength="6"
                     />
             </com.google.android.material.textfield.TextInputLayout>

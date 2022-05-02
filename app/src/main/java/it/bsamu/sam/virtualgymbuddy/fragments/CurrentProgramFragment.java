@@ -29,6 +29,8 @@ import androidx.annotation.Nullable;
 import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+
 import org.w3c.dom.Text;
 
 import java.io.BufferedOutputStream;
@@ -70,8 +72,9 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     EditText weightInput;
     Button addSetBtn;
     Button recordSetBtn;
-    VideoView videoView;
+    ImageView videoThumbnail;
     TextView restTimerText;
+    ViewGroup restTimeLayout, setAuxButtonsLayout;
     TextView currentExerciseTextView;
     Uri takenVideoUri;
 
@@ -116,8 +119,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         weightInput = view.findViewById(R.id.training_session_weight_input);
         addSetBtn = view.findViewById(R.id.add_set_btn);
         recordSetBtn = view.findViewById(R.id.set_record_video_btn);
-        videoView = view.findViewById(R.id.set_video);
+        videoThumbnail = view.findViewById(R.id.set_video_thumbnail);
         restTimerText = view.findViewById(R.id.rest_timer_text);
+        restTimeLayout = view.findViewById(R.id.rest_timer_container);
+        setAuxButtonsLayout = view.findViewById(R.id.set_aux_btn_container);
         currentExerciseTextView = view.findViewById(R.id.session_current_exercise);
 
         recordSetBtn.setOnClickListener(this);
@@ -214,13 +219,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             // save video uri for later usage (when saving data for the set to db)
             takenVideoUri = intent.getData();
 
-            // show video preview
-            videoView.setVideoURI(takenVideoUri);
-            videoView.setVisibility(View.VISIBLE);
-            // play mute video
-            videoView.seekTo(0);
-            videoView.setOnPreparedListener((mp)->mp.setVolume(0,0));
-            videoView.start();
+            // hide auxiliary buttons
+            setAuxButtonsLayout.setVisibility(View.GONE);
+
+            // show video thumbnail
+            Glide
+                .with(getActivity())
+                .load(takenVideoUri)
+                .into(videoThumbnail);
+            videoThumbnail.setVisibility(View.VISIBLE);
         }
     }
 
@@ -362,7 +369,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             restTimerText.setText(String.valueOf(remainingRestTime--));
 
             if (remainingRestTime < 0) {
-                restTimerText.setVisibility(View.GONE);
+                restTimeLayout.setVisibility(View.GONE);
                 setControlsLayoutEnabled(true);
                 updateCurrentExercise();
                 setDataSetToCurrentExerciseSets();
@@ -388,18 +395,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
 
     private void startNextSetTimer() {
-       restTimerText.setVisibility(View.VISIBLE);
+       restTimeLayout.setVisibility(View.VISIBLE);
+       videoThumbnail.setVisibility(View.GONE);
        setControlsLayoutEnabled(false);
         remainingRestTime = currentRestTime;
         restTimerHandler.postDelayed(this, 0);
-
-
-        /*AlarmManager am = (AlarmManager)getActivity().getSystemService(Context.ALARM_SERVICE);
-        Intent alarmIntent = new Intent(getActivity(), AlarmReceiver.class);
-        PendingIntent pi = PendingIntent.getBroadcast(getContext(),TIMER_UP,alarmIntent,0)
-        am.setAlarmClock(
-                new AlarmManager.AlarmClockInfo(getAlarmTargetTime().toEpochMilli(), pi),
-                pi
-        );*/
     }
 }
