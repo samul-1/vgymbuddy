@@ -7,6 +7,10 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -49,6 +53,7 @@ import java.util.List;
 import java.util.Map;
 
 import adapter.TrainingSessionSetAdapter;
+import dialog.RepCounterDialog;
 import it.bsamu.sam.virtualgymbuddy.R;
 import it.bsamu.sam.virtualgymbuddy.receiver.AlarmReceiver;
 import relational.entities.Exercise;
@@ -57,7 +62,7 @@ import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
 import relational.entities.TrainingSessionSet;
 
-public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable {
+public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable, RepCounterDialog.RepCounterDialogListener {
     short todayWeekDayIdx;
     short currentRestTime;
     short remainingRestTime;
@@ -70,13 +75,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     List<TrainingSessionSet> currentExerciseSets = new LinkedList<>();
     EditText repsInput;
     EditText weightInput;
-    Button addSetBtn;
-    Button recordSetBtn;
+    Button addSetBtn, recordSetBtn, countRepsBtn;
     ImageView videoThumbnail;
     TextView restTimerText;
     ViewGroup restTimeLayout, setAuxButtonsLayout;
     TextView currentExerciseTextView;
     Uri takenVideoUri;
+    RepCounterDialog repCounterDialog;
+
+    private double magnitudePrevious = 0;
 
     Handler restTimerHandler = new Handler();
 
@@ -118,6 +125,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         repsInput = view.findViewById(R.id.training_session_reps_input);
         weightInput = view.findViewById(R.id.training_session_weight_input);
         addSetBtn = view.findViewById(R.id.add_set_btn);
+        countRepsBtn = view.findViewById(R.id.set_count_reps_btn);
         recordSetBtn = view.findViewById(R.id.set_record_video_btn);
         videoThumbnail = view.findViewById(R.id.set_video_thumbnail);
         restTimerText = view.findViewById(R.id.rest_timer_text);
@@ -126,6 +134,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         currentExerciseTextView = view.findViewById(R.id.session_current_exercise);
 
         recordSetBtn.setOnClickListener(this);
+        countRepsBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
 
     }
@@ -192,6 +201,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         }
     }
 
+    @Override
+    public void onStopSet(int repCount) {
+        repCounterDialog.dismiss();
+        repsInput.setText(String.valueOf(repCount));
+    }
 
 
     enum EmptyStates {
@@ -330,9 +344,20 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
 
             insertTrainingSet(reps, weight);
-        } else {
+        } else if(v==recordSetBtn) {
             dispatchTakeVideoIntent();
+        } else if (v==countRepsBtn) {
+            countReps();
+        } else {
+            System.out.println("?????" + v);
         }
+    }
+
+    private void countReps() {
+        repCounterDialog = repCounterDialog == null ?
+                new RepCounterDialog(this) :
+                repCounterDialog;
+        repCounterDialog.show(getActivity().getSupportFragmentManager(), "rep-counter-dialog");
     }
 
     private void insertTrainingSet(short reps, double weight) {

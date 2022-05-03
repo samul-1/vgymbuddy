@@ -90,7 +90,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     private void insertExercise() {
         short sets = Short.valueOf(setsInput.getText().toString());
         short reps = Short.valueOf(repsInput.getText().toString());
-        chosenExerciseId = 4; // TODO implement exercise choice
         System.out.println("E " + chosenExerciseId + " R " + reps + " S " + sets);
 
         new AsyncTask<Void,Void,Void>(){
@@ -140,6 +139,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     public void onExerciseSelection(long exerciseId, String exerciseName) {
         dialog.dismiss();
         selectedExerciseName.setText(exerciseName);
+        chosenExerciseId = exerciseId;
         addExerciseBtn.setVisibility(View.GONE);
         addExerciseControls.setVisibility(View.VISIBLE);
     }

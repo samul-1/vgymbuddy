@@ -28,6 +28,9 @@
     <string name="exercise_selection_title">Seleziona esercizio</string>
 
 
+    <string name="rep_counter_text">Hai fatto</string>
+    <string name="stop_set">Termina serie</string>
+
     <string name="dialog_program_title">Crea programma di allenamento</string>
     <string name="dialog_program_name">Nome programma</string>
     <string name="dialog_program_desc">Descrizione</string>

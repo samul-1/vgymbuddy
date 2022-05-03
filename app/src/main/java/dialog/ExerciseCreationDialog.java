@@ -98,23 +98,16 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
 
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        listener.onCreateExercise(
-                                ExerciseCreationDialog.this,
-                                ((EditText)getDialog().
-                                        findViewById(R.id.exercise_name_input))
-                                        .getText().toString(),
-                                pickedImg
-                        );
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        ExerciseCreationDialog.this.getDialog().cancel();
-                    }
-                }).setTitle(R.string.dialog_exercise_title);
+                .setPositiveButton(R.string.create, (dialog, id) -> listener.onCreateExercise(
+                        ExerciseCreationDialog.this,
+                        ((EditText)getDialog().
+                                findViewById(R.id.exercise_name_input))
+                                .getText().toString(),
+                        pickedImg
+                ))
+                .setNegativeButton(R.string.cancel, (dialog, id) -> ExerciseCreationDialog
+                        .this.getDialog().cancel())
+                .setTitle(R.string.dialog_exercise_title);
         return builder.create();
     }
 }
