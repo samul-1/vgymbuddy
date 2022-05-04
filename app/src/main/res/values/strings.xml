@@ -29,6 +29,7 @@
 
 
     <string name="rep_counter_text">Hai fatto</string>
+    <string name="rep_counter_instructions">Posiziona il dispositivo sullo stack di pesi del macchinario che stai usando o, se stai usando i pesi liberi, all\'interno di un armband.</string>
     <string name="stop_set">Termina serie</string>
 
     <string name="dialog_program_title">Crea programma di allenamento</string>

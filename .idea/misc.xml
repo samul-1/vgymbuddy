@@ -11,7 +11,10 @@
         <entry key="app/src/main/res/drawable/ic_baseline_fitness_center_24.xml" value="0.1" />
         <entry key="app/src/main/res/drawable/ic_baseline_sentiment_very_dissatisfied_24.xml" value="0.1445" />
         <entry key="app/src/main/res/drawable/ic_baseline_single_bed_24.xml" value="0.1445" />
+        <entry key="app/src/main/res/drawable/ic_baseline_weight_stack_24.xml" value="0.1435" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.148" />
+        <entry key="app/src/main/res/drawable/ic_sharp_line_phone_on_weight_24.xml" value="0.16" />
+        <entry key="app/src/main/res/drawable/ic_twotone_phone_android_24.xml" value="0.1435" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/content_main.xml" value="0.1" />
         <entry key="app/src/main/res/layout/current_program_fragment.xml" value="0.33" />

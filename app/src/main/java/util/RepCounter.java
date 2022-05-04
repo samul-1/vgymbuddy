@@ -11,8 +11,10 @@ public class RepCounter {
 
     private static RepCounter instance;
 
-    private long lastEventTimestamp;
-    private double previousMagnitude;
+    private long lastEventTimestamp = 0L;
+    private boolean lastReadingWasRep = false;
+
+    private double previousMagnitude = 0d;
     private SensorEventListener repListener;
     private SensorManager sm;
     private Sensor sensor;
@@ -35,6 +37,9 @@ public class RepCounter {
         if(repListener != null) {
             sm.unregisterListener(repListener);
             repListener = null;
+            lastReadingWasRep = false;
+            lastEventTimestamp = 0L;
+            previousMagnitude = 0d;
         }
     }
 
@@ -61,23 +66,48 @@ public class RepCounter {
     }
 
     private boolean isRep(SensorEvent sensorEvent) {
-        if(sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/1.8) {
+        if(
+            // discard the very first reading
+            lastEventTimestamp == 0L || previousMagnitude == 0d ||
             // discard new events if they are too close to the last recorded
+            sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/2 ||
+            // discard new event if the last valid reading was a rep and not enough time has
+            // passed to avoid counting positive + negative portions of a rep as 2 distinct reps
+            lastReadingWasRep && sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/1.2
+        ) {
+            if(lastEventTimestamp == 0L) {
+                previousMagnitude = getMagnitude(sensorEvent);
+                lastEventTimestamp = sensorEvent.timestamp;
+            }
             return false;
         }
 
         lastEventTimestamp = sensorEvent.timestamp;
 
+        double magnitude = getMagnitude(sensorEvent);
+        double delta = magnitude - previousMagnitude;
+
+        previousMagnitude = magnitude;
+
+        boolean isRep = delta > THRESHOLD;
+        lastReadingWasRep = isRep;
+
+        if(isRep) {
+            System.out.println(delta + ", p " + previousMagnitude + ", c " + magnitude);
+        }
+
+        return isRep;
+    }
+
+    private double getMagnitude(SensorEvent sensorEvent) {
         float accX = sensorEvent.values[0];
         float accY = sensorEvent.values[1];
         float accZ = sensorEvent.values[2];
 
-        double magnitude = Math.sqrt(accX*accX + accY*accY + accZ*accZ);
-        double delta = magnitude - previousMagnitude;
-        previousMagnitude = magnitude;
-
-        System.out.println(delta>THRESHOLD);
-        return delta>THRESHOLD;
+        double magnitude = Math.sqrt(
+                accX*accX + accY*accY + accZ*accZ
+        );
+        return magnitude;
     }
 
     public static RepCounter getInstance(Context context) {
@@ -91,6 +121,5 @@ public class RepCounter {
             return instance;
         }
     }
-
 
 }
