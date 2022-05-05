@@ -67,9 +67,15 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        System.out.println("RESUME");
         // get all instances of the entity for this fragment from the db
         asyncFetchMainEntity();
-        return view;
     }
 
     @Override

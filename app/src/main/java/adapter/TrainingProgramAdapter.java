@@ -82,6 +82,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
             editBtn = itemView.findViewById(R.id.edit_program_btn);
             activeChip = itemView.findViewById(R.id.active_program_chip);
             this.listener = listener;
+            System.out.println("ACTIVE PROGRAM ID " + activeProgramId);
             this.activeProgramId = activeProgramId;
 
             itemView.setOnLongClickListener(this);

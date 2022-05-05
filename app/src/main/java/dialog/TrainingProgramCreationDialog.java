@@ -37,6 +37,8 @@ import relational.entities.Exercise;
 public class TrainingProgramCreationDialog extends DialogFragment {
     private TrainingProgramCreationDialogListener listener;
 
+    public TrainingProgramCreationDialog() {}
+
     public TrainingProgramCreationDialog(TrainingProgramCreationDialogListener fListener) {
         super();
         listener = fListener;

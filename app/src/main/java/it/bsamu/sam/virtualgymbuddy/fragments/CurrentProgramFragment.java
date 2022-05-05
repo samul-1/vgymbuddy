@@ -98,12 +98,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // get information needed to fetch today's training
-        todayWeekDayIdx = (short)LocalDate.now().getDayOfWeek().getValue();
-        activeProgramId = getContext().getSharedPreferences(
-                getString(R.string.pref_file_key), Context.MODE_PRIVATE
-        ).getLong(getString(R.string.active_program_pref_key), 0L);
-
 
         /* TODO for each exercise in today session: show input for weight and reps and a button to add
             the set information, until all sets are completed, then move on to the next exercise. For
@@ -137,6 +131,16 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         countRepsBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
 
+    }
+
+    @Override
+    public void onResume() {
+        // get information needed to fetch today's training
+        todayWeekDayIdx = (short)LocalDate.now().getDayOfWeek().getValue();
+        activeProgramId = getContext().getSharedPreferences(
+                getString(R.string.pref_file_key), Context.MODE_PRIVATE
+        ).getLong(getString(R.string.active_program_pref_key), 0L);
+        super.onResume();
     }
 
     @Override
@@ -195,6 +199,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private void fetchTrainingDay() {
+        System.out.println("FETCHING " + activeProgramId);
         trainingDay = db.trainingDayDao().getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
         if(trainingDay != null) {
             trainingDayExercises = db.trainingDayDao().getExercisesFor(trainingDay.id);
@@ -203,7 +208,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     @Override
     public void onStopSet(int repCount) {
-        repCounterDialog.dismiss();
+        //repCounterDialog.dismiss();
         repsInput.setText(String.valueOf(repCount));
     }
 
@@ -321,6 +326,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         } else if (session == null) {
             paintEmptyState(EmptyStates.REST_DAY);
         } else {
+            // TODO extract to new method
+            // hide empty state
+            View emptyStateView = getActivity().findViewById(R.id.training_session_empty_state_container);
+            View controlsView = getActivity().findViewById(R.id.training_session_controls_container);
+            emptyStateView.setVisibility(View.GONE);
+            // show controls
+            controlsView.setVisibility(View.VISIBLE);
+            getRecyclerView(getView()).setVisibility(View.VISIBLE);
+
             if(updateCurrentExercise) {
                 updateCurrentExercise();
             }

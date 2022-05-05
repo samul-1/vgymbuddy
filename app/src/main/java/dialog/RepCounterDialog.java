@@ -24,6 +24,8 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
     RepCounterDialogListener listener;
     ImageView phoneIcon, weightStackIcon;
 
+    public RepCounterDialog() {}
+
     @Override
     public void onRep() {
         int currentCount = Integer.valueOf(repCountView.getText().toString());

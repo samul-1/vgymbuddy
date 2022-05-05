@@ -27,6 +27,8 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
     AppDb db = AppDb.getInstance(getContext());
     ExerciseSelectionDialogListener listener;
 
+    public ExerciseSelectionDialog() {}
+
     public ExerciseSelectionDialog(ExerciseSelectionDialogListener listener) {
         this.listener = listener;
     }

@@ -42,6 +42,8 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
 
     private final int PICK_IMAGE = 100;
 
+    public ExerciseCreationDialog() {}
+
     public ExerciseCreationDialog(ExerciseCreationDialogListener fListener) {
         listener = fListener;
     }
