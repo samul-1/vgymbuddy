@@ -145,24 +145,24 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
     @Override
     public void setActiveTrainingProgram(long programId) {
         long oldActiveId = preferences.getLong(getString(R.string.active_program_pref_key), 0L);
-        TrainingProgramAdapter.TrainingProgramViewHolderController oldActiveHolder = (
-                (TrainingProgramAdapter.TrainingProgramViewHolderController)
-                recyclerView.findViewHolderForItemId(oldActiveId)
-        );
-        // hide active chip for old active program
-        if(oldActiveHolder != null) {
-            oldActiveHolder.setActiveChipVisibility(View.INVISIBLE);
-        }
 
         // set new active program in preferences
         preferences
                 .edit()
                 .putLong(getString(R.string.active_program_pref_key), programId)
-                .apply();
+                .commit();
 
-        // show chip for new active program
-        ((TrainingProgramAdapter.TrainingProgramViewHolderController)
-                recyclerView.findViewHolderForItemId(programId)).setActiveChipVisibility(View.VISIBLE);
+
+        // trigger onBindViewHolder on the affected items
+        if(oldActiveId != 0L) {
+            RecyclerView.ViewHolder oldActiveHolder = (
+                    recyclerView.findViewHolderForItemId(oldActiveId)
+            );
+            adapter.notifyItemChanged(oldActiveHolder.getAdapterPosition());
+        }
+
+        RecyclerView.ViewHolder newActiveHolder = recyclerView.findViewHolderForItemId(programId);
+        adapter.notifyItemChanged(newActiveHolder.getAdapterPosition());
 
         Toast.makeText(getContext(), R.string.new_active_program_set, Toast.LENGTH_SHORT).show();
     }

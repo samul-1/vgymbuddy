@@ -10,6 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import adapter.TrainingDayExerciseAdapter;
@@ -26,8 +28,33 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     ViewGroup addExerciseControls;
     private TrainingDayDetailBinding binding;
     long chosenExerciseId;
+    String chosenExerciseName;
     EditText setsInput, repsInput;
     ExerciseSelectionDialog dialog;
+
+    private final String BUNDLE_CHOSEN_EXERCISE_ID = "eid";
+    private final String BUNDLE_CHOSEN_EXERCISE_NAME = "ename";
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        System.out.println("saving");
+        outState.putLong(BUNDLE_CHOSEN_EXERCISE_ID, chosenExerciseId);
+        outState.putString(BUNDLE_CHOSEN_EXERCISE_NAME, chosenExerciseName);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        System.out.println("RESTORED");
+        if(savedInstanceState != null) {
+            long savedExerciseId = savedInstanceState.getLong(BUNDLE_CHOSEN_EXERCISE_ID, 0L);
+            String savedExerciseName =  savedInstanceState.getString(BUNDLE_CHOSEN_EXERCISE_NAME, "");
+            if(savedExerciseId != 0L) {
+                setChosenExercise(savedExerciseId, savedExerciseName);
+            }
+        }
+    }
 
     @Override
     protected TrainingDayExerciseAdapter getAdapter() {
@@ -138,8 +165,13 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     @Override
     public void onExerciseSelection(long exerciseId, String exerciseName) {
         dialog.dismiss();
-        selectedExerciseName.setText(exerciseName);
+        setChosenExercise(exerciseId, exerciseName);
+    }
+
+    private void setChosenExercise(long exerciseId, String exerciseName) {
         chosenExerciseId = exerciseId;
+        chosenExerciseName = exerciseName;
+        selectedExerciseName.setText(exerciseName);
         addExerciseBtn.setVisibility(View.GONE);
         addExerciseControls.setVisibility(View.VISIBLE);
     }

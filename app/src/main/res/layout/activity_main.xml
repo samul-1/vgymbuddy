@@ -3,6 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
+    android:id="@+id/main_activity_coordinator"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
@@ -32,6 +33,7 @@
                 android:insetBottom="0dp"
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
+                android:id="@+id/select_gym_location_btn"
                 app:icon="@drawable/ic_baseline_place_24" />
         </com.google.android.material.appbar.MaterialToolbar>
 

@@ -33,6 +33,8 @@ public abstract class AbstractItemDetailFragment<A extends RecyclerView.Adapter>
         paintItemData();
     }
 
+
+
     protected abstract void paintItemData();
     protected abstract void asyncFetchItem();
 }

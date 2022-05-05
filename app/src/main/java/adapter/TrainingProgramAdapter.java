@@ -1,6 +1,7 @@
 package adapter;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.chip.Chip;
+
+import java.util.prefs.Preferences;
 
 import it.bsamu.sam.virtualgymbuddy.R;
 
@@ -49,7 +52,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
 
         // show active chip if item is the active program
         holder.setActiveChipVisibility(
-                holder.activeProgramId == holder.programId
+                holder.prefs.getLong(holder.activeProgramKey, 0L) == holder.programId
                         ? View.VISIBLE : View.INVISIBLE
         );
 
@@ -62,17 +65,15 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
         void setActiveTrainingProgram(long programId);
     }
 
-    public interface TrainingProgramViewHolderController {
-        void setActiveChipVisibility(int visibility);
-    }
 
-    class TrainingProgramViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener, TrainingProgramViewHolderController {
+    class TrainingProgramViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         TextView programNameView;
         TextView programDescriptionView;
         Button editBtn;
         Chip activeChip;
         long programId;
-        long activeProgramId;
+        SharedPreferences prefs;
+        String activeProgramKey;
 
         TrainingProgramViewHolderListener listener;
         TrainingProgramViewHolder(View itemView, TrainingProgramViewHolderListener listener, long activeProgramId) {
@@ -82,10 +83,16 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
             editBtn = itemView.findViewById(R.id.edit_program_btn);
             activeChip = itemView.findViewById(R.id.active_program_chip);
             this.listener = listener;
-            System.out.println("ACTIVE PROGRAM ID " + activeProgramId);
-            this.activeProgramId = activeProgramId;
 
             itemView.setOnLongClickListener(this);
+
+            prefs = itemView
+                    .getContext()
+                    .getSharedPreferences(
+                            itemView.getContext().getString(R.string.pref_file_key),
+                            Context.MODE_PRIVATE
+                    );
+            activeProgramKey = itemView.getContext().getString(R.string.active_program_pref_key);
         }
 
         @Override
@@ -100,7 +107,6 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
             return true;
         }
 
-        @Override
         public void setActiveChipVisibility(int visibility) {
             activeChip.setVisibility(visibility);
         }
