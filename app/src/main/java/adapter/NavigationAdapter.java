@@ -26,6 +26,7 @@ public class NavigationAdapter extends FragmentStateAdapter {
         super(fragmentManager, lifecycle);
     }
 
+
     @NonNull
     @Override
     public Fragment createFragment(int position) {

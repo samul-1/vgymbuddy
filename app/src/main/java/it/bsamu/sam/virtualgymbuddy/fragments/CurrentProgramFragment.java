@@ -2,22 +2,14 @@ package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
-import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,27 +18,16 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.VideoView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.loader.content.AsyncTaskLoader;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
-import org.w3c.dom.Text;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.time.Instant;
 import java.time.LocalDate;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -55,12 +36,13 @@ import java.util.Map;
 import adapter.TrainingSessionSetAdapter;
 import dialog.RepCounterDialog;
 import it.bsamu.sam.virtualgymbuddy.R;
-import it.bsamu.sam.virtualgymbuddy.receiver.AlarmReceiver;
+import it.bsamu.sam.virtualgymbuddy.databinding.TodaysTrainingFragmentBinding;
 import relational.entities.Exercise;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
 import relational.entities.TrainingSessionSet;
+import viewmodel.CurrentTrainingSessionViewModel;
 
 public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable, RepCounterDialog.RepCounterDialogListener {
     short todayWeekDayIdx;
@@ -83,11 +65,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     Uri takenVideoUri;
     RepCounterDialog repCounterDialog;
 
-    private double magnitudePrevious = 0;
-
     Handler restTimerHandler = new Handler();
 
     static final int REQUEST_VIDEO_CAPTURE = 22222;
+
+    CurrentTrainingSessionViewModel viewModel;
 
 
     public CurrentProgramFragment() {
@@ -98,18 +80,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
-        /* TODO for each exercise in today session: show input for weight and reps and a button to add
-            the set information, until all sets are completed, then move on to the next exercise. For
-            each set, also add ability to take video and associate it.
-            Start a timer using the exercise rest time after inputting the set info!!!
-
-            to access the videos for an exercise, you can have clicking on the exercise card
-            open a dialog that fetches all the TrainingDayExerciseSet with that exerciseId and look
-            for videos in the video folder with name "exerciseId_timestamp.mp4" or something*/
-
-
-
+        viewModel =
+                ViewModelProviders
+                        .of(requireActivity())
+                        .get(CurrentTrainingSessionViewModel.class);
     }
 
     @Override
@@ -130,7 +104,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         recordSetBtn.setOnClickListener(this);
         countRepsBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
-
     }
 
     @Override
@@ -181,28 +154,51 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private void fetchExercisesAndSets() {
-        exercisesWithSets = db.trainingSessionSetDao().getExercisesWithSetsForSession(session.id);
+        Map<Exercise, List<TrainingSessionSet>> exercisesWithSets = db
+                .trainingSessionSetDao()
+                .getExercisesWithSetsForSession(session.id);
+
+        viewModel.setExercisesWithSets(exercisesWithSets);
+
     }
 
     private synchronized void fetchOrCreateTodaysTrainingSession() {
         // attempts to retrieve a training session that matches the current
         // training day; if it doesn't exist, it creates one in the database
-        session = db.trainingSessionDao().getTodaysTrainingSessionForTrainingDay(trainingDay.id);
+       TrainingSession session = db
+                .trainingSessionDao()
+                .getTodaysTrainingSessionForTrainingDay(trainingDay.id);
+        long sessionId;
         if(session == null) {
-            System.out.println("SESSION IS NULL, CREATING");
-            long sessionId = db.trainingSessionDao().insertTrainingSession(new TrainingSession(
-                    trainingDay.id, new Date()
-            ));
+            sessionId = db
+                    .trainingSessionDao()
+                    .insertTrainingSession(
+                            new TrainingSession(
+                                trainingDay.id, new Date()
+                            )
+                    );
             session = db.trainingSessionDao().getById(sessionId);
+        } else {
+            sessionId = session.id;
         }
+        viewModel.setSessionId(sessionId);
+
         System.out.println("SESSION " + session);
     }
 
     private void fetchTrainingDay() {
         System.out.println("FETCHING " + activeProgramId);
-        trainingDay = db.trainingDayDao().getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
+
+        TrainingDay trainingDay = db
+                .trainingDayDao()
+                .getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
+        viewModel.setTrainingDayId(trainingDay.id);
+
         if(trainingDay != null) {
-            trainingDayExercises = db.trainingDayDao().getExercisesFor(trainingDay.id);
+           List<TrainingDayExercise> trainingDayExercises = db
+                   .trainingDayDao()
+                   .getExercisesFor(trainingDay.id);
+           viewModel.setTrainingDayExercises(trainingDayExercises);
         }
     }
 
@@ -285,40 +281,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         tv.setText(textResId);
     }
 
-    private void updateCurrentExercise() {
-        /**
-         * sets the current exercise instance variable to the first exercise for which
-         * not all sets have been completed
-         */
-        System.out.println("updating exercise");
-        for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.entrySet()) {
-            TrainingDayExercise exercise = trainingDayExercises
-                    .stream()
-                    .filter(e->e.exerciseId==entry.getKey().id)
-                    .findFirst()
-                    .orElseThrow(() -> new AssertionError("cannot find exercise " + entry.getKey()));
-            long sets = exercise.setsPrescribed;
-            if(entry.getValue().size() < sets) {
-                currentExercise = entry.getKey();
-                currentRestTime = exercise.restSeconds;
-                return;
-            }
-        }
-        // no suitable exercise found
-        currentExercise = null;
-    }
-
-    private void setDataSetToCurrentExerciseSets() {
-        /**
-         * sets recyclerview adapter's data set to the sets for the
-         * current exercise in the session
-         */
-        if(currentExercise!=null) {
-            currentExerciseSets.clear();
-            currentExerciseSets.addAll(exercisesWithSets.get(currentExercise));
-            adapter.notifyDataSetChanged();
-        }
-    }
 
     private void paintTrainingSessionInfo(boolean updateCurrentExercise) {
         if(activeProgramId == 0L) {
@@ -326,7 +288,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         } else if (session == null) {
             paintEmptyState(EmptyStates.REST_DAY);
         } else {
-            // TODO extract to new method
+            // FIXME use viewmodel
             // hide empty state
             View emptyStateView = getActivity().findViewById(R.id.training_session_empty_state_container);
             View controlsView = getActivity().findViewById(R.id.training_session_controls_container);
@@ -336,13 +298,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             getRecyclerView(getView()).setVisibility(View.VISIBLE);
 
             if(updateCurrentExercise) {
-                updateCurrentExercise();
+                viewModel.updateCurrentExercise();
             }
-            setDataSetToCurrentExerciseSets();
+            viewModel.setDataSetToCurrentExerciseSets();
             if(currentExercise != null) {
+                // FIXME use viewmodel
                 currentExerciseTextView
                         .setText(currentExercise.name);
             } else {
+                // FIXME use viewmodel
                 paintEmptyState(EmptyStates.FINISHED);
             }
         }
@@ -381,7 +345,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             protected Void doInBackground(Void... voids) {
                 TrainingSessionSet set = new TrainingSessionSet(
                         currentExercise.id,
-                        session.id,
+                        viewModel.getSessionId(),
                         reps,
                         weight,
                         takenVideoUri
@@ -394,7 +358,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                //updateCurrentExercise();
                 paintTrainingSessionInfo(false);
                 startNextSetTimer();
             }
@@ -408,10 +371,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             restTimerText.setText(String.valueOf(remainingRestTime--));
 
             if (remainingRestTime < 0) {
+                // FIXME use viewmodel
                 restTimeLayout.setVisibility(View.GONE);
                 setControlsLayoutEnabled(true);
-                updateCurrentExercise();
-                setDataSetToCurrentExerciseSets();
+                viewModel.updateCurrentExercise();
+                viewModel.setDataSetToCurrentExerciseSets();
                 paintTrainingSessionInfo(true);
             } else {
                 restTimerHandler.postDelayed(this, 1000);
