@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="viewModel"
+            type="it.bsamu.sam.virtualgymbuddy.viewmodel.TestViewModel" />
+    </data>
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+            <TextView
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/tv"
+                android:text="@{String.valueOf(viewModel.testId)}"
+                />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@id/tv"
+            app:layout_constraintLeft_toLeftOf="parent"
+            android:text="Click
+"           android:id="@+id/test_btn"
+        />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

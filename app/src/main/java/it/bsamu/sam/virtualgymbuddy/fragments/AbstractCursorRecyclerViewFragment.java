@@ -73,7 +73,7 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("RESUME");
+        System.out.println("SUPER RESUME - ABOUT TO CALL FETCH");
         // get all instances of the entity for this fragment from the db
         asyncFetchMainEntity();
     }

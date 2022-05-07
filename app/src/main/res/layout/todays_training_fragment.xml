@@ -1,225 +1,254 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".fragments.CurrentProgramFragment"
-    android:orientation="vertical"
-    android:paddingHorizontal="10dp"
-    android:id="@+id/todays_training_fragment"
-    android:paddingTop="5dp"
-    >
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-        <!--<TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/session_previous_exercise" />-->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            style="@style/FragmentTitle"
-            android:gravity="center"
-            android:layout_weight="1"
-            android:id="@+id/session_current_exercise"
-            android:text=""/>
-        <!-- <TextView
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content"
-             android:id="@+id/session_next_exercise" />-->
-    </androidx.appcompat.widget.LinearLayoutCompat>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <import type="android.view.View" />
+        <variable
+            name="viewmodel"
+            type="it.bsamu.sam.virtualgymbuddy.viewmodel.CurrentTrainingSessionViewModel" />
+    </data>
 
-    <androidx.recyclerview.widget.RecyclerView
+    <LinearLayout
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:layout_weight="1"
-        android:id="@+id/todays_training_recyclerview"
-        android:divider="@android:color/transparent"
-        android:dividerHeight="1.5sp"
-        android:paddingVertical="7.5sp"
-        android:paddingHorizontal="5.0sp"
-        />
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_weight="1"
+        android:layout_height="match_parent"
+        tools:context=".fragments.CurrentProgramFragment"
+        android:orientation="vertical"
+        android:paddingHorizontal="10dp"
+        android:id="@+id/todays_training_fragment"
+        android:paddingTop="5dp"
         >
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="5dp"
-            android:orientation="vertical"
-            android:layout_gravity="bottom"
-            >
 
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:scaleType="centerInside"
-                android:visibility="gone"
-                android:adjustViewBounds="true"
-                android:id="@+id/set_video_thumbnail" />
-            <LinearLayout
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(viewmodel.activeProgramId)}"
+            android:layout_marginRight="10dp"
+            />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{String.valueOf(viewmodel.trainingDayId)}" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <!--<TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/rest_timer_container"
-                android:orientation="horizontal"
+                android:id="@+id/session_previous_exercise" />-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/FragmentTitle"
                 android:gravity="center"
-                android:visibility="gone"
-                android:layout_gravity="center_horizontal"
                 android:layout_weight="1"
-                >
-                <ImageView
-                    android:layout_marginRight="5dp"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:src="@drawable/ic_baseline_timer_24" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/rest_timer_text"
-                    android:text="5"
-                    />
-            </LinearLayout>
+                android:id="@+id/session_current_exercise"
+                android:text="@{viewmodel.currentExercise.name}"/>
+            <!-- <TextView
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:id="@+id/session_next_exercise" />-->
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-
-            <LinearLayout
-                android:orientation="vertical"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:visibleIf="@{viewmodel.sessionId != 0 &amp;&amp; viewmodel.activeProgramId != 0}"
+            >
+            <androidx.recyclerview.widget.RecyclerView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_gravity="top"
                 android:layout_weight="1"
+                android:id="@+id/todays_training_recyclerview"
+                android:divider="@android:color/transparent"
+                android:dividerHeight="1.5sp"
+                android:paddingVertical="7.5sp"
+                android:paddingHorizontal="5.0sp"
+                />
+            <androidx.core.widget.NestedScrollView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom"
-                android:id="@+id/training_session_controls_container"
+                android:layout_weight="1"
                 >
-                <com.google.android.flexbox.FlexboxLayout
-                    android:layout_gravity="bottom"
-                    android:layout_weight="1"
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    app:justifyContent="space_between"
-                    android:id="@+id/set_aux_btn_container"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="5dp"
+                    android:orientation="vertical"
+                    android:layout_gravity="bottom"
                     >
-                    <com.google.android.material.button.MaterialButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        app:icon="@drawable/ic_baseline_videocam_24"
-                        app:iconGravity="textStart"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:id="@+id/set_record_video_btn"
-                        android:text="@string/record_set_video_btn"
-                        />
-                    <com.google.android.material.button.MaterialButton
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                        android:id="@+id/set_count_reps_btn"
-                        android:text="@string/count_reps_set_btn"
-                        />
-                </com.google.android.flexbox.FlexboxLayout>
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="5"
-                    android:orientation="horizontal"
-                    android:paddingVertical="15dp"
-                    android:rowCount="1"
-                    android:layout_gravity="bottom"
-                    android:layout_weight="1"
-                >
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_columnSpan="2"
-                        android:layout_columnWeight="1"
-                        android:layout_gravity="fill_horizontal"
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="100dp"
+                        android:scaleType="centerInside"
+                        android:visibility="gone"
+                        android:adjustViewBounds="true"
+                        android:id="@+id/set_video_thumbnail" />
+                    <LinearLayout
                         android:layout_width="wrap_content"
-                        android:layout_marginRight="5dp"
-                        android:hint="@string/training_day_exercise_reps"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/rest_timer_container"
+                        android:orientation="horizontal"
+                        android:gravity="center"
+                        app:visibleIf="@{viewmodel.remainingRestTime >= 0}"
+                        android:layout_gravity="center_horizontal"
+                        android:layout_weight="1"
                         >
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/training_session_reps_input"
+                        <ImageView
+                            android:layout_marginRight="5dp"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/ic_baseline_timer_24" />
+                        <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:inputType="number"
-                            android:windowSoftInputMode="adjustPan"
-                            android:maxLength="3" />
-                    </com.google.android.material.textfield.TextInputLayout>
-
-                    <TextView
-                        android:layout_height="wrap_content"
-                        android:layout_columnSpan="1"
-                        android:layout_gravity="center"
-                        android:paddingRight="7dp"
-                        android:paddingLeft="4dp"
-                        android:textSize="24dp"
-                        android:text="\@" />
-
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:layout_height="wrap_content"
-                        android:layout_columnSpan="2"
-                        android:layout_columnWeight="1"
-                        android:layout_gravity="fill_horizontal"
-                        android:hint="@string/training_set_weight"
-                        app:suffixText="kg"
-                        app:expandedHintEnabled="false"
-                        >
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:id="@+id/training_session_weight_input"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:inputType="numberDecimal"
-                            android:windowSoftInputMode="adjustPan"
-                            android:maxLength="6"
+                            android:id="@+id/rest_timer_text"
+                            android:text="@{String.valueOf(viewmodel.remainingRestTime)}"
                             />
-                    </com.google.android.material.textfield.TextInputLayout>
-                </GridLayout>
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/add_set_btn"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/add_set_btn_label"
-                    app:icon="@drawable/ic_baseline_add_24"
-                    app:iconGravity="textStart"
-                    android:layout_gravity="bottom"
-                    android:layout_weight="1"
-                    />
+                    </LinearLayout>
 
-            </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:layout_gravity="bottom"
+                        android:id="@+id/training_session_controls_container"
+                        >
+                        <com.google.android.flexbox.FlexboxLayout
+                            android:layout_gravity="bottom"
+                            android:layout_weight="1"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            app:justifyContent="space_between"
+                            android:id="@+id/set_aux_btn_container"
+                            >
+                            <com.google.android.material.button.MaterialButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                app:icon="@drawable/ic_baseline_videocam_24"
+                                app:iconGravity="textStart"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:id="@+id/set_record_video_btn"
+                                android:text="@string/record_set_video_btn"
+                                />
+                            <com.google.android.material.button.MaterialButton
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                                android:id="@+id/set_count_reps_btn"
+                                android:text="@string/count_reps_set_btn"
+                                />
+                        </com.google.android.flexbox.FlexboxLayout>
+                        <GridLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:columnCount="5"
+                            android:orientation="horizontal"
+                            android:paddingVertical="15dp"
+                            android:rowCount="1"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="1"
+                            >
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_columnSpan="2"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:layout_width="wrap_content"
+                                android:layout_marginRight="5dp"
+                                android:hint="@string/training_day_exercise_reps"
+                                >
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/training_session_reps_input"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="number"
+                                    android:windowSoftInputMode="adjustPan"
+                                    android:maxLength="3" />
+                            </com.google.android.material.textfield.TextInputLayout>
+
+                            <TextView
+                                android:layout_height="wrap_content"
+                                android:layout_columnSpan="1"
+                                android:layout_gravity="center"
+                                android:paddingRight="7dp"
+                                android:paddingLeft="4dp"
+                                android:textSize="24dp"
+                                android:text="\@" />
+
+                            <com.google.android.material.textfield.TextInputLayout
+                                android:layout_height="wrap_content"
+                                android:layout_columnSpan="2"
+                                android:layout_columnWeight="1"
+                                android:layout_gravity="fill_horizontal"
+                                android:hint="@string/training_set_weight"
+                                app:suffixText="kg"
+                                app:expandedHintEnabled="false"
+                                >
+
+                                <com.google.android.material.textfield.TextInputEditText
+                                    android:id="@+id/training_session_weight_input"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:inputType="numberDecimal"
+                                    android:windowSoftInputMode="adjustPan"
+                                    android:maxLength="6"
+                                    />
+                            </com.google.android.material.textfield.TextInputLayout>
+                        </GridLayout>
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/add_set_btn"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/add_set_btn_label"
+                            app:icon="@drawable/ic_baseline_add_24"
+                            app:iconGravity="textStart"
+                            android:layout_gravity="bottom"
+                            android:layout_weight="1"
+                            />
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
 
-    </androidx.core.widget.NestedScrollView>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:visibility="gone"
-        app:layout_constraintVertical_weight="1"
-        android:layout_marginHorizontal="20dp"
-        android:id="@+id/training_session_empty_state_container"
-        >
-
-        <ImageView
-            android:id="@+id/training_session_empty_state_icon"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="1"
-            android:src="@drawable/ic_baseline_single_bed_24"></ImageView>
+            android:orientation="vertical"
+            android:gravity="center"
+            app:visibleIf="@{viewmodel.sessionId == 0 || viewmodel.activeProgramId == 0}"
+            app:layout_constraintVertical_weight="1"
+            android:layout_marginHorizontal="20dp"
+            android:id="@+id/training_session_empty_state_container"
+            >
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textAlignment="center"
-            android:id="@+id/training_session_empty_state_desc"
-            android:text="@string/rest_day"
-            ></TextView>
+            <ImageView
+                android:id="@+id/training_session_empty_state_icon"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:src='@{viewmodel.activeProgramId == 0 ? @drawable/ic_baseline_sentiment_very_dissatisfied_24 : @drawable/ic_baseline_single_bed_24}'
+                />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAlignment="center"
+                android:id="@+id/training_session_empty_state_desc"
+                android:text="@{viewmodel.activeProgramId == 0 ? @string/no_active_program : @string/rest_day}"
+                ></TextView>
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</layout>

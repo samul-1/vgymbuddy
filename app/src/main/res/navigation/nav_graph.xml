@@ -5,6 +5,12 @@
     android:id="@+id/nav_graph"
     app:startDestination="@id/ProgramList">
 
+   <!-- <fragment
+        android:id="@+id/TestFragment"
+        android:label="@string/first_fragment_label"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.TestFragment"
+        tools:layout="@layout/test_fragment"/>-->
+
     <fragment
         android:id="@+id/ProgramList"
         android:name="it.bsamu.sam.virtualgymbuddy.fragments.MainFragment"

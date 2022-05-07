@@ -21,6 +21,8 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.databinding.BindingAdapter;
+import androidx.databinding.DataBindingUtil;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -42,19 +44,14 @@ import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
 import relational.entities.TrainingSessionSet;
-import viewmodel.CurrentTrainingSessionViewModel;
+import it.bsamu.sam.virtualgymbuddy.viewmodel.CurrentTrainingSessionViewModel;
 
 public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable, RepCounterDialog.RepCounterDialogListener {
     short todayWeekDayIdx;
-    short currentRestTime;
-    short remainingRestTime;
-    long activeProgramId;
-    Map<Exercise, List<TrainingSessionSet>> exercisesWithSets;
     TrainingDay trainingDay;
-    List<TrainingDayExercise> trainingDayExercises;
     TrainingSession session;
-    Exercise currentExercise;
     List<TrainingSessionSet> currentExerciseSets = new LinkedList<>();
+
     EditText repsInput;
     EditText weightInput;
     Button addSetBtn, recordSetBtn, countRepsBtn;
@@ -70,6 +67,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     static final int REQUEST_VIDEO_CAPTURE = 22222;
 
     CurrentTrainingSessionViewModel viewModel;
+    private TodaysTrainingFragmentBinding binding;
 
 
     public CurrentProgramFragment() {
@@ -79,11 +77,25 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+    }
 
-        viewModel =
-                ViewModelProviders
-                        .of(requireActivity())
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        binding = DataBindingUtil
+                .inflate(
+                        inflater,
+                        R.layout.todays_training_fragment,
+                        container,
+                        false
+                );
+        binding.setLifecycleOwner(this);
+
+        viewModel = ViewModelProviders
+                        .of(this)
                         .get(CurrentTrainingSessionViewModel.class);
+
+        return binding.getRoot();
     }
 
     @Override
@@ -104,15 +116,29 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         recordSetBtn.setOnClickListener(this);
         countRepsBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
+
+        binding.setViewmodel(viewModel);
+
+        binding.setLifecycleOwner(this);
+        //viewModel.setActiveProgramId(12L);
     }
 
     @Override
     public void onResume() {
         // get information needed to fetch today's training
         todayWeekDayIdx = (short)LocalDate.now().getDayOfWeek().getValue();
-        activeProgramId = getContext().getSharedPreferences(
-                getString(R.string.pref_file_key), Context.MODE_PRIVATE
-        ).getLong(getString(R.string.active_program_pref_key), 0L);
+
+        // get active program id from preferences and set it in view model
+        viewModel
+                .setActiveProgramId(
+                   getContext()
+                       .getSharedPreferences(
+                                getString(R.string.pref_file_key),
+                                Context.MODE_PRIVATE
+                        )
+                        .getLong(getString(R.string.active_program_pref_key), 0L)
+        );
+        System.out.println("set active program id" + viewModel.getActiveProgramId().getValue());
         super.onResume();
     }
 
@@ -122,17 +148,19 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                fetchTrainingDay();
-                if(trainingDay != null) {
-                    fetchOrCreateTodaysTrainingSession();
-                    fetchExercisesAndSets();
+                System.out.println("!!!!!!! FETCH MAIN");
+                long fetchedDayId = fetchTrainingDay();
+                System.out.println("fetched day, id in viewmodel is " + viewModel.getTrainingDayId().getValue());
+                if(fetchedDayId != 0L) {
+                    long sessionId = fetchOrCreateTodaysTrainingSession(fetchedDayId);
+                    fetchExercisesAndSets(sessionId);
                 }
                 return null;
             }
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                paintTrainingSessionInfo(true);
+                updateTrainingSessionInfo(true);
             }
         }.execute();
     }
@@ -153,53 +181,52 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         return inflater.inflate(R.layout.todays_training_fragment, container,false);
     }
 
-    private void fetchExercisesAndSets() {
+    private void fetchExercisesAndSets(long sessionId) {
         Map<Exercise, List<TrainingSessionSet>> exercisesWithSets = db
                 .trainingSessionSetDao()
-                .getExercisesWithSetsForSession(session.id);
+                .getExercisesWithSetsForSession(sessionId);
 
         viewModel.setExercisesWithSets(exercisesWithSets);
 
     }
 
-    private synchronized void fetchOrCreateTodaysTrainingSession() {
+    private synchronized long fetchOrCreateTodaysTrainingSession(long trainingDayId) {
         // attempts to retrieve a training session that matches the current
         // training day; if it doesn't exist, it creates one in the database
+        System.out.println("fetching sess id");
        TrainingSession session = db
                 .trainingSessionDao()
-                .getTodaysTrainingSessionForTrainingDay(trainingDay.id);
+                .getTodaysTrainingSessionForTrainingDay(trainingDayId);
         long sessionId;
         if(session == null) {
             sessionId = db
                     .trainingSessionDao()
                     .insertTrainingSession(
                             new TrainingSession(
-                                trainingDay.id, new Date()
+                                trainingDayId, new Date()
                             )
                     );
-            session = db.trainingSessionDao().getById(sessionId);
         } else {
             sessionId = session.id;
         }
         viewModel.setSessionId(sessionId);
-
-        System.out.println("SESSION " + session);
+        return sessionId;
     }
-
-    private void fetchTrainingDay() {
-        System.out.println("FETCHING " + activeProgramId);
-
+    private long fetchTrainingDay() {
         TrainingDay trainingDay = db
                 .trainingDayDao()
-                .getForProgramAndDayOfWeek(activeProgramId, todayWeekDayIdx);
-        viewModel.setTrainingDayId(trainingDay.id);
+                .getForProgramAndDayOfWeek(viewModel.getActiveProgramId().getValue(), todayWeekDayIdx);
 
         if(trainingDay != null) {
-           List<TrainingDayExercise> trainingDayExercises = db
+            viewModel.setTrainingDayId(trainingDay.id);
+            List<TrainingDayExercise> trainingDayExercises = db
                    .trainingDayDao()
                    .getExercisesFor(trainingDay.id);
-           viewModel.setTrainingDayExercises(trainingDayExercises);
+            viewModel.setTrainingDayExercises(trainingDayExercises);
+        } else {
+            System.out.println("DAY IS NULL for id, day: " + viewModel.getActiveProgramId().getValue() + " " + todayWeekDayIdx);
         }
+        return trainingDay == null ? 0 : trainingDay.id;
     }
 
     @Override
@@ -282,34 +309,12 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
 
-    private void paintTrainingSessionInfo(boolean updateCurrentExercise) {
-        if(activeProgramId == 0L) {
-            paintEmptyState(EmptyStates.NO_ACTIVE_PROGRAM);
-        } else if (session == null) {
-            paintEmptyState(EmptyStates.REST_DAY);
-        } else {
-            // FIXME use viewmodel
-            // hide empty state
-            View emptyStateView = getActivity().findViewById(R.id.training_session_empty_state_container);
-            View controlsView = getActivity().findViewById(R.id.training_session_controls_container);
-            emptyStateView.setVisibility(View.GONE);
-            // show controls
-            controlsView.setVisibility(View.VISIBLE);
-            getRecyclerView(getView()).setVisibility(View.VISIBLE);
-
+    private void updateTrainingSessionInfo(boolean updateCurrentExercise) {
             if(updateCurrentExercise) {
                 viewModel.updateCurrentExercise();
             }
-            viewModel.setDataSetToCurrentExerciseSets();
-            if(currentExercise != null) {
-                // FIXME use viewmodel
-                currentExerciseTextView
-                        .setText(currentExercise.name);
-            } else {
-                // FIXME use viewmodel
-                paintEmptyState(EmptyStates.FINISHED);
-            }
-        }
+            System.out.println("ADAPTER IS  " + getAdapter());
+            viewModel.setDataSetToCurrentExerciseSets(adapter);
     }
 
 
@@ -344,21 +349,21 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @Override
             protected Void doInBackground(Void... voids) {
                 TrainingSessionSet set = new TrainingSessionSet(
-                        currentExercise.id,
-                        viewModel.getSessionId(),
+                        viewModel.getCurrentExercise().id,
+                        viewModel.getSessionId().getValue(),
                         reps,
                         weight,
                         takenVideoUri
                 );
                 db.trainingSessionSetDao().insertSet(set);
-                fetchExercisesAndSets();
+                fetchExercisesAndSets(viewModel.getSessionId().getValue());
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                paintTrainingSessionInfo(false);
+                updateTrainingSessionInfo(false);
                 startNextSetTimer();
             }
         }.execute();
@@ -366,21 +371,20 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
 
     private void updateRestTimer() {
-        getActivity().runOnUiThread(() ->
-        {
-            restTimerText.setText(String.valueOf(remainingRestTime--));
+        //getActivity().runOnUiThread(() ->
+        //{
+            viewModel.setRemainingRestTime(
+                    (short)(viewModel.getRemainingRestTime().getValue()-1)
+            );
 
-            if (remainingRestTime < 0) {
-                // FIXME use viewmodel
-                restTimeLayout.setVisibility(View.GONE);
-                setControlsLayoutEnabled(true);
+            if (viewModel.getRemainingRestTime().getValue() < 0) {
                 viewModel.updateCurrentExercise();
-                viewModel.setDataSetToCurrentExerciseSets();
-                paintTrainingSessionInfo(true);
+                viewModel.setDataSetToCurrentExerciseSets(adapter);
+                updateTrainingSessionInfo(true);
             } else {
                 restTimerHandler.postDelayed(this, 1000);
             }
-        });
+        //});
     }
 
     @Override
@@ -403,7 +407,12 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
        restTimeLayout.setVisibility(View.VISIBLE);
        videoThumbnail.setVisibility(View.GONE);
        setControlsLayoutEnabled(false);
-        remainingRestTime = currentRestTime;
+        viewModel.setRemainingRestTime(viewModel.getCurrentRestTime().getValue());
         restTimerHandler.postDelayed(this, 0);
+    }
+
+    @BindingAdapter("app:visibleIf")
+    public static void visibleIf(View view, Boolean condition) {
+        view.setVisibility(condition ? View.VISIBLE : View.GONE);
     }
 }
