@@ -150,7 +150,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
 
 
     @Override
-    protected ExerciseAdapter getAdapter() {
+    protected ExerciseAdapter instantiateAdapter() {
         return new ExerciseAdapter(this);
     }
 

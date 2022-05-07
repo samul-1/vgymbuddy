@@ -25,7 +25,7 @@ public class ExerciseDetailFragment extends AbstractItemDetailFragment<ExerciseS
     LinearLayout emptyState;
 
     @Override
-    protected ExerciseSetAdapter getAdapter() {
+    protected ExerciseSetAdapter instantiateAdapter() {
         return new ExerciseSetAdapter();
     }
 

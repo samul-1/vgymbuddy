@@ -57,7 +57,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     }
 
     @Override
-    protected TrainingDayExerciseAdapter getAdapter() {
+    protected TrainingDayExerciseAdapter instantiateAdapter() {
         return new TrainingDayExerciseAdapter();
     }
 

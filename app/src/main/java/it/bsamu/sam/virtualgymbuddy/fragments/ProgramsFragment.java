@@ -67,7 +67,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
     }
 
     @Override
-    protected TrainingProgramAdapter getAdapter() {
+    protected TrainingProgramAdapter instantiateAdapter() {
         return new TrainingProgramAdapter(this);
     }
 

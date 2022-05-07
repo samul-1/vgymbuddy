@@ -1,5 +1,6 @@
 package it.bsamu.sam.virtualgymbuddy.viewmodel;
 
+import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,18 +18,17 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
     private MutableLiveData<Long> trainingDayId = new MutableLiveData<>(0L);
     private MutableLiveData<List<TrainingDayExercise>> trainingDayExercises = new MutableLiveData<>();
     private MutableLiveData<Long> sessionId = new MutableLiveData<>(0L);
-    Exercise currentExercise;
-    List<TrainingSessionSet> currentExerciseSets = new LinkedList<>();
+    private MutableLiveData<Exercise> currentExercise = new MutableLiveData<>();
+    private MutableLiveData<List<TrainingSessionSet>> currentExerciseSets;
     private MutableLiveData<Short> currentRestTime = new MutableLiveData<>((short)0);
     private MutableLiveData<Short> remainingRestTime = new MutableLiveData<>((short)0);
     public MutableLiveData<Long> activeProgramId;
 
-    public void updateCurrentExercise() {
+    public void updateCurrentExercise(RecyclerView.Adapter notifyAdapter) {
         /**
          * sets the current exercise instance variable to the first exercise for which
          * not all sets have been completed
          */
-        System.out.println("updating exercise");
         if(exercisesWithSets.getValue() == null) {
             return;
         }
@@ -40,17 +40,38 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
                     .orElseThrow(() -> new AssertionError("cannot find exercise " + entry.getKey()));
             long sets = exercise.setsPrescribed;
             if(entry.getValue().size() < sets) {
-                currentExercise = entry.getKey();
-                currentRestTime.postValue(exercise.restSeconds);
+                System.out.println("FOUND CURRENT EXERCISE: " + entry.getKey());
+                currentExercise.setValue(entry.getKey());
+                currentRestTime.setValue(exercise.restSeconds);
+                setDataSetToCurrentExerciseSets(notifyAdapter);
                 return;
             }
         }
         // no suitable exercise found
-        currentExercise = null;
+        currentExercise.setValue(null);
+        setDataSetToCurrentExerciseSets(notifyAdapter);
     }
 
-    public Exercise getCurrentExercise() {
+    public LiveData<Exercise> getCurrentExercise() {
         return currentExercise;
+    }
+
+    public void addCurrentExerciseSet(TrainingSessionSet set) {
+       exercisesWithSets.getValue().get(currentExercise.getValue()).add(set);
+        // trigger observers
+        currentExerciseSets
+                .postValue(
+                        exercisesWithSets.getValue().get(
+                                currentExercise.getValue()
+                        )
+                );
+    }
+
+    public MutableLiveData<List<TrainingSessionSet>> getCurrentExerciseSets() {
+        if(currentExerciseSets == null) {
+            currentExerciseSets = new MutableLiveData<>(new LinkedList<>());
+        }
+        return currentExerciseSets;
     }
 
     public void setDataSetToCurrentExerciseSets(RecyclerView.Adapter adapter) {
@@ -58,30 +79,37 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
          * sets recyclerview adapter's data set to the sets for the
          * current exercise in the session
          */
-        if(currentExercise!=null && exercisesWithSets.getValue()!=null) {
-            currentExerciseSets.clear();
-            currentExerciseSets.addAll(exercisesWithSets.getValue().get(currentExercise));
-           adapter.notifyDataSetChanged();
+        if(currentExercise != null && exercisesWithSets.getValue() != null) {
+           // currentExerciseSets.getValue().clear();
+            System.out.println("current exercise sets " + currentExercise.getValue().id + " " + exercisesWithSets.getValue().get(currentExercise.getValue()));
+            currentExerciseSets
+                    //.getValue()
+                    .postValue(
+                            exercisesWithSets.getValue().get(currentExercise.getValue())
+                    );
+           // adapter.notifyDataSetChanged();
         }
     }
 
-    public MutableLiveData<Long> getSessionId() {
+    public LiveData<Long> getSessionId() {
         return sessionId;
     }
-    public MutableLiveData<Long> getActiveProgramId() {
+    public LiveData<Long> getActiveProgramId() {
         if(activeProgramId == null) {
           activeProgramId = new MutableLiveData<>(0L);
         }
         return activeProgramId;
     }
-    public MutableLiveData<Short> getCurrentRestTime() {
+    public LiveData<Short> getCurrentRestTime() {
         return currentRestTime;
     }
-    public MutableLiveData<Short> getRemainingRestTime() {
+    public LiveData<Short> getRemainingRestTime() {
         return remainingRestTime;
     }
 
-    public MutableLiveData<Long> getTrainingDayId() {return trainingDayId;}
+    public LiveData<Long> getTrainingDayId() {
+        return trainingDayId;
+    }
 
     public void setCurrentRestTime(short time) {
         currentRestTime.postValue(time);

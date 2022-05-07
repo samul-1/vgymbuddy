@@ -19,7 +19,7 @@
         android:paddingTop="5dp"
         >
 
-        <TextView
+        <!--<TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{String.valueOf(viewmodel.activeProgramId)}"
@@ -29,6 +29,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@{String.valueOf(viewmodel.trainingDayId)}" />
+        -->
         <androidx.appcompat.widget.LinearLayoutCompat
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -53,7 +54,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical"
             app:visibleIf="@{viewmodel.sessionId != 0 &amp;&amp; viewmodel.activeProgramId != 0}"
             >
@@ -95,7 +96,7 @@
                         android:id="@+id/rest_timer_container"
                         android:orientation="horizontal"
                         android:gravity="center"
-                        app:visibleIf="@{viewmodel.remainingRestTime >= 0}"
+                        app:visibleIf="@{viewmodel.remainingRestTime > 0}"
                         android:layout_gravity="center_horizontal"
                         android:layout_weight="1"
                         >
@@ -128,6 +129,7 @@
                             android:layout_height="wrap_content"
                             app:justifyContent="space_between"
                             android:id="@+id/set_aux_btn_container"
+                            app:visibleIf="@{viewmodel.remainingRestTime == 0}"
                             >
                             <com.google.android.material.button.MaterialButton
                                 android:layout_width="wrap_content"
@@ -163,6 +165,7 @@
                                 android:layout_gravity="fill_horizontal"
                                 android:layout_width="wrap_content"
                                 android:layout_marginRight="5dp"
+                                android:enabled="@{1 > viewmodel.remainingRestTime}"
                                 android:hint="@string/training_day_exercise_reps"
                                 >
                                 <com.google.android.material.textfield.TextInputEditText
@@ -191,6 +194,7 @@
                                 android:hint="@string/training_set_weight"
                                 app:suffixText="kg"
                                 app:expandedHintEnabled="false"
+                                android:enabled="@{1 > viewmodel.remainingRestTime}"
                                 >
 
                                 <com.google.android.material.textfield.TextInputEditText
@@ -212,6 +216,7 @@
                             app:iconGravity="textStart"
                             android:layout_gravity="bottom"
                             android:layout_weight="1"
+                            android:enabled="@{1 > viewmodel.remainingRestTime}"
                             />
 
                     </LinearLayout>

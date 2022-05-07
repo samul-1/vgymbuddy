@@ -122,7 +122,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     }
 
     @Override
-    protected TrainingDayAdapter getAdapter() {
+    protected TrainingDayAdapter instantiateAdapter() {
         return new TrainingDayAdapter(this, getContext(), trainingDays);
     }
 

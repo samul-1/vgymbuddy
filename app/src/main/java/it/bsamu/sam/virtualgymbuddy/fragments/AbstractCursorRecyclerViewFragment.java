@@ -28,7 +28,6 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
      * and the view(s) generated from instances of it.
      *
      */
-    private ExercisesFragmentBinding binding;
 
     protected RecyclerView recyclerView;
     protected Cursor cursor;
@@ -38,8 +37,18 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
 
     private FloatingActionButton fab;
 
-
-    protected abstract A getAdapter();
+    protected abstract A instantiateAdapter();
+    protected A getAdapter() {
+        if (adapter != null) {
+            return adapter;
+        }
+        synchronized (this) {
+            if(adapter == null) {
+                adapter = instantiateAdapter();
+            }
+            return adapter;
+        }
+    };
     protected abstract RecyclerView getRecyclerView(View parent);
     protected abstract View getMainView(LayoutInflater inflater, ViewGroup container);
 
@@ -65,6 +74,7 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
         adapter = getAdapter();
         recyclerView = getRecyclerView(view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
+        System.out.println("BASE -- SETTING ADAPTER");
         recyclerView.setAdapter(adapter);
 
         return view;
@@ -73,7 +83,6 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("SUPER RESUME - ABOUT TO CALL FETCH");
         // get all instances of the entity for this fragment from the db
         asyncFetchMainEntity();
     }
@@ -81,6 +90,5 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        binding = null;
     }
 }

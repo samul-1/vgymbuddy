@@ -21,6 +21,11 @@ public class TrainingSessionSetAdapter extends RecyclerView.Adapter<TrainingSess
        dataset = sets;
     }
 
+    public void update(final List<TrainingSessionSet> sets) {
+        System.out.println("INSIDE UPDATE METHOD WITH " + sets);
+        dataset = sets;
+        notifyDataSetChanged();
+    }
 
     @NonNull
     @Override
