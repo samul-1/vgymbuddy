@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentManager;
 import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
+import it.bsamu.sam.virtualgymbuddy.R;
 import it.bsamu.sam.virtualgymbuddy.fragments.CurrentProgramFragment;
 import it.bsamu.sam.virtualgymbuddy.fragments.ExercisesFragment;
 import it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment;
@@ -26,11 +27,15 @@ public class NavigationAdapter extends FragmentStateAdapter {
         super(fragmentManager, lifecycle);
     }
 
+    public final int[] tabTexts = {
+            R.string.tab_programs,
+            R.string.tab_exercises,
+            R.string.tab_current_program
+    };
 
     @NonNull
     @Override
     public Fragment createFragment(int position) {
-        System.out.println("calling createFragment with position " + position);
         switch (position) {
             case 0:
                 return new ProgramsFragment();
@@ -45,6 +50,6 @@ public class NavigationAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 3;
+        return tabTexts.length;
     }
 }

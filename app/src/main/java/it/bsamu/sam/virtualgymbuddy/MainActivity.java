@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager2.widget.ViewPager2;
@@ -37,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(null);
+        super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         db = AppDb.getInstance(getApplicationContext());
@@ -71,7 +72,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         }).start();
-        System.out.println("db built");
     }
 
 
