@@ -88,7 +88,7 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
         new Handler().postDelayed(() -> {
             TranslateAnimation anim = new TranslateAnimation(
                     phoneIcon.getLeft(),
-                    (float)(weightStackIcon.getLeft()-phoneIcon.getWidth()/2.8),
+                    (float)(weightStackIcon.getLeft()-phoneIcon.getWidth()/2.78),
                     phoneIcon.getTop(),
                     phoneIcon.getTop()
             );

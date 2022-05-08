@@ -79,9 +79,8 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
          * sets recyclerview adapter's data set to the sets for the
          * current exercise in the session
          */
-        if(currentExercise != null && exercisesWithSets.getValue() != null) {
+        if(currentExercise.getValue() != null && exercisesWithSets.getValue() != null) {
            // currentExerciseSets.getValue().clear();
-            System.out.println("current exercise sets " + currentExercise.getValue().id + " " + exercisesWithSets.getValue().get(currentExercise.getValue()));
             currentExerciseSets
                     //.getValue()
                     .postValue(

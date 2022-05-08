@@ -1,6 +1,9 @@
 package it.bsamu.sam.virtualgymbuddy.fragments;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -17,7 +20,6 @@ import it.bsamu.sam.virtualgymbuddy.databinding.MainFragmentBinding;
 public class MainFragment extends Fragment {
     private ViewPager2 viewPager;
     private NavigationAdapter navigationAdapter;
-    private MainFragmentBinding binding;
 
     private static final String BUNDLE_CURRENT_ITEM_KEY = "ci";
 
@@ -34,8 +36,8 @@ public class MainFragment extends Fragment {
         System.out.println("on create main " + this);
 
         System.out.println("MAIN BUNDLE NULL");
-        getActivity().setContentView(R.layout.main_fragment);
-        TabLayout tabLayout = getActivity().findViewById(R.id.tabBar);
+        //getActivity().setContentView(R.layout.main_fragment);
+        /*        TabLayout tabLayout = getActivity().findViewById(R.id.tabBar);
         int[] tabTexts = {
                 R.string.tab_programs,
                R.string.tab_exercises,
@@ -50,12 +52,40 @@ public class MainFragment extends Fragment {
                 (tab, position) -> tab.setText(
                         tabTexts[position]
                 )
-        ).attach();
+        ).attach();*/
 
         if(savedInstanceState == null) {
 
         } else {
             viewPager.setCurrentItem(savedInstanceState.getInt(BUNDLE_CURRENT_ITEM_KEY, 2));
         }
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        //return super.onCreateView(inflater, container, savedInstanceState);
+        return inflater.inflate(R.layout.main_fragment, container, false);
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        TabLayout tabLayout = getActivity().findViewById(R.id.tabBar);
+        int[] tabTexts = {
+                R.string.tab_programs,
+                R.string.tab_exercises,
+                R.string.tab_current_program
+        };
+
+        // set up view pager and attach mediator to tab layout
+        this.viewPager = getActivity().findViewById(R.id.pager);
+        this.navigationAdapter = new NavigationAdapter(this);
+        viewPager.setAdapter(this.navigationAdapter);
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(
+                        tabTexts[position]
+                )
+        ).attach();
     }
 }

@@ -28,10 +28,10 @@ import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    //private ActivityMainBinding binding;
 
-    private ViewPager2 viewPager;
-    private NavigationAdapter navigationAdapter;
+    //private ViewPager2 viewPager;
+    //private NavigationAdapter navigationAdapter;
 
     private AppDb db;
 
