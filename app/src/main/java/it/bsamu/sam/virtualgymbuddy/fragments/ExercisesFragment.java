@@ -49,6 +49,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
     private FloatingActionButton fab;
     private ExerciseCreationDialog exerciseCreationDialog = null;
 
+    private static final int READ_EXT_STORAGE_PERMISSION_REQUEST = 9999;
 
     @Override
     protected void asyncFetchMainEntity() {
@@ -77,7 +78,6 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
         requestExternalStorageReadPermission();
     }
 
-    private static final int READ_EXT_STORAGE_PERMISSION_REQUEST = 9999;
 
     private void requestExternalStorageReadPermission() {
         if (ContextCompat.checkSelfPermission(
@@ -88,6 +88,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
                     READ_EXT_STORAGE_PERMISSION_REQUEST
             );
         }
+        // TODO check if user doesn't want to be asked again
     }
 
 
@@ -109,23 +110,20 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
         new AsyncTask<Void,Void,Exercise>(){
             @Override
             protected Exercise doInBackground(Void... voids) {
-                System.out.println("received" + exerciseName);
-                // create new exercise
-                String filename = null;
+                String filename;
                 Uri imageUri = null;
 
                 // save picked img
                 if(pickedImg != null) {
-                    // TODO cache date format object
                     filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
                             .format(System.currentTimeMillis()) + ".jpg"; // TODO generalize mime type
+                    // copy picked image file to internal storage
                     try(FileOutputStream fos = getContext()
                             .openFileOutput(filename, Context.MODE_PRIVATE)
                     ) {
                         Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), pickedImg);
                         bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
                         imageUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
-                        //fos.write(bitmap.to);
                    } catch (FileNotFoundException e) {
                        e.printStackTrace();
                    } catch (IOException e) {
@@ -140,12 +138,10 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
             @Override
             protected void onPostExecute(Exercise added) {
                 super.onPostExecute(added);
-                // TODO fix glitch: new card contains image of a card that was in view
                 asyncFetchMainEntity();
                 Toast.makeText(getContext(), R.string.toast_exercise_created, Toast.LENGTH_SHORT).show();
             }
         }.execute();
-        System.out.println("received!");
     }
 
 

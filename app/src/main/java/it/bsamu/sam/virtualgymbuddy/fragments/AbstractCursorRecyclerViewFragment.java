@@ -67,14 +67,12 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
             LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState
     ) {
-       // binding = ExercisesFragmentBinding.inflate(inflater, container, false);
         View view = getMainView(inflater, container);
 
         // create recycler view and set its adapter
         adapter = getAdapter();
         recyclerView = getRecyclerView(view);
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        System.out.println("BASE -- SETTING ADAPTER");
         recyclerView.setAdapter(adapter);
 
         return view;

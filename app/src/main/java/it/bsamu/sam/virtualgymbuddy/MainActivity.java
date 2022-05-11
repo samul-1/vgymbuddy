@@ -29,10 +29,6 @@ import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
-    //private ActivityMainBinding binding;
-
-    //private ViewPager2 viewPager;
-    //private NavigationAdapter navigationAdapter;
 
     private AppDb db;
 
@@ -64,12 +60,10 @@ public class MainActivity extends AppCompatActivity {
                    new TrainingDay(pplId,
                            (short) LocalDate.now().getDayOfWeek().getValue()));
 
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(benchId, dayId, (short)2, (short)12));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12));
-
-
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(benchId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12, (short)5));
 
         }).start();
     }

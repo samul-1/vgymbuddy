@@ -41,9 +41,6 @@ import relational.entities.Exercise;
 import relational.entities.TrainingProgram;
 
 public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<TrainingProgramAdapter> implements View.OnClickListener, TrainingProgramCreationDialog.TrainingProgramCreationDialogListener, TrainingProgramAdapter.TrainingProgramViewHolderListener {
-
-    private ProgramsFragmentBinding binding;
-
     private FloatingActionButton fab;
     private TrainingProgramCreationDialog programCreationDialog = null;
 
@@ -57,13 +54,6 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
         preferences = getActivity()
                 .getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE);
-        //System.out.println("ACTIVE PROGRAM" + preferences.getLong(getString(R.string.active_program_pref_key),0L));
-    }
-
-    @Override
-    public void onDestroyView() {
-        super.onDestroyView();
-        binding = null;
     }
 
     @Override
@@ -101,7 +91,7 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
     @Override
     public void onClick(View view) {
-        programCreationDialog = programCreationDialog==null ?
+        programCreationDialog = programCreationDialog == null ?
                 new TrainingProgramCreationDialog(this) : programCreationDialog;
         programCreationDialog.show(
                 getActivity().getSupportFragmentManager(), "program-creation-dialog"
@@ -131,7 +121,6 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
     public void navigateToProgramDetails(long programId) {
         Bundle args = new Bundle();
         args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, programId);
-
 
         NavHostFragment navHostFragment =
                 (NavHostFragment) getActivity().getSupportFragmentManager()

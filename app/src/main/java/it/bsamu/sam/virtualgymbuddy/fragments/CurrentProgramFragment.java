@@ -50,13 +50,11 @@ import it.bsamu.sam.virtualgymbuddy.viewmodel.CurrentTrainingSessionViewModel;
 
 public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable, RepCounterDialog.RepCounterDialogListener {
     short todayWeekDayIdx;
-    List<TrainingSessionSet> currentExerciseSets = new LinkedList<>();
 
     EditText repsInput;
     EditText weightInput;
     Button addSetBtn, recordSetBtn, countRepsBtn;
     ImageView videoThumbnail;
-    TextView restTimerText;
     ViewGroup setAuxButtonsLayout;
     Uri takenVideoUri;
     RepCounterDialog repCounterDialog;
@@ -68,15 +66,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     CurrentTrainingSessionViewModel viewModel;
     private TodaysTrainingFragmentBinding binding;
 
-
-    public CurrentProgramFragment() {
-
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
+    public CurrentProgramFragment() { }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,9 +89,9 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         recyclerView.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         recyclerView.setAdapter(getAdapter());
 
+        // observe dataset of the recyclerview
         Observer<List<TrainingSessionSet>> setsObserver =
             trainingSessionSets -> {
-                System.out.println("updating observer " + trainingSessionSets);
                 adapter.update(trainingSessionSets);
             };
         viewModel.getCurrentExerciseSets().observe(getActivity(), setsObserver);
@@ -161,7 +151,6 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 viewModel.updateCurrentExercise(adapter);
-                //updateTrainingSessionInfo(true);
             }
         }.execute();
     }
@@ -192,8 +181,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private synchronized long fetchOrCreateTodaysTrainingSession(long trainingDayId) {
-        // attempts to retrieve a training session that matches the current
-        // training day; if it doesn't exist, it creates one in the database
+       // attempts to retrieve a training session that matches the current
+       // training day; if it doesn't exist, it creates one in the database
        TrainingSession session = db
                 .trainingSessionDao()
                 .getTodaysTrainingSessionForTrainingDay(trainingDayId);
@@ -215,7 +204,10 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     private long fetchTrainingDay() {
         TrainingDay trainingDay = db
                 .trainingDayDao()
-                .getForProgramAndDayOfWeek(viewModel.getActiveProgramId().getValue(), todayWeekDayIdx);
+                .getForProgramAndDayOfWeek(
+                        viewModel.getActiveProgramId().getValue(),
+                        todayWeekDayIdx
+                );
 
         if(trainingDay != null) {
             viewModel.setTrainingDayId(trainingDay.id);
@@ -224,20 +216,13 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                    .getExercisesFor(trainingDay.id);
             viewModel.setTrainingDayExercises(trainingDayExercises);
         }
-        return trainingDay == null ? 0 : trainingDay.id;
+
+        return trainingDay == null ? 0L : trainingDay.id;
     }
 
     @Override
     public void onStopSet(int repCount) {
-        //repCounterDialog.dismiss();
         repsInput.setText(String.valueOf(repCount));
-    }
-
-
-    enum EmptyStates {
-        NO_ACTIVE_PROGRAM,
-        REST_DAY,
-        FINISHED
     }
 
     private void dispatchTakeVideoIntent() {
@@ -277,16 +262,13 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         if(v == addSetBtn) {
             short reps = Short.valueOf(repsInput.getText().toString());
             double weight = Double.valueOf(weightInput.getText().toString());
-
-            System.out.println("INSERTING REPS " + reps + " WEIGHT " + weight);
-
             insertTrainingSet(reps, weight);
-        } else if(v==recordSetBtn) {
+        } else if(v == recordSetBtn) {
             dispatchTakeVideoIntent();
-        } else if (v==countRepsBtn) {
+        } else if (v == countRepsBtn) {
             countReps();
         } else {
-            System.out.println("?????" + v);
+            throw new AssertionError();
         }
     }
 
@@ -311,14 +293,12 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                 );
                 db.trainingSessionSetDao().insertSet(set);
                 viewModel.addCurrentExerciseSet(set);
-                //fetchExercisesAndSets(viewModel.getSessionId().getValue());
                 return null;
             }
 
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                //updateTrainingSessionInfo(false);
                 startNextSetTimer();
             }
         }.execute();
@@ -326,20 +306,17 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
 
     private void updateRestTimer() {
-        //getActivity().runOnUiThread(() ->
-        //{
-
         short remainingRestTime = viewModel.getRemainingRestTime().getValue();
             viewModel.setRemainingRestTime(
                     (short)(remainingRestTime-1)
             );
 
             if (remainingRestTime-1 == 0) {
+                // time's up, on to the next exercise
                 viewModel.updateCurrentExercise(adapter);
             } else {
                 restTimerHandler.postDelayed(this, 1000);
             }
-        //});
     }
 
     @Override
@@ -348,11 +325,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
 
-
     private void startNextSetTimer() {
        videoThumbnail.setVisibility(View.GONE);
-        viewModel.setRemainingRestTime(viewModel.getCurrentRestTime().getValue());
-        restTimerHandler.postDelayed(this, 1000);
+       // start rest timer
+       viewModel.setRemainingRestTime(viewModel.getCurrentRestTime().getValue());
+       restTimerHandler.postDelayed(this, 1000);
     }
 
     @BindingAdapter("app:visibleIf")

@@ -29,7 +29,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     private TrainingDayDetailBinding binding;
     long chosenExerciseId;
     String chosenExerciseName;
-    EditText setsInput, repsInput;
+    EditText setsInput, repsInput, restInput;
     ExerciseSelectionDialog dialog;
 
     private final String BUNDLE_CHOSEN_EXERCISE_ID = "eid";
@@ -100,6 +100,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
         saveExerciseBtn = superview.findViewById(R.id.save_training_day_exercise_btn);
         setsInput = superview.findViewById(R.id.training_day_exercise_input_sets);
         repsInput = superview.findViewById(R.id.training_day_exercise_input_reps);
+        restInput = superview.findViewById(R.id.training_day_exercise_input_rest);
         addExerciseControls = superview.findViewById(R.id.training_day_exercise_controls);
 
         addExerciseBtn.setOnClickListener((__)->chooseExercise());
@@ -117,7 +118,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     private void insertExercise() {
         short sets = Short.valueOf(setsInput.getText().toString());
         short reps = Short.valueOf(repsInput.getText().toString());
-        System.out.println("E " + chosenExerciseId + " R " + reps + " S " + sets);
+        short rest = Short.valueOf(restInput.getText().toString());
 
         new AsyncTask<Void,Void,Void>(){
             @SuppressLint("StaticFieldLeak")
@@ -126,7 +127,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
                 db.trainingDayExerciseDao()
                         .insertTrainingDayExercise(
                                 new TrainingDayExercise(
-                                        chosenExerciseId, trainingDay.id, sets, reps
+                                        chosenExerciseId, trainingDay.id, sets, reps, rest
                                 )
                         );
                 cursor = db.trainingDayExerciseDao().getExercisesForTrainingDay(itemId);

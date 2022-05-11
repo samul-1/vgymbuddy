@@ -28,12 +28,12 @@ public class TrainingDayExercise {
     public short repsPrescribed;
     public short restSeconds;
 
-    public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed) {
+    public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed, short restSeconds) {
         this.exerciseId = exerciseId;
         this.trainingDayId = trainingDayId;
         this.repsPrescribed = repsPrescribed;
         this.setsPrescribed = setsPrescribed;
-        this.restSeconds = 5;
+        this.restSeconds = restSeconds;
     }
 
    /* public TrainingDayExercise(long exerciseId, long trainingDayId, short setsPrescribed, short repsPrescribed, short restSeconds) {

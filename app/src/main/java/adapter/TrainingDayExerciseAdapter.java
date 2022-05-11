@@ -21,10 +21,12 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
         String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
         short sets = cursor.getShort(cursor.getColumnIndexOrThrow("setsPrescribed"));
         short reps = cursor.getShort(cursor.getColumnIndexOrThrow("repsPrescribed"));
-        //System.out.println("NAME " + name);
+        short rest = cursor.getShort(cursor.getColumnIndexOrThrow("restSeconds"));
+
         holder.trainingDayExerciseExerciseName.setText(String.valueOf(name));
-        holder.trainingDayExerciseExerciseSets.setText(String.valueOf(String.valueOf(sets)));
-        holder.trainingDayExerciseExerciseReps.setText(String.valueOf(String.valueOf(reps)));
+        holder.trainingDayExerciseExerciseSets.setText(String.valueOf(sets));
+        holder.trainingDayExerciseExerciseReps.setText(String.valueOf(reps));
+        holder.trainingDayExerciseExerciseRest.setText(String.valueOf(rest));
     }
 
     @NonNull
@@ -42,11 +44,13 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
         TextView trainingDayExerciseExerciseName;
         TextView trainingDayExerciseExerciseReps;
         TextView trainingDayExerciseExerciseSets;
+        TextView trainingDayExerciseExerciseRest;
         TrainingDayExerciseViewHolder(View itemView) {
             super(itemView);
             trainingDayExerciseExerciseName = itemView.findViewById(R.id.training_day_exercise_name);
             trainingDayExerciseExerciseSets = itemView.findViewById(R.id.training_day_exercise_sets);
             trainingDayExerciseExerciseReps = itemView.findViewById(R.id.training_day_exercise_reps);
+            trainingDayExerciseExerciseRest = itemView.findViewById(R.id.training_day_exercise_rest);
         }
     }
 }

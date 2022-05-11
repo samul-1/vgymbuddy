@@ -32,7 +32,6 @@ import relational.entities.TrainingProgram;
 
 public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDayAdapter> implements TrainingDayAdapter.TrainingDayViewHolderListener {
     private TrainingProgram program;
-    private ProgramDetailFragmentBinding binding;
     private TextView programName;
     private TextView programDesc;
     private Button addDayBtn;
@@ -48,8 +47,6 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View superview = super.onCreateView(inflater, container, savedInstanceState);
-        binding = ProgramDetailFragmentBinding.inflate(inflater, container, false);
-        View rootView = binding.getRoot();
 
         programName = superview.findViewById(R.id.program_detail_title);
         programDesc = superview.findViewById(R.id.program_detail_description);
@@ -98,10 +95,8 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
         }
     }
 
-
     @Override
     protected void paintItemData() {
-        System.out.println("painting");
         if(program != null) {
             programName.setText(program.name);
             programDesc.setText(program.description);
@@ -133,7 +128,6 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
     @Override
     protected View getMainView(LayoutInflater inflater, ViewGroup container) {
-        System.out.println("getting program detail inflate");
         return inflater.inflate(R.layout.program_detail_fragment, container,false);
     }
 
@@ -143,8 +137,6 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @Override
             protected Void doInBackground(Void... voids) {
                 short selectedDayIdx = (short)(weekDays.indexOf(dayOfWeekDropdown.getSelectedItem())+1);
-                // to allow max one training day per day of week, remove selected day from dropdown
-
                 db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, selectedDayIdx));
                 trainingDays.clear();
                 trainingDays.addAll(db.trainingDayDao().getForProgram(itemId));
@@ -154,6 +146,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 adapter.notifyDataSetChanged();
+                // update list of usable days (i.e. days for which a training day doesn't exist)
                 setUsableDaysOfWeek();
             }
         }.execute();
@@ -172,6 +165,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 adapter.notifyDataSetChanged();
+                setUsableDaysOfWeek();
             }
         }.execute();
     }
@@ -180,7 +174,6 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     public void navigateToTrainingDayDetails(long dayId) {
         Bundle args = new Bundle();
         args.putLong(AbstractItemDetailFragment.ITEM_ID_ARG, dayId);
-
 
         NavHostFragment navHostFragment =
                 (NavHostFragment) getActivity().getSupportFragmentManager()
