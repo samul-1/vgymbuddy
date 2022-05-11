@@ -38,7 +38,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     @Override
     public void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
-        System.out.println("saving");
         outState.putLong(BUNDLE_CHOSEN_EXERCISE_ID, chosenExerciseId);
         outState.putString(BUNDLE_CHOSEN_EXERCISE_NAME, chosenExerciseName);
     }
@@ -46,7 +45,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     @Override
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
-        System.out.println("RESTORED");
         if(savedInstanceState != null) {
             long savedExerciseId = savedInstanceState.getLong(BUNDLE_CHOSEN_EXERCISE_ID, 0L);
             String savedExerciseName =  savedInstanceState.getString(BUNDLE_CHOSEN_EXERCISE_NAME, "");
@@ -127,7 +125,11 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
                 db.trainingDayExerciseDao()
                         .insertTrainingDayExercise(
                                 new TrainingDayExercise(
-                                        chosenExerciseId, trainingDay.id, sets, reps, rest
+                                        chosenExerciseId,
+                                        trainingDay.id,
+                                        sets,
+                                        reps,
+                                        rest
                                 )
                         );
                 cursor = db.trainingDayExerciseDao().getExercisesForTrainingDay(itemId);
@@ -165,7 +167,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
 
     @Override
     public void onExerciseSelection(long exerciseId, String exerciseName) {
-        dialog.dismiss();
         setChosenExercise(exerciseId, exerciseName);
     }
 

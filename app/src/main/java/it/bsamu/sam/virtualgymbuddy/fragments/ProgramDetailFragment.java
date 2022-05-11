@@ -72,6 +72,11 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
     @NonNull
     private void setUsableDaysOfWeek() {
+        /**
+         * Filters out days for which a TrainingDay exists to prevent the user from
+         * adding more than one TrainingDay for any given day of the week
+         */
+
         List<Short> usedDays = trainingDays
                 .stream()
                 .map(t->t.dayOfWeek)

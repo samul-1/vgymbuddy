@@ -150,7 +150,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             @Override
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
-                viewModel.updateCurrentExercise(adapter);
+                viewModel.updateCurrentExercise();
             }
         }.execute();
     }
@@ -313,7 +313,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
             if (remainingRestTime-1 == 0) {
                 // time's up, on to the next exercise
-                viewModel.updateCurrentExercise(adapter);
+                viewModel.updateCurrentExercise();
             } else {
                 restTimerHandler.postDelayed(this, 1000);
             }

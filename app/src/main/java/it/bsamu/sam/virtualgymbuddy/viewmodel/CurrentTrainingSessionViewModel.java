@@ -22,9 +22,9 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
     private MutableLiveData<List<TrainingSessionSet>> currentExerciseSets;
     private MutableLiveData<Short> currentRestTime = new MutableLiveData<>((short)0);
     private MutableLiveData<Short> remainingRestTime = new MutableLiveData<>((short)0);
-    public MutableLiveData<Long> activeProgramId;
+    private MutableLiveData<Long> activeProgramId;
 
-    public void updateCurrentExercise(RecyclerView.Adapter notifyAdapter) {
+    public void updateCurrentExercise() {
         /**
          * sets the current exercise instance variable to the first exercise for which
          * not all sets have been completed
@@ -40,20 +40,15 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
                     .orElseThrow(() -> new AssertionError("cannot find exercise " + entry.getKey()));
             long sets = exercise.setsPrescribed;
             if(entry.getValue().size() < sets) {
-                System.out.println("FOUND CURRENT EXERCISE: " + entry.getKey());
                 currentExercise.setValue(entry.getKey());
                 currentRestTime.setValue(exercise.restSeconds);
-                setDataSetToCurrentExerciseSets(notifyAdapter);
+                setDataSetToCurrentExerciseSets();
                 return;
             }
         }
         // no suitable exercise found
         currentExercise.setValue(null);
-        setDataSetToCurrentExerciseSets(notifyAdapter);
-    }
-
-    public LiveData<Exercise> getCurrentExercise() {
-        return currentExercise;
+        setDataSetToCurrentExerciseSets();
     }
 
     public void addCurrentExerciseSet(TrainingSessionSet set) {
@@ -67,29 +62,22 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
                 );
     }
 
-    public MutableLiveData<List<TrainingSessionSet>> getCurrentExerciseSets() {
-        if(currentExerciseSets == null) {
-            currentExerciseSets = new MutableLiveData<>(new LinkedList<>());
-        }
-        return currentExerciseSets;
-    }
-
-    public void setDataSetToCurrentExerciseSets(RecyclerView.Adapter adapter) {
+    public void setDataSetToCurrentExerciseSets() {
         /**
          * sets recyclerview adapter's data set to the sets for the
          * current exercise in the session
          */
         if(currentExercise.getValue() != null && exercisesWithSets.getValue() != null) {
-           // currentExerciseSets.getValue().clear();
             currentExerciseSets
-                    //.getValue()
                     .postValue(
                             exercisesWithSets.getValue().get(currentExercise.getValue())
                     );
-           // adapter.notifyDataSetChanged();
         }
     }
 
+    public LiveData<Exercise> getCurrentExercise() {
+        return currentExercise;
+    }
     public LiveData<Long> getSessionId() {
         return sessionId;
     }
@@ -105,10 +93,17 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
     public LiveData<Short> getRemainingRestTime() {
         return remainingRestTime;
     }
-
+    public LiveData<List<TrainingSessionSet>> getCurrentExerciseSets() {
+        if(currentExerciseSets == null) {
+            currentExerciseSets = new MutableLiveData<>(new LinkedList<>());
+        }
+        return currentExerciseSets;
+    }
     public LiveData<Long> getTrainingDayId() {
         return trainingDayId;
     }
+
+
 
     public void setCurrentRestTime(short time) {
         currentRestTime.postValue(time);
