@@ -23,6 +23,7 @@ public class RepCounter {
 
     private final long ONE_SECOND = 1000000000;
     private final double THRESHOLD = 5.5;
+    private final double REP_TIME_GAP_RATIO = 1.2;
 
     private RepCounter(Context context) {
         sm = (SensorManager) context.getSystemService(Context.SENSOR_SERVICE);
@@ -73,7 +74,7 @@ public class RepCounter {
             sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/2 ||
             // discard new event if the last valid reading was a rep and not enough time has
             // passed to avoid counting positive + negative portions of a rep as 2 distinct reps
-            lastReadingWasRep && sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/1.2
+            lastReadingWasRep && sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/REP_TIME_GAP_RATIO
         ) {
             if(lastEventTimestamp == 0L) {
                 previousMagnitude = getMagnitude(sensorEvent);
@@ -91,10 +92,6 @@ public class RepCounter {
 
         boolean isRep = delta > THRESHOLD;
         lastReadingWasRep = isRep;
-
-        if(isRep) {
-            System.out.println(delta + ", p " + previousMagnitude + ", c " + magnitude);
-        }
 
         return isRep;
     }
@@ -121,5 +118,4 @@ public class RepCounter {
             return instance;
         }
     }
-
 }
