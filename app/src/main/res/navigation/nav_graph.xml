@@ -9,7 +9,10 @@
         android:name="it.bsamu.sam.virtualgymbuddy.fragments.MainFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/main_fragment">
-
+        <action
+            android:id="@+id/action_Main_to_GymMap"
+            app:destination="@id/GymMap"
+            />
         <action
             android:id="@+id/action_Main_to_ProgramDetail"
             app:destination="@id/ProgramDetails" />
@@ -61,4 +64,8 @@
             android:defaultValue="0L"
             app:argType="long" />
     </fragment>
+    <fragment
+        android:id="@+id/GymMap"
+        android:name="it.bsamu.sam.virtualgymbuddy.fragments.GymMapFragment"
+    />
 </navigation>

@@ -67,4 +67,11 @@
 
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="option_get_place">Scegli posto</string>
+    <string name="default_info_title">Default info</string>
+    <string name="default_info_snippet">Default info snippet</string>
+    <string name="pick_place">Scegli un posto</string>
+    <string name="gym_lat_key">GYM_LAT</string>
+    <string name="gym_lng_key">GYM_LNG</string>
+    <string name="your_gym">La tua palestra</string>
 </resources>

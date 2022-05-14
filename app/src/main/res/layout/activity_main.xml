@@ -14,7 +14,6 @@
         android:id="@+id/app_bar"
         android:theme="@style/Theme.VirtualGymBuddy.AppBarOverlay"
     >
-
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"

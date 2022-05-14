@@ -24,11 +24,13 @@ import relational.entities.TrainingProgram;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 
 import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
+    Button gymMapBtn;
 
     private AppDb db;
 
@@ -36,6 +38,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        gymMapBtn = findViewById(R.id.select_gym_location_btn);
+        gymMapBtn.setOnClickListener((__) -> navigateToSelectGymLocation());
 
         db = AppDb.getInstance(getApplicationContext());
 
@@ -67,6 +72,17 @@ public class MainActivity extends AppCompatActivity {
 
         }).start();
     }
+
+    private void navigateToSelectGymLocation() {
+        NavHostFragment navHostFragment =
+                (NavHostFragment)getSupportFragmentManager()
+                        .findFragmentById(R.id.nav_host_fragment);
+
+        navHostFragment.getNavController().navigate(
+                R.id.action_Main_to_GymMap
+        );
+    }
+
 
 
     @Override
