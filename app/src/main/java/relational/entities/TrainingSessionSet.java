@@ -7,6 +7,8 @@ import androidx.room.Entity;
 import androidx.room.ForeignKey;
 import androidx.room.PrimaryKey;
 
+import java.util.Date;
+
 @Entity(
         foreignKeys = {
                 @ForeignKey(
@@ -34,11 +36,14 @@ import androidx.room.PrimaryKey;
     public String notes;
     public Uri videoUri;
 
-    public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed, Uri videoUri) {
+    public Date timestamp;
+
+    public TrainingSessionSet(long exerciseId, long trainingSessionId, short repsDone, double weightUsed, Uri videoUri, Date timestamp) {
         this.exerciseId=exerciseId;
         this.trainingSessionId=trainingSessionId;
         this.repsDone=repsDone;
         this.weightUsed=weightUsed;
         this.videoUri = videoUri;
+        this.timestamp = timestamp;
     }
 }

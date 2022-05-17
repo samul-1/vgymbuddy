@@ -3,6 +3,7 @@ package relational.dao;
 import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -23,7 +24,7 @@ public interface TrainingSessionDao {
     public TrainingSession getById(long id);
 
     @Query("SELECT * FROM TrainingSession WHERE trainingDayId = :trainingDayId AND " +
-            "timestamp BETWEEN :minTimestamp AND :maxTimestamp")
+            "beginTimestamp BETWEEN :minTimestamp AND :maxTimestamp")
     public TrainingSession getTrainingSessionBetweenDatesForTrainingDay(Date minTimestamp, Date maxTimestamp, long trainingDayId);
 
 
@@ -40,5 +41,13 @@ public interface TrainingSessionDao {
                 trainingDayId
         );
     }
+
+    // returns the timestamp of the last set done for a training session
+    @Query("SELECT MAX(timestamp) FROM TrainingSessionSet " +
+            "WHERE trainingSessionId = :trainingSessionId")
+    public Date getTrainingSessionEndTimestamp(long trainingSessionId);
+
+    @Update
+    public void updateTrainingSessions(TrainingSession ...sessions);
 
 }

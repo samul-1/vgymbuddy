@@ -289,7 +289,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                         viewModel.getSessionId().getValue(),
                         reps,
                         weight,
-                        takenVideoUri
+                        takenVideoUri,
+                        new Date()
                 );
                 db.trainingSessionSetDao().insertSet(set);
                 viewModel.addCurrentExerciseSet(set);

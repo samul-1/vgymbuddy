@@ -74,4 +74,9 @@
     <string name="gym_lat_key">GYM_LAT</string>
     <string name="gym_lng_key">GYM_LNG</string>
     <string name="your_gym">La tua palestra</string>
+    <string name="geofence_transition_invalid_type">INVALID TRANSITION TYPE</string>
+    <string name="arrived_at_gym">Sei in palestra</string>
+    <string name="notification_channel_id">VGYMBUD_NOTIFICATION_CHANNEL</string>
+    <string name="start_working_out">Sei in palestra. Inizia ad allenarti!</string>
+    <string name="total_gym_time">"Allenamento terminato! Tempo trascorso in palestra in totale: "</string>
 </resources>

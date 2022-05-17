@@ -1,12 +1,28 @@
 package it.bsamu.sam.virtualgymbuddy;
 
+import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingClient;
+import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
@@ -16,6 +32,7 @@ import androidx.viewpager2.widget.ViewPager2;
 
 import adapter.NavigationAdapter;
 import it.bsamu.sam.virtualgymbuddy.databinding.ActivityMainBinding;
+import receiver.GymGeofenceBroadcastReceiver;
 import relational.AppDb;
 import relational.entities.Exercise;
 import relational.entities.TrainingDay;
@@ -34,6 +51,13 @@ public class MainActivity extends AppCompatActivity {
 
     private AppDb db;
 
+    private GeofencingClient geofencingClient;
+    private final String GYM_GEOFENCE_ID = "GYM_GEOFENCE";
+    private final int GYM_GEOFENCE_RADIUS_M = 10;
+    private final long GEOFENCE_EXPIRATION_MS = 1000000000;
+    private final int GEOFENCE_LOITERING_MS =  10000; //300000;
+    private PendingIntent geofencePendingIntent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +65,11 @@ public class MainActivity extends AppCompatActivity {
 
         gymMapBtn = findViewById(R.id.select_gym_location_btn);
         gymMapBtn.setOnClickListener((__) -> navigateToSelectGymLocation());
+
+        // used to keep track of when user goes near their specified gym location
+        geofencingClient = LocationServices.getGeofencingClient(this);
+
+        addGymGeofence();
 
         db = AppDb.getInstance(getApplicationContext());
 
@@ -112,6 +141,100 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    @SuppressLint("MissingPermission")
+    private void addGymGeofence() {
+        LatLng gymLocation = getGymLocation();
+
+        if(gymLocation == null) {
+            return;
+        }
+
+        Geofence geofence = new Geofence.Builder()
+                .setRequestId(GYM_GEOFENCE_ID)
+                .setCircularRegion(
+                        gymLocation.latitude,
+                        gymLocation.longitude,
+                        GYM_GEOFENCE_RADIUS_M
+                )
+                .setLoiteringDelay(GEOFENCE_LOITERING_MS)
+                .setExpirationDuration(GEOFENCE_EXPIRATION_MS)
+                .setTransitionTypes(
+                        Geofence.GEOFENCE_TRANSITION_DWELL|
+                                Geofence.GEOFENCE_TRANSITION_EXIT
+                )
+                .build();
+
+        geofencingClient.addGeofences(
+                new GeofencingRequest.Builder()
+                        .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL)
+                        .addGeofence(geofence)
+                        .build(),
+                getGymGeofencePendingIntent()
+        ).addOnSuccessListener((aVoid) -> {
+            System.out.println("geofence added");
+
+            createNotificationChannel();
+/*            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "CHANNEL_ID")
+                    .setSmallIcon(R.drawable.ic_baseline_fitness_center_24)
+                    .setContentTitle("Sei in palestra")
+                    .setContentText("Inizia il tuo allenamento!")
+                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+
+            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
+            notificationManagerCompat.notify(1, builder.build());*/
+            System.out.println("notified");
+
+        }).addOnFailureListener((e) -> {
+            System.out.println("FAILURE GEOFENCE");
+            e.printStackTrace();
+        });
+    }
+
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "NOTIFICATION_CHANNEL";
+            String description = "Gym geofence notifications channel";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id), name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private PendingIntent getGymGeofencePendingIntent() {
+        if(geofencePendingIntent != null) {
+            return geofencePendingIntent;
+        }
+        Intent intent = new Intent(this, GymGeofenceBroadcastReceiver.class);
+        geofencePendingIntent = PendingIntent.getBroadcast(
+                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+        );
+        return geofencePendingIntent;
+    }
+
+    @Nullable
+    public LatLng getGymLocation() {
+        /**
+         * Returns a LatLng object describing the location of user's gym saved in
+         * preferences, or null if user didn't specify a gym location
+         */
+
+        SharedPreferences prefs =
+                getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE);
+
+        double lat = prefs.getFloat(getString(R.string.gym_lat_key), 0);
+        double lng = prefs.getFloat(getString(R.string.gym_lng_key), 0);
+
+        System.out.println(lat + " " + lng);
+
+        return lat != 0 && lng != 0 ? new LatLng(lat, lng) : null;
     }
 
 }

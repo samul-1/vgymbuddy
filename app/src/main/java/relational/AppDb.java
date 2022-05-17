@@ -8,12 +8,14 @@ import androidx.room.RoomDatabase;
 import androidx.room.TypeConverters;
 
 import relational.dao.ExerciseDao;
+import relational.dao.GymTransitionDao;
 import relational.dao.TrainingDayDao;
 import relational.dao.TrainingDayExerciseDao;
 import relational.dao.TrainingProgramDao;
 import relational.dao.TrainingSessionDao;
 import relational.dao.TrainingSessionSetDao;
 import relational.entities.Exercise;
+import relational.entities.GymTransition;
 import relational.entities.TrainingDay;
 import relational.entities.TrainingDayExercise;
 import relational.entities.TrainingSession;
@@ -26,7 +28,8 @@ import relational.entities.TrainingProgram;
         TrainingDay.class,
         TrainingDayExercise.class,
         TrainingSessionSet.class,
-        TrainingSession.class
+        TrainingSession.class,
+        GymTransition.class
 }, version=1)
 @TypeConverters({Converters.class})
 public abstract class AppDb extends RoomDatabase {
@@ -36,6 +39,7 @@ public abstract class AppDb extends RoomDatabase {
     public abstract TrainingDayExerciseDao trainingDayExerciseDao();
     public abstract TrainingSessionSetDao trainingSessionSetDao();
     public abstract TrainingSessionDao trainingSessionDao();
+    public abstract GymTransitionDao gymTransitionDao();
 
     private static AppDb instance = null;
 

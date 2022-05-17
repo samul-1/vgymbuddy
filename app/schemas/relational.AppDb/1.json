@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 1,
-    "identityHash": "e1ddea1cd9e5fdcc9a453ad816e1f702",
+    "identityHash": "4e2d65a7d4dc4f0d4484dc95519dcd70",
     "entities": [
       {
         "tableName": "Exercise",
@@ -188,7 +188,7 @@
       },
       {
         "tableName": "TrainingSessionSet",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, `videoUri` TEXT, FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`sid` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `exerciseId` INTEGER NOT NULL, `trainingSessionId` INTEGER NOT NULL, `weightUsed` REAL NOT NULL, `repsDone` INTEGER NOT NULL, `notes` TEXT, `videoUri` TEXT, `timestamp` INTEGER, FOREIGN KEY(`trainingSessionId`) REFERENCES `TrainingSession`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`exerciseId`) REFERENCES `Exercise`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "sid",
@@ -231,6 +231,12 @@
             "columnName": "videoUri",
             "affinity": "TEXT",
             "notNull": false
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
           }
         ],
         "primaryKey": {
@@ -267,7 +273,7 @@
       },
       {
         "tableName": "TrainingSession",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `trainingDayId` INTEGER NOT NULL, `timestamp` INTEGER, FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `trainingDayId` INTEGER NOT NULL, `beginTimestamp` INTEGER, FOREIGN KEY(`trainingDayId`) REFERENCES `TrainingDay`(`_id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -282,8 +288,8 @@
             "notNull": true
           },
           {
-            "fieldPath": "timestamp",
-            "columnName": "timestamp",
+            "fieldPath": "beginTimestamp",
+            "columnName": "beginTimestamp",
             "affinity": "INTEGER",
             "notNull": false
           }
@@ -308,12 +314,44 @@
             ]
           }
         ]
+      },
+      {
+        "tableName": "GymTransition",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`_id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `timestamp` INTEGER, `entering` INTEGER NOT NULL)",
+        "fields": [
+          {
+            "fieldPath": "id",
+            "columnName": "_id",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": false
+          },
+          {
+            "fieldPath": "entering",
+            "columnName": "entering",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "columnNames": [
+            "_id"
+          ],
+          "autoGenerate": true
+        },
+        "indices": [],
+        "foreignKeys": []
       }
     ],
     "views": [],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'e1ddea1cd9e5fdcc9a453ad816e1f702')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e2d65a7d4dc4f0d4484dc95519dcd70')"
     ]
   }
 }

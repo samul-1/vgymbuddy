@@ -50,6 +50,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import it.bsamu.sam.virtualgymbuddy.BuildConfig;
+import it.bsamu.sam.virtualgymbuddy.MainActivity;
 import it.bsamu.sam.virtualgymbuddy.R;
 
 public class GymMapFragment extends Fragment implements OnMapReadyCallback {
@@ -209,7 +210,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        LatLng gymLocation = getGymLocation();
+        LatLng gymLocation = ((MainActivity)getActivity()).getGymLocation();
         if(gymLocation != null) {
             setGymMarker(gymLocation);
         }

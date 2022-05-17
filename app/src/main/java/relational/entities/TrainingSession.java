@@ -23,10 +23,10 @@ public class TrainingSession {
     public long id;
 
     public long trainingDayId;
-    public Date timestamp;
+    public Date beginTimestamp;
 
-    public TrainingSession(long trainingDayId, Date timestamp) {
+    public TrainingSession(long trainingDayId, Date beginTimestamp) {
         this.trainingDayId = trainingDayId;
-        this.timestamp = timestamp;
+        this.beginTimestamp = beginTimestamp;
     }
 }
