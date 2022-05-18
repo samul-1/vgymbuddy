@@ -10,6 +10,8 @@
     <string name="tab_current_program">Oggi</string>
     <string name="tab_programs">Programmi</string>
     <string name="tab_exercises">Esercizi</string>
+    <string name="tab_stats">Stats</string>
+
 
     <string name="new_active_program_set">Programma impostato come attivo</string>
 
@@ -79,4 +81,6 @@
     <string name="notification_channel_id">VGYMBUD_NOTIFICATION_CHANNEL</string>
     <string name="start_working_out">Sei in palestra. Inizia ad allenarti!</string>
     <string name="total_gym_time">"Allenamento terminato! Tempo trascorso in palestra in totale: "</string>
+    <string name="actual_train_time_this_week">Tempo trascorso allenandoti questa settimana</string>
+    <string name="gym_time_this_week">Tempo trascorso in palestra questa settimana</string>
 </resources>

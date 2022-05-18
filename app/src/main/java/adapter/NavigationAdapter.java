@@ -11,6 +11,7 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import it.bsamu.sam.virtualgymbuddy.fragments.CurrentProgramFragment;
 import it.bsamu.sam.virtualgymbuddy.fragments.ExercisesFragment;
 import it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment;
+import it.bsamu.sam.virtualgymbuddy.fragments.StatsFragment;
 
 public class NavigationAdapter extends FragmentStateAdapter {
 
@@ -30,7 +31,8 @@ public class NavigationAdapter extends FragmentStateAdapter {
     public final int[] tabTexts = {
             R.string.tab_programs,
             R.string.tab_exercises,
-            R.string.tab_current_program
+            R.string.tab_current_program,
+            R.string.tab_stats
     };
 
     @NonNull
@@ -43,6 +45,8 @@ public class NavigationAdapter extends FragmentStateAdapter {
                 return new ExercisesFragment();
             case 2:
                 return new CurrentProgramFragment();
+            case 3:
+                return new StatsFragment();
 
         }
         throw new AssertionError();

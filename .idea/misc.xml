@@ -35,6 +35,7 @@
         <entry key="app/src/main/res/layout/program_item.xml" value="0.33" />
         <entry key="app/src/main/res/layout/programs_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/rep_counter_dialog.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/stats_fragment.xml" value="0.25" />
         <entry key="app/src/main/res/layout/test_fragment.xml" value="0.15989583333333332" />
         <entry key="app/src/main/res/layout/todays_training_fragment.xml" value="0.1766595289079229" />
         <entry key="app/src/main/res/layout/training_day.xml" value="0.2" />
