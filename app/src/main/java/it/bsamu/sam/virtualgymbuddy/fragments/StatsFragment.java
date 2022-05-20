@@ -68,5 +68,6 @@ public class StatsFragment extends Fragment {
                         7); // number of groups
         chart.getXAxis().setGranularity(1f);
         chart.groupBars(0, 0.18f, 0.0f);
+        // TODO invalidate?
     }
 }

@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 
 import relational.entities.TrainingSession;
 
@@ -47,7 +48,27 @@ public interface TrainingSessionDao {
             "WHERE trainingSessionId = :trainingSessionId")
     public Date getTrainingSessionEndTimestamp(long trainingSessionId);
 
+    // returns the begin timestamp, end timestamp, and day of week of all training
+    // session whose beginTimestamp is in the specified interval
+    @Query("SELECT beginTimestamp, dayOfWeek, MAX(timestamp) AS endTimestamp " +
+            "FROM TrainingSession INNER JOIN TrainingSessionSet ON " +
+            "TrainingSession._id = trainingSessionId " +
+            "INNER JOIN TrainingDay ON TrainingDay._id = trainingDayId " +
+            "WHERE beginTimestamp BETWEEN :beginDate AND :endDate")
+    public List<TrainingSessionDurationData> getDurationDataForTimeInterval(Date beginDate, Date endDate);
+
     @Update
     public void updateTrainingSessions(TrainingSession ...sessions);
+
+    public class TrainingSessionDurationData {
+        public Date beginTimestamp;
+        public Date endTimestamp;
+        public short dayOfWeek;
+
+        public long getDuration() {
+            // TODO implement
+            return 0; // endTimestamp - beginTimestamp;
+        }
+    }
 
 }
