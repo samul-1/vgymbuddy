@@ -12,6 +12,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import relational.entities.TrainingSession;
 
@@ -65,9 +66,11 @@ public interface TrainingSessionDao {
         public Date endTimestamp;
         public short dayOfWeek;
 
-        public long getDuration() {
-            // TODO implement
-            return 0; // endTimestamp - beginTimestamp;
+        public long getDurationInMinutes() {
+            return TimeUnit.MINUTES.convert(
+                    endTimestamp.getTime() - beginTimestamp.getTime(),
+                    TimeUnit.MILLISECONDS
+            );
         }
     }
 
