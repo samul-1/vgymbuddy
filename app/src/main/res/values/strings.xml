@@ -80,7 +80,7 @@
     <string name="arrived_at_gym">Sei in palestra</string>
     <string name="notification_channel_id">VGYMBUD_NOTIFICATION_CHANNEL</string>
     <string name="start_working_out">Sei in palestra. Inizia ad allenarti!</string>
-    <string name="total_gym_time">"Allenamento terminato! Tempo trascorso in palestra in totale: "</string>
+    <string name="total_gym_time">"Allenamento terminato!"</string>
     <string name="actual_train_time_this_week">Tempo trascorso allenandoti questa settimana</string>
     <string name="gym_time_this_week">Tempo trascorso in palestra questa settimana</string>
 </resources>

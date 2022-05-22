@@ -14,14 +14,19 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.charts.BarChart;
+import com.github.mikephil.charting.components.AxisBase;
+import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
+import com.github.mikephil.charting.formatter.IAxisValueFormatter;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
@@ -61,6 +66,23 @@ public class StatsFragment extends Fragment {
 
         chart = view.findViewById(R.id.gym_time_chart);
         chart.setPinchZoom(false);
+        XAxis xAxis= chart.getXAxis();
+
+        xAxis.setDrawGridLines(false);
+
+        String[] weekDays = getResources().getStringArray(R.array.days_of_week);
+
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return weekDays[(int)value];
+            }
+        });
+        xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
+        xAxis.setLabelCount(7);
+        xAxis.setGranularity(1f); // only intervals of 1 day
+
+        chart.invalidate();
 
         return view;
     }
@@ -80,13 +102,14 @@ public class StatsFragment extends Fragment {
                 LocalDateTime midnight = now.toLocalDate().atStartOfDay();
 
                 int todayIdx = now.getDayOfWeek().getValue();
-                LocalDateTime beginningOfWeek = midnight.minusDays(todayIdx-1);
-                LocalDateTime endOfWeek = midnight.plusDays(7);
+                LocalDateTime beginningOfWeek = midnight.minusDays(todayIdx+10);
+                LocalDateTime endOfWeek = beginningOfWeek.plusDays(1000);
                 Date midnightBeginningOfWeek = Date.from(beginningOfWeek.atZone(ZoneId.systemDefault()).toInstant());
                 Date midnightEndOfWeek = Date.from(endOfWeek.atZone(ZoneId.systemDefault()).toInstant());
 
                 trainingSessionDurationData = db.trainingSessionDao()
                         .getDurationDataForTimeInterval(midnightBeginningOfWeek, midnightEndOfWeek);
+
 
                 gymTimeDurationData = getGymTimeDurationData(midnightBeginningOfWeek, midnightEndOfWeek);
 
@@ -109,7 +132,7 @@ public class StatsFragment extends Fragment {
 
         double[] ret = new double[7];
 
-        for(int i = 0; i < 6; i++) {
+        for(int i = 0; i < 7; i++) {
             int finalI = i;
             // get training session's duration data for the i-th day
             TrainingSessionDao.TrainingSessionDurationData durationData =
@@ -190,6 +213,7 @@ public class StatsFragment extends Fragment {
         for(int i = 0; i < 7; i++) {
             // add time spent at the gym based on geofence transitions for i-th day of the week
             gymTimeValues.add(new BarEntry(i, (float) gymTimeDurationData[i]));
+            System.out.println("GTD " + gymTimeDurationData[i]);
 
             // get duration of training session for i-th day of this week, if it exists
             int finalI = i;
@@ -220,14 +244,18 @@ public class StatsFragment extends Fragment {
         BarData data = new BarData(gymTimeDataSet, actualTrainTimeDataSet);
         chart.setData(data);
 
-        // TODO extract numbers to final variables
-        chart.getBarData().setBarWidth(0.3f);
+        float groupSpace = 0.1f;
+        float barSpace = 0.0f;
+        float barWidth = 0.42f;
+
+        chart.getBarData().setBarWidth(barWidth);
         chart.getXAxis().setAxisMinimum(0.0f);
-        chart.getXAxis().setAxisMaximum(
-                0 + chart.getBarData().getGroupWidth(0.18f, 0.0f) *
-                        7); // number of groups
-        chart.getXAxis().setGranularity(1f);
-        chart.groupBars(0, 0.18f, 0.0f);
+
+        chart.getXAxis().setLabelCount(14);
+        chart.getXAxis().setAxisMinimum(0f);
+        chart.getXAxis().setTextSize(7f);
+        chart.groupBars(0, groupSpace, barSpace);
+
         chart.invalidate();
     }
 

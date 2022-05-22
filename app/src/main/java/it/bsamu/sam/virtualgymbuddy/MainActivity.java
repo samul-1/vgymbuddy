@@ -174,18 +174,7 @@ public class MainActivity extends AppCompatActivity {
                 getGymGeofencePendingIntent()
         ).addOnSuccessListener((aVoid) -> {
             System.out.println("geofence added");
-
             createNotificationChannel();
-/*            NotificationCompat.Builder builder = new NotificationCompat.Builder(this, "CHANNEL_ID")
-                    .setSmallIcon(R.drawable.ic_baseline_fitness_center_24)
-                    .setContentTitle("Sei in palestra")
-                    .setContentText("Inizia il tuo allenamento!")
-                    .setPriority(NotificationCompat.PRIORITY_DEFAULT);
-
-            NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(this);
-            notificationManagerCompat.notify(1, builder.build());*/
-            System.out.println("notified");
-
         }).addOnFailureListener((e) -> {
             System.out.println("FAILURE GEOFENCE");
             e.printStackTrace();
@@ -210,12 +199,14 @@ public class MainActivity extends AppCompatActivity {
 
     private PendingIntent getGymGeofencePendingIntent() {
         if(geofencePendingIntent != null) {
+            System.out.println("PENDING INTENT NOT NULL");
             return geofencePendingIntent;
         }
         Intent intent = new Intent(this, GymGeofenceBroadcastReceiver.class);
         geofencePendingIntent = PendingIntent.getBroadcast(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+                this, 0, intent, 0 //PendingIntent.FLAG_UPDATE_CURRENT
         );
+        System.out.println("CREATED PENDING INTENT");
         return geofencePendingIntent;
     }
 

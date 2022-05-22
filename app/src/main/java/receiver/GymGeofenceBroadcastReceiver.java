@@ -25,6 +25,7 @@ import relational.entities.GymTransition;
 public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
+        System.out.println("RECEIVED GEOFENCE TRANSITION");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceStatusCodes
@@ -63,13 +64,8 @@ public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
 
 
     private void sendNotification(boolean isDwell, Context context) {
-        long totalTimeAtTheGym = 0L;
-        if(!isDwell) {
-            totalTimeAtTheGym = getTotalTimeAtTheGym();
-        }
-
         String notificationText = isDwell ? context.getString(R.string.start_working_out) :
-                context.getString(R.string.total_gym_time) + totalTimeAtTheGym + "m";
+                context.getString(R.string.total_gym_time);
 
 
         NotificationCompat.Builder builder = new NotificationCompat
@@ -81,10 +77,6 @@ public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(1, builder.build());
-    }
-
-    private long getTotalTimeAtTheGym() {
-        return 0;
     }
 
 }

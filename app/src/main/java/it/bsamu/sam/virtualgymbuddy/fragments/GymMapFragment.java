@@ -144,28 +144,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         super.onSaveInstanceState(outState);
     }
 
-    /**
-     * Sets up the options menu.
-     * @param menu The options menu.
-     * @return Boolean.
-     */
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.gym_place_menu, menu);
-    }
-
-    /**
-     * Handles a click on the menu option to get a place.
-     * @param item The menu item to handle.
-     * @return Boolean.
-     */
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.option_get_place) {
-            showCurrentPlace();
-        }
-        return true;
-    }
 
     /**
      * Manipulates the map when it's available.
@@ -178,7 +156,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         // Use a custom info window adapter to handle multiple lines of text in the
         // info window contents.
         this.map.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-
             @Override
             // Return null here, so that getInfoContents() is called next.
             public View getInfoWindow(Marker arg0) {
@@ -236,24 +213,21 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         try {
             if (locationPermissionGranted) {
                 Task<Location> locationResult = fusedLocationProviderClient.getLastLocation();
-                locationResult.addOnCompleteListener(getActivity(), new OnCompleteListener<Location>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Location> task) {
-                        if (task.isSuccessful()) {
-                            // Set the map's camera position to the current location of the device.
-                            lastKnownLocation = task.getResult();
-                            if (lastKnownLocation != null) {
-                                map.moveCamera(CameraUpdateFactory.newLatLngZoom(
-                                        new LatLng(lastKnownLocation.getLatitude(),
-                                                lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
-                            }
-                        } else {
-                            Log.d(TAG, "Current location is null. Using defaults.");
-                            Log.e(TAG, "Exception: %s", task.getException());
-                            map.moveCamera(CameraUpdateFactory
-                                    .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
-                            map.getUiSettings().setMyLocationButtonEnabled(false);
+                locationResult.addOnCompleteListener(getActivity(), task -> {
+                    if (task.isSuccessful()) {
+                        // Set the map's camera position to the current location of the device.
+                        lastKnownLocation = task.getResult();
+                        if (lastKnownLocation != null) {
+                            map.moveCamera(CameraUpdateFactory.newLatLngZoom(
+                                    new LatLng(lastKnownLocation.getLatitude(),
+                                            lastKnownLocation.getLongitude()), DEFAULT_ZOOM));
                         }
+                    } else {
+                        Log.d(TAG, "Current location is null. Using defaults.");
+                        Log.e(TAG, "Exception: %s", task.getException());
+                        map.moveCamera(CameraUpdateFactory
+                                .newLatLngZoom(defaultLocation, DEFAULT_ZOOM));
+                        map.getUiSettings().setMyLocationButtonEnabled(false);
                     }
                 });
             }
@@ -279,6 +253,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
             }
         } catch (SecurityException e)  {
             Log.e("Exception: %s", e.getMessage());
+            throw e;
         }
     }
 
@@ -328,36 +303,33 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
                 if (task.isSuccessful() && task.getResult() != null) {
                     FindCurrentPlaceResponse likelyPlaces = task.getResult();
 
-                    // Set the count, handling cases where less than 5 entries are returned.
-                    int count;
-                    if (likelyPlaces.getPlaceLikelihoods().size() < M_MAX_ENTRIES) {
-                        count = likelyPlaces.getPlaceLikelihoods().size();
-                    } else {
-                        count = M_MAX_ENTRIES;
-                    }
-
+                    int count = M_MAX_ENTRIES;
                     int i = 0;
+
                     likelyPlaceNames = new String[count];
                     likelyPlaceAddresses = new String[count];
                     likelyPlaceAttributions = new List[count];
                     likelyPlaceLatLngs = new LatLng[count];
 
                     for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
-                        // Build a list of likely places to show the user.
-                        likelyPlaceNames[i] = placeLikelihood.getPlace().getName();
-                        likelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
-                        likelyPlaceAttributions[i] = placeLikelihood.getPlace()
-                                .getAttributions();
-                        likelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+                        if(placeLikelihood.getPlace().getTypes() == null ||
+                                // try to get only gyms
+                                placeLikelihood.getPlace().getTypes().contains(Place.Type.GYM)) {
 
-                        i++;
-                        if (i > (count - 1)) {
-                            break;
+                            likelyPlaceNames[i] = placeLikelihood.getPlace().getName();
+                            likelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
+                            likelyPlaceAttributions[i] = placeLikelihood.getPlace()
+                                    .getAttributions();
+                            likelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+
+                            i++;
+                            if (i > (count - 1)) {
+                                break;
+                            }
                         }
                     }
 
-                    // Show a dialog offering the user the list of likely places, and add a
-                    // marker at the selected place.
+                    // show place selection dialog
                     GymMapFragment.this.openPlacesDialog();
                 }
                 else {

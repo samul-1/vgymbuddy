@@ -55,8 +55,10 @@ public interface TrainingSessionDao {
             "FROM TrainingSession INNER JOIN TrainingSessionSet ON " +
             "TrainingSession._id = trainingSessionId " +
             "INNER JOIN TrainingDay ON TrainingDay._id = trainingDayId " +
-            "WHERE beginTimestamp BETWEEN :beginDate AND :endDate")
+            "WHERE beginTimestamp BETWEEN :beginDate AND :endDate " +
+            "GROUP BY TrainingSession._id ")
     public List<TrainingSessionDurationData> getDurationDataForTimeInterval(Date beginDate, Date endDate);
+
 
     @Update
     public void updateTrainingSessions(TrainingSession ...sessions);
