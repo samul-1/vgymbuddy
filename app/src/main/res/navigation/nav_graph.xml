@@ -15,10 +15,18 @@
             />
         <action
             android:id="@+id/action_Main_to_ProgramDetail"
-            app:destination="@id/ProgramDetails" />
+            app:destination="@id/ProgramDetails"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_down_from_up"
+            />
         <action
             android:id="@+id/action_ExerciseList_to_ExerciseDetail"
-            app:destination="@id/ExerciseDetails" />
+            app:destination="@id/ExerciseDetails"
+            app:enterAnim="@anim/slide_up"
+            app:exitAnim="@anim/slide_down"
+            app:popEnterAnim="@anim/slide_down_from_up"
+            />
     </fragment>
     <fragment
         android:id="@+id/ProgramDetails"
@@ -31,7 +39,12 @@
             app:argType="long" />
         <action
             android:id="@+id/action_ProgramDetail_to_TrainingDay"
-            app:destination="@id/TrainingDayDetail" />
+            app:destination="@id/TrainingDayDetail"
+            app:enterAnim="@anim/slide_in_left"
+            app:exitAnim="@anim/slide_in_right"
+            app:popEnterAnim="@anim/slide_out_right"
+            app:popExitAnim="@anim/slide_out_left"
+            />
     </fragment>
     <fragment
         android:id="@+id/TrainingDayDetail"
@@ -49,10 +62,6 @@
         android:name="it.bsamu.sam.virtualgymbuddy.fragments.ExercisesFragment"
         android:label="@string/first_fragment_label"
         tools:layout="@layout/exercises_fragment">
-
-        <!--<action
-            android:id="@+id/action_ExerciseList_to_ExerciseDetail"
-            app:destination="@id/ExerciseDetails" />-->
     </fragment>
     <fragment
         android:id="@+id/ExerciseDetails"
