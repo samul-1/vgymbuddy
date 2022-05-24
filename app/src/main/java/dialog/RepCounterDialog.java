@@ -37,6 +37,7 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
     }
 
     public RepCounterDialog(RepCounterDialogListener listener) {
+        System.out.println("CONSTRUCTOR "+ listener);
         this.listener = listener;
     }
 
@@ -46,11 +47,15 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
         terminateSet();
     }
 
+
     private void terminateSet() {
-        RepCounter.getInstance(getActivity()).stopCounting();
-        listener.onStopSet(
-                Integer.valueOf(repCountView.getText().toString())
-        );
+        System.out.println("LISTENER  "+ listener);
+        if(listener != null) {
+            RepCounter.getInstance(getActivity()).stopCounting();
+            listener.onStopSet(
+                    Integer.valueOf(repCountView.getText().toString())
+            );
+        }
     }
 
     @NonNull

@@ -75,6 +75,10 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 
+        // prevent restoring state until data has been reloaded
+        adapter.setStateRestorationPolicy(
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        );
         return view;
     }
 

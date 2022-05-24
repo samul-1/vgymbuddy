@@ -42,16 +42,16 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
         holder.weightView.setText(String.valueOf(weight));
         holder.timestampView.setText(DateFormat.getDateInstance().format(sessionTimestamp));
 
-        // if the exercise has an image associated to it, set it as card preview
         if(videoUriString.length()>0) {
             Uri videoUri = Uri.parse(videoUriString);
 
             holder.videoView.setVideoURI(videoUri);
-           holder.videoView.setOnPreparedListener((mp)-> {
+            holder.videoView.setOnPreparedListener((mp)-> {
                 mp.setVolume(0, 0);
                 holder.videoView.seekTo(0);
-           });
-           holder.videoView.start();
+            });
+            holder.videoView.setMediaController(holder.mediaController);
+            holder.videoView.start();
         } else {
             throw new AssertionError("no video for " + reps + " " + weight);
         }
@@ -65,7 +65,10 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
                 .inflate(R.layout.exercise_set_item, parent, false);
 
 
-        return new ExerciseSetAdapter.ExerciseSetViewHolder(formNameView);
+        return new ExerciseSetAdapter.ExerciseSetViewHolder(
+                formNameView,
+                new MediaController(parent.getContext())
+        );
     }
 
     class ExerciseSetViewHolder extends RecyclerView.ViewHolder {
@@ -73,12 +76,15 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
         TextView repsView;
         TextView weightView;
         TextView timestampView;
-        ExerciseSetViewHolder(View itemView) {
+        MediaController mediaController;
+
+        ExerciseSetViewHolder(View itemView, MediaController mediaController) {
             super(itemView);
             videoView = itemView.findViewById(R.id.set_item_video);
             repsView = itemView.findViewById(R.id.set_item_reps);
             weightView = itemView.findViewById(R.id.set_item_weight);
             timestampView = itemView.findViewById(R.id.set_session_timestamp);
+            this.mediaController = mediaController;
         }
     }
 }

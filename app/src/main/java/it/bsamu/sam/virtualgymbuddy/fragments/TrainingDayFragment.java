@@ -168,6 +168,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     @Override
     public void onExerciseSelection(long exerciseId, String exerciseName) {
         setChosenExercise(exerciseId, exerciseName);
+        dialog.dismiss();
     }
 
     private void setChosenExercise(long exerciseId, String exerciseName) {

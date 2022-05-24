@@ -18,6 +18,16 @@
         android:id="@+id/todays_training_fragment"
         android:paddingTop="5dp"
         >
+        <androidx.core.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+            >
 
         <!--<TextView
             android:layout_width="match_parent"
@@ -69,15 +79,10 @@
                 android:paddingVertical="7.5sp"
                 android:paddingHorizontal="5.0sp"
                 />
-            <androidx.core.widget.NestedScrollView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="1"
-                >
+
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="5dp"
                     android:orientation="vertical"
                     android:layout_gravity="bottom"
@@ -223,7 +228,6 @@
 
                 </LinearLayout>
 
-            </androidx.core.widget.NestedScrollView>
 
         </LinearLayout>
 
@@ -255,5 +259,7 @@
                 android:text="@{viewmodel.activeProgramId == 0 ? @string/no_active_program : viewmodel.currentExercise == null ? @string/done_training : @string/rest_day}"
                 ></TextView>
         </LinearLayout>
+    </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
     </LinearLayout>
 </layout>

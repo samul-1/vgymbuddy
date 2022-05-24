@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -32,7 +33,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BinaryOperator;
 import java.util.stream.Collectors;
+import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
 
 import it.bsamu.sam.virtualgymbuddy.R;
@@ -50,6 +53,8 @@ public class StatsFragment extends Fragment {
 
     List<TrainingSessionDao.TrainingSessionDurationData> trainingSessionDurationData;
     double[] gymTimeDurationData;
+
+    TextView gymTimeText, trainTimeText;
 
     AppDb db;
 
@@ -84,6 +89,9 @@ public class StatsFragment extends Fragment {
 
         chart.invalidate();
 
+        gymTimeText = view.findViewById(R.id.gym_time_text);
+        trainTimeText = view.findViewById(R.id.train_time_text);
+
         return view;
     }
 
@@ -102,8 +110,8 @@ public class StatsFragment extends Fragment {
                 LocalDateTime midnight = now.toLocalDate().atStartOfDay();
 
                 int todayIdx = now.getDayOfWeek().getValue();
-                LocalDateTime beginningOfWeek = midnight.minusDays(todayIdx+10);
-                LocalDateTime endOfWeek = beginningOfWeek.plusDays(1000);
+                LocalDateTime beginningOfWeek = midnight.minusDays(todayIdx-1);
+                LocalDateTime endOfWeek = beginningOfWeek.plusDays(7);
                 Date midnightBeginningOfWeek = Date.from(beginningOfWeek.atZone(ZoneId.systemDefault()).toInstant());
                 Date midnightEndOfWeek = Date.from(endOfWeek.atZone(ZoneId.systemDefault()).toInstant());
 
@@ -120,6 +128,7 @@ public class StatsFragment extends Fragment {
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 updateBarChartDataSets();
+                displayGymTime();
             }
         }.execute();
     }
@@ -223,9 +232,7 @@ public class StatsFragment extends Fragment {
                             .filter(d->d.dayOfWeek-1 == finalI)
                             .findFirst()
                             .orElse(null);
-            System.out.println("DAY " + i + ": " + sessionDuration + ", " + (sessionDuration != null ?
-                    sessionDuration.getDurationInMinutes() :
-                    0));
+
             actualTrainTimeValues.add(
                     new BarEntry(i,
                             sessionDuration != null ?
@@ -262,6 +269,19 @@ public class StatsFragment extends Fragment {
     void displayTip() {
         // shows a card with a tip about optimizing gym time based on the data
         // about gym time vs actual train time
+    }
+
+    void displayGymTime() {
+        double totalGymTime = DoubleStream.of(gymTimeDurationData).sum();
+        double totalTrainTime = DoubleStream.of(
+                trainingSessionDurationData
+                        .stream()
+                        .map(d->d.getDurationInMinutes())
+                        .mapToDouble(x->x).toArray()
+                ).sum();
+
+        gymTimeText.setText(String.valueOf(Math.round(totalGymTime/60 * 100) / 100) + "h");
+        trainTimeText.setText(String.valueOf(Math.round(totalTrainTime/60 * 100) / 100) + "h");
     }
 
 }

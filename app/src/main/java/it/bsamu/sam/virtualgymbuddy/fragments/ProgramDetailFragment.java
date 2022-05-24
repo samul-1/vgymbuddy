@@ -163,6 +163,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
+                trainingDays.clear();
                 trainingDays.addAll(db.trainingDayDao().getForProgram(itemId));
                 return null;
             }
