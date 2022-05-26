@@ -91,10 +91,9 @@ public class ProgramsFragment extends AbstractCursorRecyclerViewFragment<Trainin
 
     @Override
     public void onClick(View view) {
-        programCreationDialog = programCreationDialog == null ?
-                new TrainingProgramCreationDialog(this) : programCreationDialog;
+        programCreationDialog = new TrainingProgramCreationDialog();
         programCreationDialog.show(
-                getActivity().getSupportFragmentManager(), "program-creation-dialog"
+                getChildFragmentManager(), "program-creation-dialog"
         );
     }
 

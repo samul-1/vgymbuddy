@@ -35,16 +35,6 @@ import relational.AppDb;
 import relational.entities.Exercise;
 
 public class TrainingProgramCreationDialog extends DialogFragment {
-    private TrainingProgramCreationDialogListener listener;
-
-    public TrainingProgramCreationDialog() {}
-
-    public TrainingProgramCreationDialog(TrainingProgramCreationDialogListener fListener) {
-        super();
-        listener = fListener;
-    }
-
-
     public interface TrainingProgramCreationDialogListener {
         public void onCreateProgram(DialogFragment dialog, String programName, String programDescription);
     }
@@ -66,25 +56,21 @@ public class TrainingProgramCreationDialog extends DialogFragment {
 
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton(R.string.create, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        listener.onCreateProgram(
+                .setPositiveButton(R.string.create, (dialog, id) ->
+                        ((TrainingProgramCreationDialogListener) getParentFragment()).onCreateProgram(
                                 TrainingProgramCreationDialog.this,
-                                ((EditText)getDialog().
-                                        findViewById(R.id.program_name_input))
-                                        .getText().toString(),
-                                ((EditText)getDialog().
-                                        findViewById(R.id.program_desc_input))
-                                        .getText().toString()
-                        );
-                    }
-                })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        TrainingProgramCreationDialog.this.getDialog().cancel();
-                    }
-                }).setTitle(R.string.dialog_program_title);
+                                    ((EditText)getDialog().
+                                            findViewById(R.id.program_name_input))
+                                            .getText().toString(),
+                                    ((EditText)getDialog().
+                                            findViewById(R.id.program_desc_input))
+                                            .getText().toString()
+                        )
+                )
+                .setNegativeButton(R.string.cancel, (dialog, id) ->
+                        TrainingProgramCreationDialog.this
+                                .getDialog().cancel())
+                .setTitle(R.string.dialog_program_title);
         return builder.create();
     }
 }

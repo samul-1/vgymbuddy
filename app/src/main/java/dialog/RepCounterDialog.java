@@ -21,24 +21,26 @@ import util.RepCounter;
 
 public class RepCounterDialog extends DialogFragment implements RepCounter.RepCounterListener {
     TextView repCountView;
-    RepCounterDialogListener listener;
     ImageView phoneIcon, weightStackIcon;
+    int currentRepCount = 0;
 
-    public RepCounterDialog() {}
+    private final String REP_COUNT_KEY = "rep_count";
+
+
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putInt(REP_COUNT_KEY, currentRepCount);
+    }
 
     @Override
     public void onRep() {
-        int currentCount = Integer.valueOf(repCountView.getText().toString());
-        repCountView.setText(String.valueOf(currentCount+1));
+        currentRepCount++;
+        repCountView.setText(String.valueOf(currentRepCount));
     }
 
     public interface RepCounterDialogListener {
         void onStopSet(int repCount);
-    }
-
-    public RepCounterDialog(RepCounterDialogListener listener) {
-        System.out.println("CONSTRUCTOR "+ listener);
-        this.listener = listener;
     }
 
     @Override
@@ -49,13 +51,11 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
 
 
     private void terminateSet() {
-        System.out.println("LISTENER  "+ listener);
-        if(listener != null) {
-            RepCounter.getInstance(getActivity()).stopCounting();
-            listener.onStopSet(
-                    Integer.valueOf(repCountView.getText().toString())
-            );
-        }
+        RepCounter.getInstance(getActivity()).stopCounting();
+        ((RepCounterDialogListener)getParentFragment())
+                .onStopSet(
+                        Integer.valueOf(repCountView.getText().toString())
+                );
     }
 
     @NonNull
@@ -85,6 +85,11 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
 
         animateIcons();
 
+        // restore rep count, if present
+        if(savedInstanceState != null && savedInstanceState.containsKey(REP_COUNT_KEY)) {
+            currentRepCount = savedInstanceState.getInt(REP_COUNT_KEY);
+            repCountView.setText(String.valueOf(currentRepCount));
+        }
 
         return builder.create();
     }

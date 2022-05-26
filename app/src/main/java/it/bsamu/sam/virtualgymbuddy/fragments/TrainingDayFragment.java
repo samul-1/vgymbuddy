@@ -107,9 +107,9 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     }
 
     private void chooseExercise() {
-        dialog = dialog == null ? new ExerciseSelectionDialog(this) : dialog;
+        dialog = new ExerciseSelectionDialog();
         dialog.show(
-                getActivity().getSupportFragmentManager(), "exercise-selection-dialog"
+               getChildFragmentManager(), "exercise-selection-dialog"
         );
     }
 
@@ -168,7 +168,6 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
     @Override
     public void onExerciseSelection(long exerciseId, String exerciseName) {
         setChosenExercise(exerciseId, exerciseName);
-        dialog.dismiss();
     }
 
     private void setChosenExercise(long exerciseId, String exerciseName) {

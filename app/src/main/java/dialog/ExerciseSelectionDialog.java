@@ -25,13 +25,6 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
     Cursor cursor;
     ExerciseAdapter adapter;
     AppDb db = AppDb.getInstance(getContext());
-    ExerciseSelectionDialogListener listener;
-
-    public ExerciseSelectionDialog() {}
-
-    public ExerciseSelectionDialog(ExerciseSelectionDialogListener listener) {
-        this.listener = listener;
-    }
 
     @NonNull
     @Override
@@ -86,6 +79,9 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
 
     @Override
     public void onExerciseClick(long exerciseId, String exerciseName) {
-        listener.onExerciseSelection(exerciseId, exerciseName);
+        ((ExerciseSelectionDialogListener)
+                getParentFragment()
+        ).onExerciseSelection(exerciseId, exerciseName);
+        dismiss();
     }
 }

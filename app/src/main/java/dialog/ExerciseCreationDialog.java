@@ -34,20 +34,15 @@ import relational.AppDb;
 import relational.entities.Exercise;
 
 public class ExerciseCreationDialog extends DialogFragment implements View.OnClickListener {
-    private ExerciseCreationDialogListener listener;
-    private EditText nameInput;
     private ImageView previewView;
     private Button pickImgBtn;
     private Uri pickedImg;
 
     private final int PICK_IMAGE = 100;
 
-    public ExerciseCreationDialog() {}
-
-    public ExerciseCreationDialog(ExerciseCreationDialogListener fListener) {
-        listener = fListener;
+    public interface ExerciseCreationDialogListener {
+        public void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
     }
-
 
     @Override
     public void onClick(View view) {
@@ -75,9 +70,6 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
         }
     }
 
-    public interface ExerciseCreationDialogListener {
-        public void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
-    }
 
 
     @Nullable
@@ -100,7 +92,8 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
 
         builder.setView(view)
                 // Add action buttons
-                .setPositiveButton(R.string.create, (dialog, id) -> listener.onCreateExercise(
+                .setPositiveButton(R.string.create, (dialog, id) -> ((ExerciseCreationDialogListener) getParentFragment())
+                        .onCreateExercise(
                         ExerciseCreationDialog.this,
                         ((EditText)getDialog().
                                 findViewById(R.id.exercise_name_input))

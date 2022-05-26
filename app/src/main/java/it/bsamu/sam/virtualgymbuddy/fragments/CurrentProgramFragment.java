@@ -273,10 +273,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     }
 
     private void countReps() {
-        repCounterDialog = repCounterDialog == null ?
-                new RepCounterDialog(this) :
-                repCounterDialog;
-        repCounterDialog.show(getActivity().getSupportFragmentManager(), "rep-counter-dialog");
+        repCounterDialog = new RepCounterDialog();
+        repCounterDialog.show(getChildFragmentManager(), "rep-counter-dialog");
     }
 
     private void insertTrainingSet(short reps, double weight) {
