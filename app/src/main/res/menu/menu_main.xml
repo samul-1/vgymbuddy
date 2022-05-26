@@ -6,5 +6,7 @@
         android:id="@+id/action_select_gym_location"
         android:orderInCategory="1"
         android:title="@string/select_gym_location"
-        app:showAsAction="never" />
+        app:showAsAction="never"
+        android:icon="@drawable/ic_baseline_place_24"
+        />
 </menu>

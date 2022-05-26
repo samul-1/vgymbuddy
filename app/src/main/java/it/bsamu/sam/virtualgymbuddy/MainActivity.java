@@ -21,6 +21,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
@@ -48,7 +49,6 @@ import java.time.LocalDate;
 
 public class MainActivity extends AppCompatActivity {
     private AppBarConfiguration appBarConfiguration;
-    Button gymMapBtn;
 
     private AppDb db;
 
@@ -64,8 +64,6 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //gymMapBtn = findViewById(R.id.select_gym_location_btn);
-        //gymMapBtn.setOnClickListener((__) -> navigateToSelectGymLocation());
 
         // used to keep track of when user goes near their specified gym location
         geofencingClient = LocationServices.getGeofencingClient(this);
@@ -104,7 +102,6 @@ public class MainActivity extends AppCompatActivity {
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //toolbar.showOverflowMenu();
     }
 
     private void navigateToSelectGymLocation() {
@@ -119,9 +116,15 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    @SuppressLint("RestrictedApi")
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // show options' icons
+        if (menu instanceof MenuBuilder) {
+            ((MenuBuilder) menu).setOptionalIconsVisible(true);
+        }
+
+        // Inflate the menu; this adds items to the action bar if it is present
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
@@ -178,40 +181,42 @@ public class MainActivity extends AppCompatActivity {
                         .build(),
                 getGymGeofencePendingIntent()
         ).addOnSuccessListener((aVoid) -> {
-            System.out.println("geofence added");
             createNotificationChannel();
         }).addOnFailureListener((e) -> {
-            System.out.println("FAILURE GEOFENCE");
             e.printStackTrace();
         });
     }
 
     private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
+        // Create the NotificationChannel, but only on API 26+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "NOTIFICATION_CHANNEL";
-            String description = "Gym geofence notifications channel";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(getString(R.string.notification_channel_id), name, importance);
-            channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
             NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+            NotificationChannel notificationChannel = notificationManager
+                    .getNotificationChannel(getString(R.string.notification_channel_id));
+
+            if(notificationChannel == null) {
+                CharSequence name = "NOTIFICATION_CHANNEL";
+                String description = "Gym geofence notifications channel";
+                int importance = NotificationManager.IMPORTANCE_DEFAULT;
+
+                NotificationChannel channel = new NotificationChannel(
+                        getString(R.string.notification_channel_id), name, importance
+                );
+                channel.setDescription(description);
+                // Register the channel with the system
+                notificationManager.createNotificationChannel(channel);
+            }
         }
     }
 
     private PendingIntent getGymGeofencePendingIntent() {
         if(geofencePendingIntent != null) {
-            System.out.println("PENDING INTENT NOT NULL");
             return geofencePendingIntent;
         }
         Intent intent = new Intent(this, GymGeofenceBroadcastReceiver.class);
         geofencePendingIntent = PendingIntent.getBroadcast(
-                this, 0, intent, 0 //PendingIntent.FLAG_UPDATE_CURRENT
+                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
         );
-        System.out.println("CREATED PENDING INTENT");
         return geofencePendingIntent;
     }
 
@@ -228,9 +233,9 @@ public class MainActivity extends AppCompatActivity {
         double lat = prefs.getFloat(getString(R.string.gym_lat_key), 0);
         double lng = prefs.getFloat(getString(R.string.gym_lng_key), 0);
 
-        System.out.println(lat + " " + lng);
-
-        return lat != 0 && lng != 0 ? new LatLng(lat, lng) : null;
+        return lat != 0 || lng != 0 ? // no gym selected (unless user trains at Null Island...)
+                new LatLng(lat, lng) :
+                null;
     }
 
 }
