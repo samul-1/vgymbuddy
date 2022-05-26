@@ -83,4 +83,5 @@
     <string name="total_gym_time">"Allenamento terminato!"</string>
     <string name="actual_train_time_this_week">Tempo trascorso allenandoti questa settimana</string>
     <string name="gym_time_this_week">Tempo trascorso in palestra questa settimana</string>
+    <string name="select_gym_location">La tua palestra</string>
 </resources>

@@ -4,11 +4,16 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +36,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedList;
@@ -60,6 +66,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
     RepCounterDialog repCounterDialog;
 
     Handler restTimerHandler = new Handler();
+
+    private final String BUNDLE_THUMBNAIL_IMG_KEY = "video_thumbnail";
 
     static final int REQUEST_VIDEO_CAPTURE = 22222;
 
@@ -115,6 +123,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         addSetBtn.setOnClickListener(this);
 
         binding.setViewmodel(viewModel);
+
+        // restore video thumbnail, if present
+        if(savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_THUMBNAIL_IMG_KEY)) {
+            videoThumbnail.setImageBitmap((Bitmap) savedInstanceState
+                    .getParcelable(BUNDLE_THUMBNAIL_IMG_KEY)
+            );
+            videoThumbnail.setVisibility(View.VISIBLE);
+            setAuxButtonsLayout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -256,6 +273,16 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         }
     }
 
+    @Override
+    public void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        BitmapDrawable thumbnailDrawable = ((BitmapDrawable)videoThumbnail.getDrawable());
+        if(thumbnailDrawable != null) {
+            outState.putParcelable(BUNDLE_THUMBNAIL_IMG_KEY,
+                    (Parcelable) thumbnailDrawable.getBitmap()
+            );
+        }
+    }
 
     @Override
     public void onClick(View v) {

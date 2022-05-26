@@ -70,7 +70,9 @@ public class StatsFragment extends Fragment {
         View view = inflater.inflate(R.layout.stats_fragment, container,false);
 
         chart = view.findViewById(R.id.gym_time_chart);
+        chart.clear();
         chart.setPinchZoom(false);
+
         XAxis xAxis= chart.getXAxis();
 
         xAxis.setDrawGridLines(false);
@@ -219,10 +221,12 @@ public class StatsFragment extends Fragment {
     }
 
     private void updateBarChartDataSets() {
+        gymTimeValues.clear();
+        actualTrainTimeValues.clear();
+
         for(int i = 0; i < 7; i++) {
             // add time spent at the gym based on geofence transitions for i-th day of the week
             gymTimeValues.add(new BarEntry(i, (float) gymTimeDurationData[i]));
-            System.out.println("GTD " + gymTimeDurationData[i]);
 
             // get duration of training session for i-th day of this week, if it exists
             int finalI = i;

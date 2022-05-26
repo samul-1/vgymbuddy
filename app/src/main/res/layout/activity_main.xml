@@ -22,7 +22,7 @@
             app:popupTheme="@style/Theme.VirtualGymBuddy.PopupOverlay"
             app:title="@string/app_name">
 
-            <com.google.android.material.button.MaterialButton
+            <!--<com.google.android.material.button.MaterialButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
@@ -33,7 +33,7 @@
                 app:iconGravity="textStart"
                 app:iconPadding="0dp"
                 android:id="@+id/select_gym_location_btn"
-                app:icon="@drawable/ic_baseline_place_24" />
+                app:icon="@drawable/ic_baseline_place_24" />-->
         </com.google.android.material.appbar.MaterialToolbar>
 
 

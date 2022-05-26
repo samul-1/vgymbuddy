@@ -21,6 +21,7 @@ import com.google.android.material.tabs.TabLayoutMediator;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.navigation.NavController;
@@ -63,8 +64,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        gymMapBtn = findViewById(R.id.select_gym_location_btn);
-        gymMapBtn.setOnClickListener((__) -> navigateToSelectGymLocation());
+        //gymMapBtn = findViewById(R.id.select_gym_location_btn);
+        //gymMapBtn.setOnClickListener((__) -> navigateToSelectGymLocation());
 
         // used to keep track of when user goes near their specified gym location
         geofencingClient = LocationServices.getGeofencingClient(this);
@@ -100,6 +101,10 @@ public class MainActivity extends AppCompatActivity {
             db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12, (short)5));
 
         }).start();
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        //toolbar.showOverflowMenu();
     }
 
     private void navigateToSelectGymLocation() {
@@ -129,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_select_gym_location) {
+            navigateToSelectGymLocation();
         }
 
         return super.onOptionsItemSelected(item);
