@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
@@ -13,19 +12,18 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -36,7 +34,6 @@ import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 
 import com.google.android.libraries.places.api.Places;
@@ -45,9 +42,12 @@ import com.google.android.libraries.places.api.model.PlaceLikelihood;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceRequest;
 import com.google.android.libraries.places.api.net.FindCurrentPlaceResponse;
 import com.google.android.libraries.places.api.net.PlacesClient;
+import com.google.android.libraries.places.widget.AutocompleteSupportFragment;
+import com.google.android.libraries.places.widget.listener.PlaceSelectionListener;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import it.bsamu.sam.virtualgymbuddy.BuildConfig;
 import it.bsamu.sam.virtualgymbuddy.MainActivity;
@@ -57,37 +57,30 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = GymMapFragment.class.getSimpleName();
     private GoogleMap map;
     private CameraPosition cameraPosition;
-
-    // The entry point to the Places API.
     private PlacesClient placesClient;
-
-    // The entry point to the Fused Location Provider.
     private FusedLocationProviderClient fusedLocationProviderClient;
 
-    // A default location (Sydney, Australia) and default zoom to use when location permission is
-    // not granted.
+    // A default location (Sydney, Australia) and default zoom
     private final LatLng defaultLocation = new LatLng(-33.8523341, 151.2106085);
     private static final int DEFAULT_ZOOM = 15;
+
+
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
-    // The geographical location where the device is currently located. That is, the last-known
-    // location retrieved by the Fused Location Provider.
+
     private Location lastKnownLocation;
 
     // Keys for storing activity state.
     private static final String KEY_CAMERA_POSITION = "camera_position";
     private static final String KEY_LOCATION = "location";
 
-    // Used for selecting the current place.
+    // max entries in place selection dialog
     private static final int M_MAX_ENTRIES = 5;
-    private String[] likelyPlaceNames;
-    private String[] likelyPlaceAddresses;
-    private List[] likelyPlaceAttributions;
-    private LatLng[] likelyPlaceLatLngs;
 
+
+    private Place[] likelyPlaces;
     private AlertDialog dialog;
-
     private Marker gymMarker;
 
     @Override
@@ -128,14 +121,59 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        // Build the map.
+
+        // Build the map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        // set up auto complete for place search
+        AutocompleteSupportFragment autocompleteFragment = (AutocompleteSupportFragment)
+                getChildFragmentManager()
+                        .findFragmentById(R.id.autocomplete_fragment);
+        autocompleteFragment.setPlaceFields(
+                Arrays.asList(
+                        Place.Field.ID,
+                        Place.Field.NAME,
+                        Place.Field.ADDRESS,
+                        Place.Field.LAT_LNG
+                )
+        );
+        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(@NonNull Place place) {
+                setGymLocation(place);
+            }
+
+
+            @Override
+            public void onError(@NonNull Status status) {
+                Log.i(TAG, "An error occurred: " + status);
+            }
+        });
+
         getActivity()
                 .findViewById(R.id.place_selection_btn)
                 .setOnClickListener((__)->showCurrentPlace());
+    }
+
+    /**
+    * Saves the LatLng of selected Place to shared preferences
+    * and adds a map marker to that location
+    */
+    private void setGymLocation(@NonNull Place place) {
+        LatLng latLng = place.getLatLng();
+
+        saveGymLocationPreference(latLng);
+        setGymMarker(latLng);
+        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,
+                DEFAULT_ZOOM));
+
+        Toast.makeText(
+                getContext(),
+                place.getName() + " " + getString(R.string.gym_selected),
+                Toast.LENGTH_SHORT
+        ).show();
     }
 
     /**
@@ -267,11 +305,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
      * Prompts the user for permission to use the device location.
      */
     private void getLocationPermission() {
-        /*
-         * Request location permission, so that we can get the location of the
-         * device. The result of the permission request is handled by a callback,
-         * onRequestPermissionsResult.
-         */
         if (ContextCompat.checkSelfPermission(getContext(),
                 android.Manifest.permission.ACCESS_FINE_LOCATION)
                 == PackageManager.PERMISSION_GRANTED) {
@@ -298,8 +331,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
             FindCurrentPlaceRequest request =
                     FindCurrentPlaceRequest.newInstance(placeFields);
 
-            // Get the likely places - that is, the businesses and other points of interest that
-            // are the best match for the device's current location.
+            // Get the likely places
             @SuppressWarnings("MissingPermission") final
             Task<FindCurrentPlaceResponse> placeResult =
                     placesClient.findCurrentPlace(request);
@@ -307,26 +339,19 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
 
             placeResult.addOnCompleteListener (task -> {
                 if (task.isSuccessful() && task.getResult() != null) {
-                    FindCurrentPlaceResponse likelyPlaces = task.getResult();
+                    FindCurrentPlaceResponse taskResult = task.getResult();
 
                     int count = M_MAX_ENTRIES;
                     int i = 0;
 
-                    likelyPlaceNames = new String[count];
-                    likelyPlaceAddresses = new String[count];
-                    likelyPlaceAttributions = new List[count];
-                    likelyPlaceLatLngs = new LatLng[count];
+                    likelyPlaces = new Place[count];
 
-                    for (PlaceLikelihood placeLikelihood : likelyPlaces.getPlaceLikelihoods()) {
+                    for (PlaceLikelihood placeLikelihood : taskResult.getPlaceLikelihoods()) {
                         if(placeLikelihood.getPlace().getTypes() == null ||
                                 // try to get only gyms
                                 placeLikelihood.getPlace().getTypes().contains(Place.Type.GYM)) {
 
-                            likelyPlaceNames[i] = placeLikelihood.getPlace().getName();
-                            likelyPlaceAddresses[i] = placeLikelihood.getPlace().getAddress();
-                            likelyPlaceAttributions[i] = placeLikelihood.getPlace()
-                                    .getAttributions();
-                            likelyPlaceLatLngs[i] = placeLikelihood.getPlace().getLatLng();
+                            likelyPlaces[i] = placeLikelihood.getPlace();
 
                             i++;
                             if (i > (count - 1)) {
@@ -350,21 +375,19 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
 
     private void openPlacesDialog() {
         DialogInterface.OnClickListener listener = (dialog, which) -> {
-            LatLng markerLatLng = likelyPlaceLatLngs[which];
-            // String markerSnippet = likelyPlaceAddresses[which];
-
-            saveGymLocationPreference(markerLatLng);
-            setGymMarker(markerLatLng);
-
-            map.moveCamera(CameraUpdateFactory.newLatLngZoom(markerLatLng,
-                    DEFAULT_ZOOM));
+            Place selectedPlace = likelyPlaces[which];
+            setGymLocation(selectedPlace);
         };
 
         // open place selection dialog
         dialog = new AlertDialog.Builder(getContext())
                 .setTitle(R.string.pick_place)
-                .setItems(likelyPlaceNames, listener)
-                .show();
+                .setItems(
+                        Arrays
+                                .stream(likelyPlaces).map(p->p.getName()).collect(Collectors.toList())
+                                .toArray(new String[0]),
+                        listener
+                ).show();
     }
 
     private void saveGymLocationPreference(@NonNull LatLng location) {
@@ -374,16 +397,5 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
                 .putFloat(getString(R.string.gym_lat_key), (float) location.latitude)
                 .putFloat(getString(R.string.gym_lng_key), (float) location.longitude)
                 .commit();
-    }
-
-    @Nullable
-    private LatLng getGymLocation() {
-       SharedPreferences prefs = getActivity().
-                getSharedPreferences(getString(R.string.pref_file_key), Context.MODE_PRIVATE);
-
-       double lat = prefs.getFloat(getString(R.string.gym_lat_key), 0);
-       double lng = prefs.getFloat(getString(R.string.gym_lng_key), 0);
-
-       return lat != 0 && lng != 0 ? new LatLng(lat, lng) : null;
     }
 }

@@ -23,6 +23,7 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
     private MutableLiveData<Short> currentRestTime = new MutableLiveData<>((short)0);
     private MutableLiveData<Short> remainingRestTime = new MutableLiveData<>((short)0);
     private MutableLiveData<Long> activeProgramId;
+    private MutableLiveData<Boolean> addSetBtnActive = new MutableLiveData<>(false);
 
     public void updateCurrentExercise() {
         /**
@@ -127,4 +128,11 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
         activeProgramId.setValue(id);
     }
 
+    public LiveData<Boolean> getAddSetBtnEnabled() {
+        return addSetBtnActive;
+    }
+
+    public void setAddSetBtnEnabled(boolean b) {
+        addSetBtnActive.setValue(b);
+    }
 }

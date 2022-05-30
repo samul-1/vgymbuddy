@@ -3,6 +3,8 @@ package it.bsamu.sam.virtualgymbuddy.fragments;
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -103,7 +105,33 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
 
         addExerciseBtn.setOnClickListener((__)->chooseExercise());
         saveExerciseBtn.setOnClickListener((__)->insertExercise());
+
+       checkRequiredFields();
+
+       TextWatcher tw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkRequiredFields();
+            }
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        };
+
+       setsInput.addTextChangedListener(tw);
+       repsInput.addTextChangedListener(tw);
+       restInput.addTextChangedListener(tw);
+
         return superview;
+    }
+
+    private void checkRequiredFields() {
+        saveExerciseBtn.setEnabled(
+                setsInput.getText().toString().length() > 0
+                && repsInput.getText().toString().length() > 0
+                && restInput.getText().toString().length() > 0
+        );
     }
 
     private void chooseExercise() {
@@ -140,6 +168,10 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
                 super.onPostExecute(unused);
                 adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
+                setChosenExercise(0L, "");
+                setsInput.setText("");
+                repsInput.setText("");
+                restInput.setText("");
             }
         }.execute();
     }
@@ -174,7 +206,7 @@ public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayE
         chosenExerciseId = exerciseId;
         chosenExerciseName = exerciseName;
         selectedExerciseName.setText(exerciseName);
-        addExerciseBtn.setVisibility(View.GONE);
-        addExerciseControls.setVisibility(View.VISIBLE);
+        addExerciseBtn.setVisibility(exerciseId != 0L ? View.GONE : View.VISIBLE);
+        addExerciseControls.setVisibility(exerciseId != 0L ? View.VISIBLE : View.GONE);
     }
 }

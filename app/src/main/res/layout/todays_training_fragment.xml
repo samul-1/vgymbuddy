@@ -221,7 +221,7 @@
                             app:iconGravity="textStart"
                             android:layout_gravity="bottom"
                             android:layout_weight="1"
-                            android:enabled="@{1 > viewmodel.remainingRestTime}"
+                            android:enabled="@{1 > viewmodel.remainingRestTime &amp;&amp; viewmodel.addSetBtnEnabled}"
                             />
 
                     </LinearLayout>
@@ -248,7 +248,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_weight="1"
-                android:src='@{viewmodel.activeProgramId == 0 ? @drawable/ic_baseline_sentiment_very_dissatisfied_24 : viewmodel.currentExercise == null ? @drawable/ic_baseline_done_24 : @drawable/ic_baseline_single_bed_24}'
+                android:src='@{viewmodel.activeProgramId == 0 ? @drawable/ic_baseline_sentiment_very_dissatisfied_24 : viewmodel.sessionId == 0 ? @drawable/ic_baseline_single_bed_24 : @drawable/ic_baseline_done_24}'
                 />
 
             <TextView
@@ -256,7 +256,7 @@
                 android:layout_height="wrap_content"
                 android:textAlignment="center"
                 android:id="@+id/training_session_empty_state_desc"
-                android:text="@{viewmodel.activeProgramId == 0 ? @string/no_active_program : viewmodel.currentExercise == null ? @string/done_training : @string/rest_day}"
+                android:text="@{viewmodel.activeProgramId == 0 ? @string/no_active_program : viewmodel.sessionId == 0 ? @string/rest_day : @string/done_training}"
                 ></TextView>
         </LinearLayout>
     </LinearLayout>

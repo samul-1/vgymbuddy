@@ -84,4 +84,6 @@
     <string name="actual_train_time_this_week">Tempo trascorso allenandoti questa settimana</string>
     <string name="gym_time_this_week">Tempo trascorso in palestra questa settimana</string>
     <string name="select_gym_location">La tua palestra</string>
+    <string name="gym_selected">impostata come la tua palestra</string>
+    <string name="near_me">Posti vicini</string>
 </resources>

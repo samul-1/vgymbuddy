@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     private final int GEOFENCE_LOITERING_MS =  10000; //300000;
     private PendingIntent geofencePendingIntent;
 
+    private final String GEOFENCE_ADDED_KEY = "geofence_added";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,7 +70,9 @@ public class MainActivity extends AppCompatActivity {
         // used to keep track of when user goes near their specified gym location
         geofencingClient = LocationServices.getGeofencingClient(this);
 
-        addGymGeofence();
+        if(getGymGeofencePendingIntent(false) == null) {
+            addGymGeofence();
+        }
 
         db = AppDb.getInstance(getApplicationContext());
 
@@ -179,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                         .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL)
                         .addGeofence(geofence)
                         .build(),
-                getGymGeofencePendingIntent()
+                getGymGeofencePendingIntent(true)
         ).addOnSuccessListener((aVoid) -> {
             createNotificationChannel();
         }).addOnFailureListener((e) -> {
@@ -209,13 +213,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private PendingIntent getGymGeofencePendingIntent() {
+    private PendingIntent getGymGeofencePendingIntent(boolean create) {
         if(geofencePendingIntent != null) {
             return geofencePendingIntent;
         }
         Intent intent = new Intent(this, GymGeofenceBroadcastReceiver.class);
         geofencePendingIntent = PendingIntent.getBroadcast(
-                this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT
+                this, 0, intent, create ? PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_NO_CREATE
         );
         return geofencePendingIntent;
     }

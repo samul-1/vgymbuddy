@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.provider.MediaStore;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -122,6 +124,22 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         countRepsBtn.setOnClickListener(this);
         addSetBtn.setOnClickListener(this);
 
+        TextWatcher tw = new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                checkRequiredFields();
+            }
+            @Override
+            public void afterTextChanged(Editable editable) { }
+        };
+
+        repsInput.addTextChangedListener(tw);
+        weightInput.addTextChangedListener(tw);
+
+        checkRequiredFields();
+
         binding.setViewmodel(viewModel);
 
         // restore video thumbnail, if present
@@ -132,6 +150,13 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             videoThumbnail.setVisibility(View.VISIBLE);
             setAuxButtonsLayout.setVisibility(View.GONE);
         }
+    }
+
+    private void checkRequiredFields() {
+        viewModel.setAddSetBtnEnabled(
+                repsInput.getText().toString().length()>0
+                        && weightInput.getText().toString().length()>0
+        );
     }
 
     @Override
@@ -326,6 +351,8 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 startNextSetTimer();
+                repsInput.setText("");
+                weightInput.setText("");
             }
         }.execute();
     }
