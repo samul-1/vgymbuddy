@@ -52,6 +52,7 @@ import java.util.stream.Collectors;
 import it.bsamu.sam.virtualgymbuddy.BuildConfig;
 import it.bsamu.sam.virtualgymbuddy.MainActivity;
 import it.bsamu.sam.virtualgymbuddy.R;
+import util.GeofenceManager;
 
 public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     private static final String TAG = GymMapFragment.class.getSimpleName();
@@ -231,7 +232,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         // Get the current location of the device and set the position of the map.
         getDeviceLocation();
 
-        LatLng gymLocation = ((MainActivity)getActivity()).getGymLocation();
+        LatLng gymLocation = GeofenceManager.getGymLocation(getContext());
         if(gymLocation != null) {
             setGymMarker(gymLocation);
         }

@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment;
 import com.github.mikephil.charting.charts.BarChart;
 import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -45,18 +46,26 @@ import relational.entities.GymTransition;
 
 public class StatsFragment extends Fragment {
 
+    public static final int GYM_TIME_BAR_COLOR = Color.rgb(104, 241, 175);
+    public static final int TRAIN_TIME_BAR_COLOR = Color.rgb(164, 228, 251);
+    public static final int CHART_LABEL_COUNT = 14;
+    public static final float CHART_TEXT_SIZE = 7f;
     private BarChart chart;
-    private SeekBar seekBarX, seekBarY;
     private BarDataSet gymTimeDataSet, actualTrainTimeDataSet;
     ArrayList<BarEntry> gymTimeValues = new ArrayList<>();
     ArrayList<BarEntry> actualTrainTimeValues = new ArrayList<>();
 
     List<TrainingSessionDao.TrainingSessionDurationData> trainingSessionDurationData;
     double[] gymTimeDurationData;
+    double totalGymTime = 0, totalTrainTime = 0;
 
-    TextView gymTimeText, trainTimeText;
+    TextView gymTimeText, trainTimeText, tipCardText;
+    View tipCard;
 
     AppDb db;
+    public static final float CHART_GROUP_SPACE = 0.1f;
+    public static final float CHART_BAR_SPACE = 0.0f;
+    public static final float CHART_BAR_WIDTH = 0.42f;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -73,12 +82,15 @@ public class StatsFragment extends Fragment {
         chart.clear();
         chart.setPinchZoom(false);
 
-        XAxis xAxis= chart.getXAxis();
+        // don't display negative axis values
+        chart.getAxisLeft().setAxisMinimum(0.0f);
+        chart.getXAxis().setAxisMinimum(0.0f);
 
+        XAxis xAxis= chart.getXAxis();
         xAxis.setDrawGridLines(false);
 
+        // set weekdays labels on x axis
         String[] weekDays = getResources().getStringArray(R.array.days_of_week);
-
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
@@ -93,6 +105,8 @@ public class StatsFragment extends Fragment {
 
         gymTimeText = view.findViewById(R.id.gym_time_text);
         trainTimeText = view.findViewById(R.id.train_time_text);
+        tipCard = view.findViewById(R.id.tip_card);
+        tipCardText = view.findViewById(R.id.tip_card_text);
 
         return view;
     }
@@ -130,9 +144,21 @@ public class StatsFragment extends Fragment {
             protected void onPostExecute(Void unused) {
                 super.onPostExecute(unused);
                 updateBarChartDataSets();
+                setTotalTimeData();
                 displayGymTime();
+                displayTip();
             }
         }.execute();
+    }
+
+    private void setTotalTimeData() {
+        totalGymTime = DoubleStream.of(gymTimeDurationData).sum();
+        totalTrainTime = DoubleStream.of(
+                trainingSessionDurationData
+                        .stream()
+                        .map(d->d.getDurationInMinutes())
+                        .mapToDouble(x->x).toArray()
+        ).sum();
     }
 
     @NonNull
@@ -157,8 +183,6 @@ public class StatsFragment extends Fragment {
                 ret[i] = 0d;
                 continue;
             }
-
-            System.out.println("DATA LIST " + trainingSessionDurationData + "w" + durationData.dayOfWeek);
 
             // get transitions happened on the i-th day of the week sorted increasingly by timestamp
             List<GymTransition> perDayTransitions = weeklyGymTransitions
@@ -209,7 +233,6 @@ public class StatsFragment extends Fragment {
                     leaveTransition.get().timestamp :
                     durationData.endTimestamp;
 
-
             ret[i] =
                     TimeUnit.MINUTES.convert(
                             leaveTransitionTimestamp.getTime() - enterTransitionTimestamp.getTime(),
@@ -246,46 +269,45 @@ public class StatsFragment extends Fragment {
             );
         }
 
-        gymTimeDataSet = new BarDataSet(gymTimeValues, "Tempo in palestra");
-        gymTimeDataSet.setColor(Color.rgb(104, 241, 175));
+        gymTimeDataSet = new BarDataSet(gymTimeValues, getString(R.string.gym_time));
+        gymTimeDataSet.setColor(GYM_TIME_BAR_COLOR);
 
-        actualTrainTimeDataSet = new BarDataSet(actualTrainTimeValues, "Durata allenamento");
-        actualTrainTimeDataSet.setColor(Color.rgb(164, 228, 251));
+        actualTrainTimeDataSet = new BarDataSet(actualTrainTimeValues, getString(R.string.train_time));
+        actualTrainTimeDataSet.setColor(TRAIN_TIME_BAR_COLOR);
 
         BarData data = new BarData(gymTimeDataSet, actualTrainTimeDataSet);
         chart.setData(data);
 
-        float groupSpace = 0.1f;
-        float barSpace = 0.0f;
-        float barWidth = 0.42f;
+        chart.getBarData().setBarWidth(CHART_BAR_WIDTH);
 
-        chart.getBarData().setBarWidth(barWidth);
-        chart.getXAxis().setAxisMinimum(0.0f);
-
-        chart.getXAxis().setLabelCount(14);
-        chart.getXAxis().setAxisMinimum(0f);
-        chart.getXAxis().setTextSize(7f);
-        chart.groupBars(0, groupSpace, barSpace);
+        chart.getXAxis().setLabelCount(CHART_LABEL_COUNT);
+        chart.getXAxis().setTextSize(CHART_TEXT_SIZE);
+        chart.groupBars(0, CHART_GROUP_SPACE, CHART_BAR_SPACE);
 
         chart.invalidate();
     }
 
-    void displayTip() {
-        // shows a card with a tip about optimizing gym time based on the data
-        // about gym time vs actual train time
-    }
-
     void displayGymTime() {
-        double totalGymTime = DoubleStream.of(gymTimeDurationData).sum();
-        double totalTrainTime = DoubleStream.of(
-                trainingSessionDurationData
-                        .stream()
-                        .map(d->d.getDurationInMinutes())
-                        .mapToDouble(x->x).toArray()
-                ).sum();
-
         gymTimeText.setText(String.valueOf(Math.round(totalGymTime/60 * 100) / 100) + "h");
         trainTimeText.setText(String.valueOf(Math.round(totalTrainTime/60 * 100) / 100) + "h");
     }
 
+    void displayTip() {
+        boolean displayCard = totalGymTime > 0 && totalTrainTime > 0;
+        tipCard.setVisibility(displayCard ? View.VISIBLE : View.GONE);
+        if(!displayCard) {
+            return;
+        }
+        String cardMessage = "";
+        double gymTimeToTrainTimeRatio = totalGymTime/totalTrainTime;
+        if(gymTimeToTrainTimeRatio>=1.2) {
+            cardMessage = getString(R.string.waste_less_gym_time_critical);
+        } else if(gymTimeToTrainTimeRatio >= 1.1) {
+            cardMessage = getString(R.string.waste_less_gym_time_normal);
+        } else {
+            cardMessage = getString(R.string.not_wasting_gym_time);
+        }
+
+        tipCardText.setText(cardMessage);
+    }
 }

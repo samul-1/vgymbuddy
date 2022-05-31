@@ -86,4 +86,10 @@
     <string name="select_gym_location">La tua palestra</string>
     <string name="gym_selected">impostata come la tua palestra</string>
     <string name="near_me">Posti vicini</string>
+    <string name="left_the_gym">Hai lasciato la palestra</string>
+    <string name="gym_time">Tempo in palestra</string>
+    <string name="train_time">Durata allenamento</string>
+    <string name="waste_less_gym_time_critical">Stai passando molto più tempo in palestra del tempo effettivo di allenamento. Perdi meno tempo quando sei in palestra!</string>
+    <string name="waste_less_gym_time_normal">Il tempo che trascorri in palestra è un po\' più di quello che passi effettivamente ad allenarti. Prova a perdere meno tempo quando arrivi in palestra!</string>
+    <string name="not_wasting_gym_time">Non stai perdendo tempo in palestra: il tempo che sei lì lo passi tutto ad allenarti. Complimenti!</string>
 </resources>

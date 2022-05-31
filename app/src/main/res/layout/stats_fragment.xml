@@ -68,7 +68,8 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Il tempo passato in palestra è maggiore del tempo di allenamento del 10%. Prova a perdere meno tempo quando arrivi in palestra!"
+                    android:padding="10dp"
+                    android:id="@+id/tip_card_text"
                     />
             </androidx.cardview.widget.CardView>
 

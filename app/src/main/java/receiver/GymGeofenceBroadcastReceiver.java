@@ -2,6 +2,7 @@ package receiver;
 
 import static android.provider.Settings.System.getString;
 
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import com.google.android.gms.location.GeofencingEvent;
 import java.util.Date;
 import java.util.List;
 
+import it.bsamu.sam.virtualgymbuddy.MainActivity;
 import it.bsamu.sam.virtualgymbuddy.R;
 import relational.AppDb;
 import relational.entities.GymTransition;
@@ -25,13 +27,11 @@ import relational.entities.GymTransition;
 public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("RECEIVED GEOFENCE TRANSITION");
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
         if (geofencingEvent.hasError()) {
             String errorMessage = GeofenceStatusCodes
                     .getStatusCodeString(geofencingEvent.getErrorCode());
             Log.e("GEOFENCE-ERROR", errorMessage);
-            System.out.println("ERROR " + errorMessage);
             return;
         }
 
@@ -71,9 +71,19 @@ public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
         NotificationCompat.Builder builder = new NotificationCompat
                 .Builder(context, context.getString(R.string.notification_channel_id))
                 .setSmallIcon(R.drawable.ic_baseline_fitness_center_24)
-                .setContentTitle(context.getString(R.string.arrived_at_gym))
+                .setContentTitle(isDwell ?
+                        context.getString(R.string.arrived_at_gym) :
+                        context.getString(R.string.left_the_gym))
                 .setContentText(notificationText)
-                .setPriority(NotificationCompat.PRIORITY_DEFAULT);
+                .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setContentIntent(
+                        PendingIntent.getActivity(
+                                context,
+                                0,
+                                new Intent(context, MainActivity.class),
+                                PendingIntent.FLAG_UPDATE_CURRENT
+                        )
+                );
 
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
         notificationManagerCompat.notify(1, builder.build());
