@@ -40,31 +40,33 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
 
     private final int PICK_IMAGE = 100;
 
+    /**
+     * Handles positive button click on the dialog
+     */
     public interface ExerciseCreationDialogListener {
-        public void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
+        void onCreateExercise(DialogFragment dialog, String exerciseName, Uri pickedImgUri);
     }
 
     @Override
     public void onClick(View view) {
-        System.out.println("CLICKED" + view);
-        if (view==pickImgBtn) {
+        if (view == pickImgBtn) {
             openGallery();
             return;
         }
+        // not supposed to happen
         throw new AssertionError();
     }
 
     private void openGallery() {
         Intent galleryIntent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        startActivityForResult(galleryIntent, 100);
+        startActivityForResult(galleryIntent, PICK_IMAGE);
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == Activity.RESULT_OK && requestCode==PICK_IMAGE) {
+        if(resultCode == Activity.RESULT_OK && requestCode == PICK_IMAGE) {
             Uri imageUri = data.getData();
-            System.out.println("URI" + imageUri);
             previewView.setImageURI(imageUri);
             pickedImg = imageUri;
         }
@@ -91,16 +93,13 @@ public class ExerciseCreationDialog extends DialogFragment implements View.OnCli
         pickImgBtn.setOnClickListener(this);
 
         builder.setView(view)
-                // Add action buttons
                 .setPositiveButton(R.string.create, (dialog, id) -> ((ExerciseCreationDialogListener) getParentFragment())
                         .onCreateExercise(
-                        ExerciseCreationDialog.this,
-                        ((EditText)getDialog().
-                                findViewById(R.id.exercise_name_input))
-                                .getText().toString(),
-                        pickedImg
-                ))
-                .setNegativeButton(R.string.cancel, (dialog, id) -> ExerciseCreationDialog
+                                ExerciseCreationDialog.this,
+                                ((EditText)getDialog().findViewById(R.id.exercise_name_input)).getText().toString(),
+                                pickedImg
+                        )
+                ).setNegativeButton(R.string.cancel, (dialog, id) -> ExerciseCreationDialog
                         .this.getDialog().cancel())
                 .setTitle(R.string.dialog_exercise_title);
         return builder.create();

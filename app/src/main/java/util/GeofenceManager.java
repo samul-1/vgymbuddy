@@ -32,6 +32,10 @@ public class GeofenceManager {
 
     @SuppressLint("MissingPermission")
     public static void addGymGeofence(Context context) {
+        /**
+         * Adds a geofence relative to the location of user's gym,
+         * as specified in their preferences
+         */
         LatLng gymLocation = getGymLocation(context);
 
         if(gymLocation == null) {
@@ -40,6 +44,7 @@ public class GeofenceManager {
 
         GeofencingClient geofencingClient = LocationServices.getGeofencingClient(context);
 
+        // build geofence
         Geofence geofence = new Geofence.Builder()
                 .setRequestId(GYM_GEOFENCE_ID)
                 .setCircularRegion(
@@ -55,6 +60,7 @@ public class GeofenceManager {
                 )
                 .build();
 
+        // add geofence using the client
         geofencingClient.addGeofences(
                 new GeofencingRequest.Builder()
                         .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_DWELL)
@@ -111,6 +117,9 @@ public class GeofenceManager {
     }
 
     private static PendingIntent getGymGeofencePendingIntent(Context context, boolean create) {
+        /**
+         * If `create` is false, will return null if the PendingIntent doesn't exist
+         */
         Intent intent = new Intent(context, GymGeofenceBroadcastReceiver.class);
         PendingIntent geofencePendingIntent = PendingIntent.getBroadcast(
                 context, 0, intent,

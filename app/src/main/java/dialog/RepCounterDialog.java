@@ -20,6 +20,13 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import util.RepCounter;
 
 public class RepCounterDialog extends DialogFragment implements RepCounter.RepCounterListener {
+    /**
+     * Handles stopping the rep counting and getting the rep count
+     */
+    public interface RepCounterDialogListener {
+        void onStopSet(int repCount);
+    }
+
     TextView repCountView;
     ImageView phoneIcon, weightStackIcon;
     int currentRepCount = 0;
@@ -39,9 +46,6 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
         repCountView.setText(String.valueOf(currentRepCount));
     }
 
-    public interface RepCounterDialogListener {
-        void onStopSet(int repCount);
-    }
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
@@ -51,11 +55,9 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
 
 
     private void terminateSet() {
+        // de-register sensor listeners and pass rep count
         RepCounter.getInstance(getActivity()).stopCounting();
-        ((RepCounterDialogListener)getParentFragment())
-                .onStopSet(
-                        Integer.valueOf(repCountView.getText().toString())
-                );
+        ((RepCounterDialogListener) getParentFragment()).onStopSet(currentRepCount);
     }
 
     @NonNull
@@ -69,14 +71,13 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
 
         builder.setView(view).setNeutralButton(
                 R.string.stop_set,
-                (dialog, id) -> {
-                    terminateSet();
-                }
+                (dialog, id) -> terminateSet()
         );
 
         phoneIcon = view.findViewById(R.id.phone_icon);
         weightStackIcon = view.findViewById(R.id.weight_icon);
 
+        // register sensor listeners and start counting reps
         RepCounter
                 .getInstance(getActivity())
                 .setListener(this)
@@ -96,9 +97,11 @@ public class RepCounterDialog extends DialogFragment implements RepCounter.RepCo
 
     private void animateIcons() {
         new Handler().postDelayed(() -> {
+            double iconOffset = 2.78;
+
             TranslateAnimation anim = new TranslateAnimation(
                     phoneIcon.getLeft(),
-                    (float)(weightStackIcon.getLeft()-phoneIcon.getWidth()/2.78),
+                    (float)(weightStackIcon.getLeft() - phoneIcon.getWidth() / iconOffset),
                     phoneIcon.getTop(),
                     phoneIcon.getTop()
             );

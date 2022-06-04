@@ -25,6 +25,9 @@ import relational.AppDb;
 import relational.entities.GymTransition;
 
 public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
+    /**
+     * Receives geofences transitions and logs them to the db
+     */
     @Override
     public void onReceive(Context context, Intent intent) {
         GeofencingEvent geofencingEvent = GeofencingEvent.fromIntent(intent);
@@ -38,6 +41,7 @@ public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
         // get transition type
         int geofenceTransition = geofencingEvent.getGeofenceTransition();
 
+        // check transition is of expected type
         if (geofenceTransition == Geofence.GEOFENCE_TRANSITION_DWELL ||
                 geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
 
@@ -85,8 +89,9 @@ public class GymGeofenceBroadcastReceiver extends BroadcastReceiver {
                         )
                 );
 
+        int notificationId = 1;
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(context);
-        notificationManagerCompat.notify(1, builder.build());
+        notificationManagerCompat.notify(notificationId, builder.build());
     }
 
 }

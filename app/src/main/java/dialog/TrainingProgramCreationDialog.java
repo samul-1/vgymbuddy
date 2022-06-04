@@ -35,8 +35,11 @@ import relational.AppDb;
 import relational.entities.Exercise;
 
 public class TrainingProgramCreationDialog extends DialogFragment {
+    /**
+     * Handles creating a program with data given to this dialog
+     */
     public interface TrainingProgramCreationDialogListener {
-        public void onCreateProgram(DialogFragment dialog, String programName, String programDescription);
+        void onCreateProgram(DialogFragment dialog, String programName, String programDescription);
     }
 
 
@@ -59,18 +62,16 @@ public class TrainingProgramCreationDialog extends DialogFragment {
                 .setPositiveButton(R.string.create, (dialog, id) ->
                         ((TrainingProgramCreationDialogListener) getParentFragment()).onCreateProgram(
                                 TrainingProgramCreationDialog.this,
-                                    ((EditText)getDialog().
-                                            findViewById(R.id.program_name_input))
-                                            .getText().toString(),
-                                    ((EditText)getDialog().
-                                            findViewById(R.id.program_desc_input))
-                                            .getText().toString()
+                                    ((EditText) getDialog().
+                                            findViewById(R.id.program_name_input)).getText().toString(),
+                                    ((EditText) getDialog().
+                                            findViewById(R.id.program_desc_input)).getText().toString()
                         )
                 )
                 .setNegativeButton(R.string.cancel, (dialog, id) ->
                         TrainingProgramCreationDialog.this
-                                .getDialog().cancel())
-                .setTitle(R.string.dialog_program_title);
+                                .getDialog().cancel()
+                ).setTitle(R.string.dialog_program_title);
         return builder.create();
     }
 }

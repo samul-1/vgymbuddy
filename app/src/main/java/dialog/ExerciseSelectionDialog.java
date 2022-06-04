@@ -21,6 +21,13 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import relational.AppDb;
 
 public class ExerciseSelectionDialog extends DialogFragment implements ExerciseAdapter.ExerciseViewHolderListener {
+    /**
+     * Handles exercise selection from the dialog
+     */
+    public interface ExerciseSelectionDialogListener {
+        void onExerciseSelection(long exerciseId, String exerciseName);
+    }
+
     RecyclerView recyclerView;
     Cursor cursor;
     ExerciseAdapter adapter;
@@ -51,9 +58,6 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
          return builder.create();
     }
 
-    public interface ExerciseSelectionDialogListener {
-        void onExerciseSelection(long exerciseId, String exerciseName);
-    }
 
 
     private void asyncFetchExercises() {
@@ -61,6 +65,7 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
+                // TODO exclude exercises already in the training day
                 cursor = db.exerciseDao().getAll();
                 return null;
             }
@@ -79,6 +84,7 @@ public class ExerciseSelectionDialog extends DialogFragment implements ExerciseA
 
     @Override
     public void onExerciseClick(long exerciseId, String exerciseName) {
+        // call parent's fragment method to signal an exercise has been selected
         ((ExerciseSelectionDialogListener)
                 getParentFragment()
         ).onExerciseSelection(exerciseId, exerciseName);

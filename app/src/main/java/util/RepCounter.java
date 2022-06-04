@@ -7,20 +7,29 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 
 public class RepCounter {
-    private RepCounter() {}
+
+    public interface RepCounterListener {
+        /**
+         * Handles movements detected as reps by the sensors
+         */
+        void onRep();
+    }
+
+    private RepCounter() {} // force usage through `getInstance`
 
     private static RepCounter instance;
 
     private long lastEventTimestamp = 0L;
     private boolean lastReadingWasRep = false;
-
     private double previousMagnitude = 0d;
+
     private SensorEventListener repListener;
+    private RepCounterListener listener;
+
     private SensorManager sm;
     private Sensor sensor;
 
-    private RepCounterListener listener;
-
+    // constants
     private final long ONE_SECOND = 1000000000;
     private final double THRESHOLD = 5.5;
     private final double REP_TIME_GAP_RATIO = 1.2;
@@ -30,8 +39,16 @@ public class RepCounter {
         sensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
     }
 
-    public interface RepCounterListener {
-        void onRep();
+    public static RepCounter getInstance(Context context) {
+        if(instance != null) {
+            return instance;
+        }
+        synchronized (RepCounter.class) {
+            if(instance == null) {
+                instance = new RepCounter(context);
+            }
+            return instance;
+        }
     }
 
     public void stopCounting() {
@@ -54,9 +71,7 @@ public class RepCounter {
             }
 
             @Override
-            public void onAccuracyChanged(Sensor sensor, int i) {
-
-            }
+            public void onAccuracyChanged(Sensor sensor, int i) {}
         };
         sm.registerListener(repListener, sensor, SensorManager.SENSOR_DELAY_UI);
     }
@@ -71,10 +86,10 @@ public class RepCounter {
             // discard the very first reading
             lastEventTimestamp == 0L || previousMagnitude == 0d ||
             // discard new events if they are too close to the last recorded
-            sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/2 ||
+            sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND / 2 ||
             // discard new event if the last valid reading was a rep and not enough time has
             // passed to avoid counting positive + negative portions of a rep as 2 distinct reps
-            lastReadingWasRep && sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND/REP_TIME_GAP_RATIO
+            lastReadingWasRep && sensorEvent.timestamp - lastEventTimestamp < ONE_SECOND / REP_TIME_GAP_RATIO
         ) {
             if(lastEventTimestamp == 0L) {
                 previousMagnitude = getMagnitude(sensorEvent);
@@ -105,17 +120,5 @@ public class RepCounter {
                 accX*accX + accY*accY + accZ*accZ
         );
         return magnitude;
-    }
-
-    public static RepCounter getInstance(Context context) {
-        if(instance != null) {
-            return instance;
-        }
-        synchronized (RepCounter.class) {
-            if(instance == null) {
-                instance = new RepCounter(context);
-            }
-            return instance;
-        }
     }
 }
