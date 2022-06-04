@@ -18,6 +18,14 @@ import java.util.prefs.Preferences;
 import it.bsamu.sam.virtualgymbuddy.R;
 
 public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgramAdapter.TrainingProgramViewHolder>{
+    /**
+     * Handles clicks and long clicks on a training program viewholder
+     */
+    public interface TrainingProgramViewHolderListener {
+        void navigateToProgramDetails(long programId);
+        void setActiveTrainingProgram(long programId);
+    }
+
     private TrainingProgramViewHolderListener listener;
 
     public TrainingProgramAdapter(TrainingProgramViewHolderListener listener) {
@@ -56,19 +64,15 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
                         ? View.VISIBLE : View.INVISIBLE
         );
 
-        // make holder accessible from recycler view
+        // make holder accessible from recycler view - used to change chip
+        // visibility if the active program is changed later
         holder.itemView.setTag(holder.programId);
     }
 
-    public interface TrainingProgramViewHolderListener {
-        void navigateToProgramDetails(long programId);
-        void setActiveTrainingProgram(long programId);
-    }
 
 
     class TrainingProgramViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
-        TextView programNameView;
-        TextView programDescriptionView;
+        TextView programNameView, programDescriptionView;
         Button editBtn;
         Chip activeChip;
         long programId;
@@ -76,6 +80,7 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
         String activeProgramKey;
 
         TrainingProgramViewHolderListener listener;
+
         TrainingProgramViewHolder(View itemView, TrainingProgramViewHolderListener listener, long activeProgramId) {
             super(itemView);
             programNameView = itemView.findViewById(R.id.program_name);
@@ -97,7 +102,6 @@ public class TrainingProgramAdapter extends AbstractCursorAdapter<TrainingProgra
 
         @Override
         public void onClick(View view) {
-            System.out.println("clicked");
             listener.navigateToProgramDetails(programId);
         }
 

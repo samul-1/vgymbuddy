@@ -18,13 +18,7 @@ public abstract class AbstractCursorAdapter<V extends RecyclerView.ViewHolder> e
 
     @Override
     public void onBindViewHolder(V holder, int position) {
-
-        if (!mDataValid) {
-            throw new IllegalStateException("Cannot bind view holder when cursor is in invalid state.");
-        }
-        if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("Could not move cursor to position " + position + " when trying to bind view holder");
-        }
+        throwIfInvalid(position);
 
         onBindViewHolder(holder, mCursor);
     }
@@ -40,23 +34,14 @@ public abstract class AbstractCursorAdapter<V extends RecyclerView.ViewHolder> e
 
     @Override
     public long getItemId(int position) {
-        if (!mDataValid) {
-            throw new IllegalStateException("Cannot lookup item id when cursor is in invalid state.");
-        }
-        if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("Could not move cursor to position " + position + " when trying to get an item id");
-        }
+        throwIfInvalid(position);
+
 
         return mCursor.getLong(mRowIDColumn);
     }
 
     public Cursor getItem(int position) {
-        if (!mDataValid) {
-            throw new IllegalStateException("Cannot lookup item id when cursor is in invalid state.");
-        }
-        if (!mCursor.moveToPosition(position)) {
-            throw new IllegalStateException("Could not move cursor to position " + position + " when trying to get an item id");
-        }
+        throwIfInvalid(position);
         return mCursor;
     }
 
@@ -75,6 +60,12 @@ public abstract class AbstractCursorAdapter<V extends RecyclerView.ViewHolder> e
             mCursor = null;
             mRowIDColumn = -1;
             mDataValid = false;
+        }
+    }
+
+    private void throwIfInvalid(int position) {
+        if (!mDataValid || !mCursor.moveToPosition(position)) {
+            throw new IllegalStateException();
         }
     }
 }

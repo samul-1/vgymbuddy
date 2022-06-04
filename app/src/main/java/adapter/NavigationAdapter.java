@@ -2,9 +2,6 @@ package adapter;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentManager;
-import androidx.lifecycle.Lifecycle;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import it.bsamu.sam.virtualgymbuddy.R;
@@ -14,18 +11,8 @@ import it.bsamu.sam.virtualgymbuddy.fragments.ProgramsFragment;
 import it.bsamu.sam.virtualgymbuddy.fragments.StatsFragment;
 
 public class NavigationAdapter extends FragmentStateAdapter {
-
-
-    public NavigationAdapter(@NonNull FragmentActivity fragmentActivity) {
-        super(fragmentActivity);
-    }
-
     public NavigationAdapter(@NonNull Fragment fragment) {
         super(fragment);
-    }
-
-    public NavigationAdapter(@NonNull FragmentManager fragmentManager, @NonNull Lifecycle lifecycle) {
-        super(fragmentManager, lifecycle);
     }
 
     public final int[] tabTexts = {
@@ -49,6 +36,7 @@ public class NavigationAdapter extends FragmentStateAdapter {
                 return new StatsFragment();
 
         }
+        // not supposed to happen - just to avoid the Java complaining
         throw new AssertionError();
     }
 

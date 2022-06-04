@@ -13,11 +13,11 @@ import it.bsamu.sam.virtualgymbuddy.R;
 public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder> {
     public TrainingDayExerciseAdapter() {
         super(null);
-        System.out.println("instantiating adapterr");
     }
 
     @Override
     public void onBindViewHolder(TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder holder, Cursor cursor) {
+        // fetch and set data
         String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
         short sets = cursor.getShort(cursor.getColumnIndexOrThrow("setsPrescribed"));
         short reps = cursor.getShort(cursor.getColumnIndexOrThrow("repsPrescribed"));
@@ -32,7 +32,6 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
     @NonNull
     @Override
     public TrainingDayExerciseAdapter.TrainingDayExerciseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        System.out.println("on creating view holder");
         View formNameView = LayoutInflater
                 .from(parent.getContext())
                 .inflate(R.layout.training_day_exercise_item, parent, false);
@@ -41,10 +40,10 @@ public class TrainingDayExerciseAdapter  extends AbstractCursorAdapter<TrainingD
 
 
     class TrainingDayExerciseViewHolder extends RecyclerView.ViewHolder {
-        TextView trainingDayExerciseExerciseName;
-        TextView trainingDayExerciseExerciseReps;
-        TextView trainingDayExerciseExerciseSets;
-        TextView trainingDayExerciseExerciseRest;
+        TextView trainingDayExerciseExerciseName,
+                trainingDayExerciseExerciseReps,
+                trainingDayExerciseExerciseSets,
+                trainingDayExerciseExerciseRest;
         TrainingDayExerciseViewHolder(View itemView) {
             super(itemView);
             trainingDayExerciseExerciseName = itemView.findViewById(R.id.training_day_exercise_name);

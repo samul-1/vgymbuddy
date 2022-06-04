@@ -14,11 +14,19 @@ import java.io.File;
 import it.bsamu.sam.virtualgymbuddy.R;
 
 public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.ExerciseViewHolder> {
+    /*
+    * Handles clicks on exercise viewholders
+    * */
+    public interface ExerciseViewHolderListener {
+        void onExerciseClick(long exerciseId, String exerciseName);
+    }
+
     public ExerciseAdapter(ExerciseViewHolderListener listener) {
         super(null);
         this.listener = listener;
     }
     private ExerciseViewHolderListener listener;
+
     @Override
     public ExerciseViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View formNameView = LayoutInflater
@@ -35,16 +43,12 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
 
         holder.exerciseNameView.setText(holder.exerciseName);
 
-        // if the exercise has an image associated to it, set it as card preview
-        if(imageUriString.length()>0) {
+        // if the exercise has an image associated to it, display it
+        if(imageUriString.length() > 0) {
             Uri exerciseImgUri = Uri.parse(imageUriString);
             holder.exerciseImgView.setImageURI(exerciseImgUri);
         }
 
-    }
-
-    public interface ExerciseViewHolderListener {
-        void onExerciseClick(long exerciseId, String exerciseName);
     }
 
     class ExerciseViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -65,7 +69,6 @@ public class ExerciseAdapter extends AbstractCursorAdapter<ExerciseAdapter.Exerc
 
         @Override
         public void onClick(View view) {
-            System.out.println("ID " + exerciseId + " NAME " + exerciseName);
             listener.onExerciseClick(exerciseId, exerciseName);
         }
     }

@@ -22,7 +22,6 @@ public class TrainingSessionSetAdapter extends RecyclerView.Adapter<TrainingSess
     }
 
     public void update(final List<TrainingSessionSet> sets) {
-        System.out.println("INSIDE UPDATE METHOD WITH " + sets);
         dataset = sets;
         notifyDataSetChanged();
     }
@@ -54,9 +53,7 @@ public class TrainingSessionSetAdapter extends RecyclerView.Adapter<TrainingSess
 
     class TrainingSessionSetViewHolder extends RecyclerView.ViewHolder {
         public TrainingSessionSetViewHolder(@NonNull View itemView) {
-
             super(itemView);
-            System.out.println("CREATING VIEW HOLDER FOR SET");
         }
     }
 }

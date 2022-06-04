@@ -42,7 +42,7 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
         holder.weightView.setText(String.valueOf(weight));
         holder.timestampView.setText(DateFormat.getDateInstance().format(sessionTimestamp));
 
-        if(videoUriString.length()>0) {
+        if(videoUriString.length() > 0) {
             Uri videoUri = Uri.parse(videoUriString);
 
             holder.videoView.setVideoURI(videoUri);
@@ -53,6 +53,7 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
             holder.videoView.setMediaController(holder.mediaController);
             holder.videoView.start();
         } else {
+            // something must have gone wrong - not supposed to get here
             throw new AssertionError("no video for " + reps + " " + weight);
         }
     }
@@ -84,6 +85,7 @@ public class ExerciseSetAdapter extends AbstractCursorAdapter<ExerciseSetAdapter
             repsView = itemView.findViewById(R.id.set_item_reps);
             weightView = itemView.findViewById(R.id.set_item_weight);
             timestampView = itemView.findViewById(R.id.set_session_timestamp);
+            // get a reference to MediaController as a Context object is needed to instantiate it
             this.mediaController = mediaController;
         }
     }

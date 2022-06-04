@@ -16,24 +16,28 @@ import it.bsamu.sam.virtualgymbuddy.R;
 import relational.entities.TrainingDay;
 
 public class TrainingDayAdapter extends RecyclerView.Adapter<TrainingDayAdapter.TrainingDayViewHolder> {
+    /**
+     * Handles clicks on training day viewholders
+     */
+    public interface TrainingDayViewHolderListener {
+        void navigateToTrainingDayDetails(long dayId);
+    }
+
     protected TrainingDayViewHolderListener listener;
     private Context context;
+
+    // use a list instead of a Cursor due to the limited amount of possible data
     List<TrainingDay> dataset;
 
     public TrainingDayAdapter(TrainingDayViewHolderListener listener, Context context, List<TrainingDay> dataset) {
         this.dataset = dataset;
         this.listener = listener;
         this.context = context;
-        System.out.println("instantiating adapter");
     }
 
     @Override
     public int getItemCount() {
         return dataset.size();
-    }
-
-    public interface TrainingDayViewHolderListener {
-        void navigateToTrainingDayDetails(long dayId);
     }
 
     @Override
@@ -43,7 +47,7 @@ public class TrainingDayAdapter extends RecyclerView.Adapter<TrainingDayAdapter.
         long dayId = day.id;
 
         String[] daysOfWeek = context.getResources().getStringArray(R.array.days_of_week);
-        holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx-1]);
+        holder.trainingDayPosition.setText(daysOfWeek[dayOfWeekIdx - 1]);
         holder.itemView.setOnClickListener((__)->listener.navigateToTrainingDayDetails(dayId));
     }
 
