@@ -17,6 +17,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -57,24 +58,33 @@ import relational.entities.TrainingSessionSet;
 import it.bsamu.sam.virtualgymbuddy.viewmodel.CurrentTrainingSessionViewModel;
 
 public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<TrainingSessionSetAdapter> implements View.OnClickListener, Runnable, RepCounterDialog.RepCounterDialogListener {
+    /**
+     * A fragment used to display the current program's training session for today, if any.
+     *
+     * It contains the UI elements needed to record sets for the training session (such as
+     * text inputs for weight and reps parameters) as well as to record videos of those sets
+     */
+
+    // viewmodel binding
+    CurrentTrainingSessionViewModel viewModel;
+    private TodaysTrainingFragmentBinding binding;
+
     short todayWeekDayIdx;
 
-    EditText repsInput;
-    EditText weightInput;
+    // views
+    EditText repsInput, weightInput;
     Button addSetBtn, recordSetBtn, countRepsBtn;
     ImageView videoThumbnail;
     ViewGroup setAuxButtonsLayout;
     Uri takenVideoUri;
     RepCounterDialog repCounterDialog;
 
+    // for inter-set timer
     Handler restTimerHandler = new Handler();
 
     private final String BUNDLE_THUMBNAIL_IMG_KEY = "video_thumbnail";
-
     static final int REQUEST_VIDEO_CAPTURE = 22222;
 
-    CurrentTrainingSessionViewModel viewModel;
-    private TodaysTrainingFragmentBinding binding;
 
     public CurrentProgramFragment() { }
 
@@ -99,7 +109,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         recyclerView.setLayoutManager(new LinearLayoutManager(binding.getRoot().getContext()));
         recyclerView.setAdapter(getAdapter());
 
-        // observe dataset of the recyclerview
+        // observe dataset of the recyclerview to update UI
         Observer<List<TrainingSessionSet>> setsObserver =
             trainingSessionSets -> {
                 adapter.update(trainingSessionSets);
@@ -144,9 +154,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
         // restore video thumbnail, if present
         if(savedInstanceState != null && savedInstanceState.containsKey(BUNDLE_THUMBNAIL_IMG_KEY)) {
-            videoThumbnail.setImageBitmap((Bitmap) savedInstanceState
-                    .getParcelable(BUNDLE_THUMBNAIL_IMG_KEY)
-            );
+            videoThumbnail.setImageBitmap(savedInstanceState.getParcelable(BUNDLE_THUMBNAIL_IMG_KEY));
             videoThumbnail.setVisibility(View.VISIBLE);
             setAuxButtonsLayout.setVisibility(View.GONE);
         }
@@ -154,15 +162,15 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
     private void checkRequiredFields() {
         viewModel.setAddSetBtnEnabled(
-                repsInput.getText().toString().length()>0
-                        && weightInput.getText().toString().length()>0
+                repsInput.getText().toString().length() > 0
+                        && weightInput.getText().toString().length() > 0
         );
     }
 
     @Override
     public void onResume() {
         // get information needed to fetch today's training
-        todayWeekDayIdx = (short)LocalDate.now().getDayOfWeek().getValue();
+        todayWeekDayIdx = (short) LocalDate.now().getDayOfWeek().getValue();
 
         // get active program id from preferences and set it in view model
         viewModel
@@ -171,8 +179,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                        .getSharedPreferences(
                                 getString(R.string.pref_file_key),
                                 Context.MODE_PRIVATE
-                        )
-                        .getLong(getString(R.string.active_program_pref_key), 0L)
+                        ).getLong(getString(R.string.active_program_pref_key), 0L)
         );
         super.onResume();
     }
@@ -230,12 +237,11 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                 .getTodaysTrainingSessionForTrainingDay(trainingDayId);
         long sessionId;
         if(session == null) {
+            // no existing training session for today; create one
             sessionId = db
                     .trainingSessionDao()
                     .insertTrainingSession(
-                            new TrainingSession(
-                                trainingDayId, new Date()
-                            )
+                            new TrainingSession(trainingDayId, new Date())
                     );
         } else {
             sessionId = session.id;
@@ -243,6 +249,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         viewModel.setSessionId(sessionId);
         return sessionId;
     }
+
     private long fetchTrainingDay() {
         TrainingDay trainingDay = db
                 .trainingDayDao()
@@ -253,6 +260,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
 
         if(trainingDay != null) {
             viewModel.setTrainingDayId(trainingDay.id);
+            // get list of exercises for today's training session
             List<TrainingDayExercise> trainingDayExercises = db
                    .trainingDayDao()
                    .getExercisesFor(trainingDay.id);
@@ -276,7 +284,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         if (takeVideoIntent.resolveActivity(getActivity().getPackageManager()) != null) {
             startActivityForResult(takeVideoIntent, REQUEST_VIDEO_CAPTURE);
         } else {
-            // TODO show message camera not available
+            Log.d("unavailable-camera", "Camera isn't available on the device");
         }
     }
 
@@ -320,6 +328,7 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
         } else if (v == countRepsBtn) {
             countReps();
         } else {
+            // not supposed to happen
             throw new AssertionError();
         }
     }

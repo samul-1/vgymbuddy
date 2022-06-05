@@ -21,10 +21,10 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
     /**
      * An abstract Fragment used for displaying instances of an entity fetched
      * from a db using a Cursor inside of a RecyclerView. The fragment is meant
-     * to display ONE main entity.
+     * to display entries for ONE main entity.
      *
      * The class is parametric in the type of Adapter used for the RecyclerView and
-     * required implementing all methods that directly interact with the entity
+     * requires implementing all methods that directly interact with the entity
      * and the view(s) generated from instances of it.
      *
      */
@@ -75,7 +75,8 @@ public abstract class AbstractCursorRecyclerViewFragment<A extends RecyclerView.
         recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
         recyclerView.setAdapter(adapter);
 
-        // prevent restoring state until data has been reloaded
+        // prevent restoring state until data has been reloaded to maintain
+        // scrolling position when fragment is destroyed and recreated
         adapter.setStateRestorationPolicy(
                 RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         );

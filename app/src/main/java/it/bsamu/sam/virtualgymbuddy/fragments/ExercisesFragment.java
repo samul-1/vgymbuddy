@@ -81,14 +81,13 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
 
     private void requestExternalStorageReadPermission() {
         if (ContextCompat.checkSelfPermission(
-                getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) !=
-                PackageManager.PERMISSION_GRANTED) {
+                getContext(), Manifest.permission.READ_EXTERNAL_STORAGE
+        ) != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(
                     new String[] { Manifest.permission.READ_EXTERNAL_STORAGE },
                     READ_EXT_STORAGE_PERMISSION_REQUEST
             );
         }
-        // TODO check if user doesn't want to be asked again
     }
 
 

@@ -32,8 +32,7 @@ import relational.entities.TrainingProgram;
 
 public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDayAdapter> implements TrainingDayAdapter.TrainingDayViewHolderListener {
     private TrainingProgram program;
-    private TextView programName;
-    private TextView programDesc;
+    private TextView programName,  programDesc;
     private Button addDayBtn;
 
     List<String> weekDays;
@@ -73,8 +72,8 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
     @NonNull
     private void setUsableDaysOfWeek() {
         /**
-         * Filters out days for which a TrainingDay exists to prevent the user from
-         * adding more than one TrainingDay for any given day of the week
+         * Filters out days for which a TrainingDay already exists to prevent the user
+         * from adding more than one TrainingDay for any given day of the week
          */
 
         List<Short> usedDays = trainingDays
@@ -84,9 +83,9 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
 
         // filter out days for which a training day exists
         List<String> usableDays =
-                IntStream.range(1, weekDays.size()+1)
-                .filter(i-> !usedDays.contains((short)i))
-                .mapToObj(i->weekDays.get(i-1))
+                IntStream.range(1, weekDays.size() + 1)
+                .filter(i-> !usedDays.contains((short) i))
+                .mapToObj(i -> weekDays.get(i - 1))
                 .collect(Collectors.toList());
 
         if(daysOfWeek == null) {
@@ -106,6 +105,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             programName.setText(program.name);
             programDesc.setText(program.description);
         } else {
+            // not supposed to happen
             throw new AssertionError("Program is null at the time of onCreateView");
         }
     }
@@ -141,7 +141,7 @@ public class ProgramDetailFragment extends AbstractItemDetailFragment<TrainingDa
             @SuppressLint("StaticFieldLeak")
             @Override
             protected Void doInBackground(Void... voids) {
-                short selectedDayIdx = (short)(weekDays.indexOf(dayOfWeekDropdown.getSelectedItem())+1);
+                short selectedDayIdx = (short) (weekDays.indexOf(dayOfWeekDropdown.getSelectedItem()) + 1);
                 db.trainingDayDao().insertTrainingDay(new TrainingDay(itemId, selectedDayIdx));
                 trainingDays.clear();
                 trainingDays.addAll(db.trainingDayDao().getForProgram(itemId));

@@ -121,10 +121,22 @@ public class GeofenceManager {
          * If `create` is false, will return null if the PendingIntent doesn't exist
          */
         Intent intent = new Intent(context, GymGeofenceBroadcastReceiver.class);
-        PendingIntent geofencePendingIntent = PendingIntent.getBroadcast(
-                context, 0, intent,
-                create ? PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_NO_CREATE
-        );
+        PendingIntent geofencePendingIntent;
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
+            // add mutability flag as required by versions of Android >= S
+            geofencePendingIntent = PendingIntent.getBroadcast(
+                    context, 0, intent,
+                    create ?
+                            PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT :
+                            PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE
+            );
+        } else {
+            geofencePendingIntent = PendingIntent.getBroadcast(
+                    context, 0, intent,
+                    create ? PendingIntent.FLAG_UPDATE_CURRENT : PendingIntent.FLAG_NO_CREATE
+            );
+        }
         return geofencePendingIntent;
     }
 

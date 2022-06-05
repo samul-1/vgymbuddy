@@ -25,13 +25,15 @@ import relational.entities.TrainingDayExercise;
 
 public class TrainingDayFragment extends AbstractItemDetailFragment<TrainingDayExerciseAdapter> implements ExerciseSelectionDialog.ExerciseSelectionDialogListener {
     private TrainingDay trainingDay;
+
     TextView title, selectedExerciseName;
     Button addExerciseBtn, saveExerciseBtn;
     ViewGroup addExerciseControls;
+    EditText setsInput, repsInput, restInput;
+
     private TrainingDayDetailBinding binding;
     long chosenExerciseId;
     String chosenExerciseName;
-    EditText setsInput, repsInput, restInput;
     ExerciseSelectionDialog dialog;
 
     private final String BUNDLE_CHOSEN_EXERCISE_ID = "eid";

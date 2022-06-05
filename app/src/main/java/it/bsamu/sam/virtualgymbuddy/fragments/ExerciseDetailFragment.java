@@ -61,7 +61,7 @@ public class ExerciseDetailFragment extends AbstractItemDetailFragment<ExerciseS
                 super.onPostExecute(unused);
                 adapter.swapCursor(cursor);
                 adapter.notifyDataSetChanged();
-                if(adapter.getItemCount()==0) {
+                if(adapter.getItemCount() == 0) {
                     emptyState.setVisibility(View.VISIBLE);
                 }
             }

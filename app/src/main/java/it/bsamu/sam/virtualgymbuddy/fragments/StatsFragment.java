@@ -45,7 +45,11 @@ import relational.dao.TrainingSessionDao;
 import relational.entities.GymTransition;
 
 public class StatsFragment extends Fragment {
-
+    /**
+     * Shows a chart which displays weekly stats relative to gym presence and training
+     * session duration and displays a tip to the user based on the ratio between
+     * time spent at the gym and time spent actually training
+     */
     public static final int GYM_TIME_BAR_COLOR = Color.rgb(104, 241, 175);
     public static final int TRAIN_TIME_BAR_COLOR = Color.rgb(164, 228, 251);
     public static final int CHART_LABEL_COUNT = 14;
@@ -94,7 +98,7 @@ public class StatsFragment extends Fragment {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getFormattedValue(float value) {
-                return weekDays[(int)value];
+                return weekDays[(int) value];
             }
         });
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -125,15 +129,16 @@ public class StatsFragment extends Fragment {
                 LocalDateTime now = LocalDateTime.now(); // current date and time
                 LocalDateTime midnight = now.toLocalDate().atStartOfDay();
 
+                // get dates relative to the beginning and end of current week
                 int todayIdx = now.getDayOfWeek().getValue();
                 LocalDateTime beginningOfWeek = midnight.minusDays(todayIdx-1);
                 LocalDateTime endOfWeek = beginningOfWeek.plusDays(7);
                 Date midnightBeginningOfWeek = Date.from(beginningOfWeek.atZone(ZoneId.systemDefault()).toInstant());
                 Date midnightEndOfWeek = Date.from(endOfWeek.atZone(ZoneId.systemDefault()).toInstant());
 
-                trainingSessionDurationData = db.trainingSessionDao()
+                trainingSessionDurationData = db
+                        .trainingSessionDao()
                         .getDurationDataForTimeInterval(midnightBeginningOfWeek, midnightEndOfWeek);
-
 
                 gymTimeDurationData = getGymTimeDurationData(midnightBeginningOfWeek, midnightEndOfWeek);
 
@@ -156,7 +161,7 @@ public class StatsFragment extends Fragment {
         totalTrainTime = DoubleStream.of(
                 trainingSessionDurationData
                         .stream()
-                        .map(d->d.getDurationInMinutes())
+                        .map(d -> d.getDurationInMinutes())
                         .mapToDouble(x->x).toArray()
         ).sum();
     }
@@ -176,10 +181,12 @@ public class StatsFragment extends Fragment {
                     trainingSessionDurationData
                             .stream()
                             .filter(d->d.dayOfWeek == finalI + 1)
-                            .findFirst().orElse(null);
+                            .findFirst()
+                            .orElse(null);
 
             if(durationData == null) {
                 // no training held that day, any transitions are irrelevant
+                // (assume the user just got near the gym and didn't actually go in)
                 ret[i] = 0d;
                 continue;
             }
@@ -188,18 +195,19 @@ public class StatsFragment extends Fragment {
             List<GymTransition> perDayTransitions = weeklyGymTransitions
                     .stream()
                     .filter(t->
-                            LocalDateTime
-                                    .ofInstant(
-                                            t.timestamp.toInstant(),
-                                            ZoneId.systemDefault()
-                                    ).getDayOfWeek().getValue()-1 == finalI
-                    ).sorted(Comparator.comparing(a -> a.timestamp))
+                            LocalDateTime.ofInstant(
+                                    t.timestamp.toInstant(),
+                                    ZoneId.systemDefault()
+                            ).getDayOfWeek().getValue() - 1 == finalI
+                    )
+                    .sorted(Comparator.comparing(a -> a.timestamp))
                     .collect(Collectors.toList());
 
-            Stream<GymTransition> enterTransitions = perDayTransitions
-                    .stream().filter(t -> t.entering);
-            Stream<GymTransition> leaveTransitions = perDayTransitions
-                    .stream().filter(t -> !t.entering);
+            Stream<GymTransition> enterTransitions =
+                    perDayTransitions.stream().filter(t -> t.entering);
+
+            Stream<GymTransition> leaveTransitions =
+                    perDayTransitions.stream().filter(t -> !t.entering);
 
 
             // get the enter transition that's closest to the begin timestamp of the training
@@ -208,7 +216,7 @@ public class StatsFragment extends Fragment {
             Optional<GymTransition> enterTransition = enterTransitions.min(
                     Comparator.comparing(t ->
                             t.timestamp.getTime() -
-                            durationData.beginTimestamp.getTime()
+                                    durationData.beginTimestamp.getTime()
                     )
             );
 

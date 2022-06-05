@@ -11,6 +11,13 @@ import adapter.AbstractCursorAdapter;
 import adapter.TrainingDayAdapter;
 
 public abstract class AbstractItemDetailFragment<A extends RecyclerView.Adapter> extends AbstractCursorRecyclerViewFragment<A>{
+    /**
+     * An abstract fragment used to display a single entry of an entity (detail mode).
+     *
+     * It inherits from AbstractCursorRecyclerViewFragment to allow simultaneous displaying of both
+     * the main entry and its children, if any (e.g. a training program and its training days)
+     */
+
     public static final String ITEM_ID_ARG = "item_id";
     protected long itemId;
 
@@ -23,6 +30,7 @@ public abstract class AbstractItemDetailFragment<A extends RecyclerView.Adapter>
             itemId = getArguments().getLong(ITEM_ID_ARG);
             asyncFetchItem();
         } else {
+            // not supposed to happen
             throw new AssertionError("no item id");
         }
     }
@@ -32,7 +40,6 @@ public abstract class AbstractItemDetailFragment<A extends RecyclerView.Adapter>
         super.onViewCreated(view, savedInstanceState);
         paintItemData();
     }
-
 
 
     protected abstract void paintItemData();

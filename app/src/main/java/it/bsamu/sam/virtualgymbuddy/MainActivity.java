@@ -65,37 +65,12 @@ public class MainActivity extends AppCompatActivity {
 
         db = AppDb.getInstance(getApplicationContext());
 
-        new Thread(()->{
-            Exercise i = db.exerciseDao().getById(1);
-            if(i!=null) return;
-
-           db.exerciseDao().insertExercise(new Exercise("Squat"));
-            long benchId= db.exerciseDao().insertExercise(new Exercise("Panca piana"));
-            db.exerciseDao().insertExercise(new Exercise("Deadlift"));
-            long milId = db.exerciseDao().insertExercise(new Exercise("Military press"));
-            db.exerciseDao().insertExercise(new Exercise("Stacco a gamba tesa"));
-            long raiseId = db.exerciseDao().insertExercise(new Exercise("Alzate laterali"));
-            db.exerciseDao().insertExercise(new Exercise("Curl con bilanciere"));
-            long ropeId = db.exerciseDao().insertExercise(new Exercise("Rope pushdown"));
-            db.exerciseDao().insertExercise(new Exercise("Pull-up"));
-            db.exerciseDao().insertExercise(new Exercise("Push-up"));
-            db.exerciseDao().insertExercise(new Exercise("Dips"));
-
-           long pplId= db.trainingProgramDao().insertTrainingProgram(new TrainingProgram("PPL", ""));
-           long dayId = db.trainingDayDao().insertTrainingDay(
-                   new TrainingDay(pplId,
-                           (short) LocalDate.now().getDayOfWeek().getValue()));
-
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(benchId, dayId, (short)2, (short)12, (short)5));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12, (short)5));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12, (short)5));
-            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12, (short)5));
-
-        }).start();
+        loadInitialData();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
     }
+
 
     private void navigateToSelectGymLocation() {
         NavHostFragment navHostFragment =
@@ -140,5 +115,40 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
         return NavigationUI.navigateUp(navController, appBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    private void loadInitialData() {
+        /**
+         * Loads some initial data to the app db
+         */
+        new Thread(() -> {
+            Exercise i = db.exerciseDao().getById(1);
+            if(i != null) {
+                // not the first time the app is launched; don't load any data
+                return;
+            }
+
+            db.exerciseDao().insertExercise(new Exercise("Squat"));
+            long benchId = db.exerciseDao().insertExercise(new Exercise("Panca piana"));
+            db.exerciseDao().insertExercise(new Exercise("Deadlift"));
+            long milId = db.exerciseDao().insertExercise(new Exercise("Military press"));
+            db.exerciseDao().insertExercise(new Exercise("Stacco a gamba tesa"));
+            long raiseId = db.exerciseDao().insertExercise(new Exercise("Alzate laterali"));
+            db.exerciseDao().insertExercise(new Exercise("Curl con bilanciere"));
+            long ropeId = db.exerciseDao().insertExercise(new Exercise("Rope pushdown"));
+            db.exerciseDao().insertExercise(new Exercise("Pull-up"));
+            db.exerciseDao().insertExercise(new Exercise("Push-up"));
+            db.exerciseDao().insertExercise(new Exercise("Dips"));
+
+            long pplId = db.trainingProgramDao().insertTrainingProgram(new TrainingProgram("PPL", "Routine di allenamento push-pull-legs"));
+            long dayId = db.trainingDayDao().insertTrainingDay(
+                    new TrainingDay(pplId,
+                            (short) LocalDate.now().getDayOfWeek().getValue()));
+
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(benchId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(milId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(raiseId, dayId, (short)2, (short)12, (short)5));
+            db.trainingDayExerciseDao().insertTrainingDayExercise(new TrainingDayExercise(ropeId, dayId, (short)2, (short)12, (short)5));
+        }).start();
     }
 }

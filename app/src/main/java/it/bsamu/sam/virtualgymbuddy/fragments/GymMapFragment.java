@@ -69,7 +69,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     private static final int PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION = 1;
     private boolean locationPermissionGranted;
 
-
     private Location lastKnownLocation;
 
     // Keys for storing activity state.
@@ -78,7 +77,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
 
     // max entries in place selection dialog
     private static final int M_MAX_ENTRIES = 5;
-
 
     private Place[] likelyPlaces;
     private AlertDialog dialog;
@@ -92,6 +90,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        // remove option to navigate to this fragment from options menu
         super.onPrepareOptionsMenu(menu);
         menu.clear();
     }
@@ -101,19 +100,15 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.gym_map, container,false);
 
-
         // Retrieve location and camera position from saved instance state.
         if (savedInstanceState != null) {
             lastKnownLocation = savedInstanceState.getParcelable(KEY_LOCATION);
             cameraPosition = savedInstanceState.getParcelable(KEY_CAMERA_POSITION);
         }
 
-
-        // Construct a PlacesClient
         Places.initialize(getActivity(), BuildConfig.MAPS_API_KEY);
         placesClient = Places.createClient(getContext());
 
-        // Construct a FusedLocationProviderClient.
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getActivity());
 
         return view;
@@ -123,7 +118,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Build the map
+        // build the map
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
@@ -146,7 +141,6 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
                 setGymLocation(place);
             }
 
-
             @Override
             public void onError(@NonNull Status status) {
                 Log.i(TAG, "An error occurred: " + status);
@@ -167,8 +161,13 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
 
         saveGymLocationPreference(latLng);
         setGymMarker(latLng);
-        map.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng,
-                DEFAULT_ZOOM));
+
+        map.moveCamera(
+                CameraUpdateFactory.newLatLngZoom(
+                        latLng,
+                        DEFAULT_ZOOM
+                )
+        );
 
         Toast.makeText(
                 getContext(),
@@ -326,7 +325,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
         if (locationPermissionGranted) {
             // Use fields to define the data types to return.
             List<Place.Field> placeFields = Arrays.asList(Place.Field.NAME, Place.Field.ADDRESS,
-                    Place.Field.LAT_LNG);
+                    Place.Field.LAT_LNG, Place.Field.TYPES);
 
             // Use the builder to create a FindCurrentPlaceRequest.
             FindCurrentPlaceRequest request =
@@ -385,7 +384,7 @@ public class GymMapFragment extends Fragment implements OnMapReadyCallback {
                 .setTitle(R.string.pick_place)
                 .setItems(
                         Arrays
-                                .stream(likelyPlaces).map(p->p.getName()).collect(Collectors.toList())
+                                .stream(likelyPlaces).map(p -> p.getName()).collect(Collectors.toList())
                                 .toArray(new String[0]),
                         listener
                 ).show();

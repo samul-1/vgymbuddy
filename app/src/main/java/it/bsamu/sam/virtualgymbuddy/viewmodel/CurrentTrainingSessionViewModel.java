@@ -36,11 +36,13 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
         for(Map.Entry<Exercise, List<TrainingSessionSet>>entry : exercisesWithSets.getValue().entrySet()) {
             TrainingDayExercise exercise = trainingDayExercises.getValue()
                     .stream()
-                    .filter(e->e.exerciseId==entry.getKey().id)
+                    .filter(e -> e.exerciseId == entry.getKey().id)
                     .findFirst()
                     .orElseThrow(() -> new AssertionError("cannot find exercise " + entry.getKey()));
             long sets = exercise.setsPrescribed;
             if(entry.getValue().size() < sets) {
+                // fewer sets than the prescribed amount exist for this exercise: this
+                // is the current exercise (i.e. the latest one the user has gotten to)
                 currentExercise.setValue(entry.getKey());
                 currentRestTime.setValue(exercise.restSeconds);
                 setDataSetToCurrentExerciseSets();
@@ -105,10 +107,6 @@ public class CurrentTrainingSessionViewModel extends ViewModel {
     }
 
 
-
-    public void setCurrentRestTime(short time) {
-        currentRestTime.postValue(time);
-    }
     public void setRemainingRestTime(short time) {
         remainingRestTime.postValue(time);
     }
