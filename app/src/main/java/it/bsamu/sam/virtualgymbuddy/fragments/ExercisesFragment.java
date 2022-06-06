@@ -108,26 +108,7 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
         new AsyncTask<Void,Void,Exercise>(){
             @Override
             protected Exercise doInBackground(Void... voids) {
-                String filename;
-                Uri imageUri = null;
-
-                // save picked img
-                if(pickedImg != null) {
-                    filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
-                            .format(System.currentTimeMillis()) + ".jpg"; // TODO generalize mime type
-                    // copy picked image file to internal storage
-                    try(FileOutputStream fos = getContext()
-                            .openFileOutput(filename, Context.MODE_PRIVATE)
-                    ) {
-                        Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), pickedImg);
-                        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
-                        imageUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
-                   } catch (FileNotFoundException e) {
-                       e.printStackTrace();
-                   } catch (IOException e) {
-                       e.printStackTrace();
-                   }
-                }
+                Uri imageUri = savePickedImgToInternalStorage(pickedImg);
                 Exercise added = new Exercise(exerciseName, imageUri);
                 db.exerciseDao().insertExercise(added);
                 return added;
@@ -140,6 +121,34 @@ public class ExercisesFragment extends AbstractCursorRecyclerViewFragment<Exerci
                 Toast.makeText(getContext(), R.string.toast_exercise_created, Toast.LENGTH_SHORT).show();
             }
         }.execute();
+    }
+
+    @Nullable
+    private Uri savePickedImgToInternalStorage(Uri pickedImg) {
+        /**
+         * Copies the image with URI `pickedImg` to internal storage
+         * and returns the URI of the thus created image file
+         */
+        String filename;
+        Uri imageUri = null;
+
+        if(pickedImg != null) {
+            filename = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS")
+                    .format(System.currentTimeMillis()) + ".jpg";
+            // copy picked image file to internal storage
+            try(FileOutputStream fos = getContext()
+                    .openFileOutput(filename, Context.MODE_PRIVATE)
+            ) {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), pickedImg);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+                imageUri = Uri.fromFile(new File(getContext().getFilesDir(), filename));
+           } catch (FileNotFoundException e) {
+               e.printStackTrace();
+           } catch (IOException e) {
+               e.printStackTrace();
+           }
+        }
+        return imageUri;
     }
 
 

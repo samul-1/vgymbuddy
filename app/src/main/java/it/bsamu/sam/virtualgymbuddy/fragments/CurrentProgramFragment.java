@@ -181,6 +181,14 @@ public class CurrentProgramFragment extends AbstractCursorRecyclerViewFragment<T
                                 Context.MODE_PRIVATE
                         ).getLong(getString(R.string.active_program_pref_key), 0L)
         );
+
+        // hide video button if external storage is unavailable
+        recordSetBtn.setVisibility(
+                Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED) ?
+                        View.VISIBLE :
+                        View.INVISIBLE
+        );
+
         super.onResume();
     }
 
